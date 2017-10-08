@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 public class ControllerDatabase {
     /** Connect database and get collection **/
-    public static DB connectDB(String host, int port, String database) {
+    public DB connectDB(String host, int port, String database) {
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
         mongoLogger.setLevel(Level.SEVERE);
 
@@ -30,13 +30,13 @@ public class ControllerDatabase {
         return null;
     }
 
-    public static DBCollection getCollection(DB db, String collection) {
+    public DBCollection getCollection(DB db, String collection) {
         DBCollection dbCollection = db.getCollection(collection);
         return dbCollection;
     }
 
     /** Insert database **/
-    public static void insertWaysDB(DBCollection collectionWay, HashMap<Long, Way> ways) {
+    public void insertWaysDB(DBCollection collectionWay, HashMap<Long, Way> ways) {
         ways.forEach((key, value) -> {
             BasicDBObject wayObject = new BasicDBObject();
 
@@ -59,26 +59,25 @@ public class ControllerDatabase {
                 wayObject.append("nd", nodesObject);
             }
 
-            ArrayList<String[]> tags = value.getTag();
-            if (tags != null && tags.size() > 0) {
-                ArrayList<BasicDBObject> tagsObject = new ArrayList<>();
+            wayObject.append("bicycle", value.isBicycle());
+            wayObject.append("foot", value.isFoot());
+            wayObject.append("electrified", value.isElectrified());
+            wayObject.append("highway", value.getHighway());
+            wayObject.append("lanes", value.getLanes());
+            wayObject.append("maxspeed", value.getMaxspeed());
+            wayObject.append("name", value.getName());
+            wayObject.append("oneway", value.isOneway());
+            wayObject.append("bridge", value.isBridge());
+            wayObject.append("layer", value.getLayer());
+            wayObject.append("tunnel", value.isTunnel());
+            wayObject.append("railway", value.getRailway());
 
-                tags.forEach((tag) -> {
-                    BasicDBObject tagObject = new BasicDBObject();
-
-                    tagObject.append("k", tag[0]);
-                    tagObject.append("v", tag[1]);
-
-                    tagsObject.add(tagObject);
-                });
-                wayObject.append("tag", tagsObject);
-            }
             collectionWay.insert(wayObject);
         });
     }
 
     /** Query database **/
-    public static String query_selectAllWays(DBCollection collectionWay) {
+    public String query_selectAllWays(DBCollection collectionWay) {
         String jsonString = "";
         DBCursor cursor = collectionWay.find();
 
@@ -88,7 +87,7 @@ public class ControllerDatabase {
         return jsonString;
     }
 
-    public static String query_selectWayById(DBCollection collectionWay, String id_way) {
+    public String query_selectWayById(DBCollection collectionWay, String id_way) {
         String jsonString = "";
         BasicDBObject query = new BasicDBObject();
         query.put("id_way", Long.parseLong(id_way));
@@ -101,7 +100,7 @@ public class ControllerDatabase {
         return jsonString;
     }
 
-    public static String query_selectAllNodes(DBCollection collectionWay) {
+    public String query_selectAllNodes(DBCollection collectionWay) {
         String jsonString = "";
         DBCursor cursor = collectionWay.find();
 
@@ -111,12 +110,12 @@ public class ControllerDatabase {
         return jsonString;
     }
 
-    public static String query_selectNodesById(DBCollection collectionWay, String id_node) {
+    public String query_selectNodesById(DBCollection collectionWay, String id_node) {
         return null;
     }
 
     /** Create JSON file from query **/
-    public static void createFileJson(String json) {
+    public void createFileJson(String json) {
         FileNameExtensionFilter jsonFilter = new FileNameExtensionFilter("json files (*.json)", "json");
 
         JFileChooser jFileChooser = new JFileChooser();

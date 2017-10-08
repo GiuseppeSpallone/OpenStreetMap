@@ -7,36 +7,37 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 public class ControllerImport {
-    /** Open file OpenStreetMap **/
-    public static String openFile() {
+    /**
+     * Open file OpenStreetMap
+     **/
+    public File openFile() {
         JFileChooser jFileChooser = new JFileChooser();
         jFileChooser.setDialogTitle("Scegli file streetMap");
 
         if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            File file = jFileChooser.getSelectedFile();
+            String pathFile = jFileChooser.getSelectedFile().getPath();
 
-            String pathFile = file.getPath();
-            String nameFile = file.getName();
+            File file = new File(pathFile);
 
-            System.out.println("Aperto file: " + nameFile);
+            System.out.println("Aperto file: " + pathFile);
 
-            return pathFile;
+            return file;
         } else {
             System.out.println("Nessun file selezionato");
             return null;
         }
     }
 
-    /** Create ways with nodes hashmap **/
-    public static HashMap createOnlyWays(String pathFile) {
-        File file = new File(pathFile);
+    /**
+     * Create ways with nodes hashmap
+     **/
+    public HashMap createWays(File file) {
         HashMap<Long, Node> nodes = null;
         HashMap<Long, Way> ways = null;
         SAXBuilder saxBuilder = new SAXBuilder();
@@ -81,7 +82,6 @@ public class ControllerImport {
                     children_way_tag = nd.getChildren("tag");
 
                     ArrayList<Node> nodes_way = new ArrayList<>();
-                    ArrayList<String[]> tags = new ArrayList<>();
 
                     //esamino i nodi delle strade
                     if (children_way_nd.size() > 0) {
@@ -103,8 +103,6 @@ public class ControllerImport {
                                     node.setLon(lon);
 
                                     nodes_way.add(node);
-
-                                    //nodes.remove(ref);
                                 }
                             });
                             way.setNd(nodes_way);
@@ -116,20 +114,15 @@ public class ControllerImport {
                         for (Iterator it3 = children_way_tag.iterator(); it3.hasNext(); ) {
                             Element nd3 = (Element) it3.next();
 
-                            String tag[] = new String[2];
+                            String key_tag = nd3.getAttributeValue("k");
+                            String value_tag = nd3.getAttributeValue("v");
 
-                            tag[0] = nd3.getAttributeValue("k");
-                            tag[1] = nd3.getAttributeValue("v");
-
-                            tags.add(tag);
-                            way.setTag(tags);
+                            setTag(way, key_tag, value_tag);
                         }
                     }
                     ways.put(way.getId(), way);
                 }
-
             }
-
         } catch (IOException | NumberFormatException | JDOMException e) {
             System.out.println("Exception: " + e.getMessage());
         }
@@ -137,9 +130,77 @@ public class ControllerImport {
         return ways;
     }
 
-    /**Create only nodes hashmap **/
-    public HashMap createOnlyNodes(String pathFile) {
-        File file = new File(pathFile);
+    private void setTag(Way way, String key_tag, String value_tag) {
+        if (key_tag.equals("bicycle")) {
+            if (value_tag.equals("yes")) {
+                way.setBicycle(true);
+            } else {
+                way.setBicycle(false);
+            }
+        }
+
+        if (key_tag.equals("foot")) {
+            if (value_tag.equals("yes")) {
+                way.setFoot(true);
+            } else {
+                way.setFoot(false);
+            }
+        }
+
+        if (key_tag.equals("electrified")) {
+            if (value_tag.equals("yes")) {
+                way.setElectrified(true);
+            } else {
+                way.setElectrified(false);
+            }
+        }
+
+        if (key_tag.equals("highway"))
+            way.setHighway(value_tag);
+
+        if (key_tag.equals("lanes"))
+            way.setLanes(Integer.parseInt(value_tag));
+
+        if (key_tag.equals("maxspeed"))
+            way.setMaxspeed(Integer.parseInt(value_tag));
+
+        if (key_tag.equals("name"))
+            way.setName(value_tag);
+
+        if (key_tag.equals("oneway")) {
+            if (value_tag.equals("yes")) {
+                way.setOneway(true);
+            } else {
+                way.setOneway(false);
+            }
+        }
+
+        if (key_tag.equals("bridge")) {
+            if (value_tag.equals("yes")) {
+                way.setBridge(true);
+            } else {
+                way.setBridge(false);
+            }
+        }
+
+        if (key_tag.equals("layer"))
+            way.setLayer(Integer.parseInt(value_tag));
+
+        if (key_tag.equals("tunnel")) {
+            if (value_tag.equals("yes")) {
+                way.setTunnel(true);
+            } else {
+                way.setTunnel(false);
+            }
+        }
+        if (key_tag.equals("railway"))
+            way.setRailway(value_tag);
+    }
+
+    /**
+     * Create only nodes hashmap
+     **/
+    public HashMap createOnlyNodes(File file) {
         HashMap<Long, Node> nodes = null;
         HashSet<Node> buildings = null;
         SAXBuilder saxBuilder = new SAXBuilder();
@@ -153,7 +214,7 @@ public class ControllerImport {
             nodes = new HashMap<>();
             buildings = new HashSet<>();
 
-            for (Iterator it = children.iterator(); it.hasNext();) {
+            for (Iterator it = children.iterator(); it.hasNext(); ) {
                 Element nd = (Element) it.next();
                 Node node = new Node();
 
@@ -175,9 +236,10 @@ public class ControllerImport {
         return nodes;
     }
 
-    /** Create only ways hashmap **/
-    public HashMap createWays(String pathFile) {
-        File file = new File(pathFile);
+    /**
+     * Create only ways hashmap
+     **/
+    public HashMap createOnlyWays(File file) {
         HashMap<Long, Way> ways = null;
         SAXBuilder saxBuilder = new SAXBuilder();
 
@@ -189,7 +251,7 @@ public class ControllerImport {
 
             ways = new HashMap<>();
 
-            for (Iterator it = children.iterator(); it.hasNext();) {
+            for (Iterator it = children.iterator(); it.hasNext(); ) {
                 Element nd = (Element) it.next();
                 Way way = new Way();
 
@@ -202,7 +264,7 @@ public class ControllerImport {
                 ArrayList<String[]> tags = new ArrayList<>();
 
                 if (children2.size() > 0) {
-                    for (Iterator it2 = children2.iterator(); it2.hasNext();) {
+                    for (Iterator it2 = children2.iterator(); it2.hasNext(); ) {
                         Element nd2 = (Element) it2.next();
 
                         Node node = new Node();
@@ -215,7 +277,7 @@ public class ControllerImport {
                 }
 
                 if (children3.size() > 0) {
-                    for (Iterator it3 = children3.iterator(); it3.hasNext();) {
+                    for (Iterator it3 = children3.iterator(); it3.hasNext(); ) {
                         Element nd3 = (Element) it3.next();
 
                         String tag[] = new String[2];
@@ -236,7 +298,9 @@ public class ControllerImport {
         return ways;
     }
 
-    /** Create only arcs hashmap **/
+    /**
+     * Create only arcs hashmap
+     **/
     public HashSet createArcs(HashMap<Long, Way> ways) {
         HashSet<Arc> arcs = new HashSet<>();
 
@@ -255,7 +319,9 @@ public class ControllerImport {
         return arcs;
     }
 
-    /** Others **/
+    /**
+     * Others
+     **/
     public HashMap simplificationWays(HashMap<Long, Way> ways) {
 
         HashMap<Long, Way> newWays = new HashMap<>();
@@ -281,8 +347,7 @@ public class ControllerImport {
         return newWays;
     }
 
-    public int approximationNodesItaly(String pathFile) {
-        File file = new File(pathFile);
+    public int approximationNodesItaly(File file) {
         SAXBuilder saxBuilder = new SAXBuilder();
 
         float minLat = 0;
@@ -310,7 +375,7 @@ public class ControllerImport {
             Element root = doc.getRootElement(); //ottenere la radice
             List children = root.getChildren("bounds"); //ottenere i figli
 
-            for (Iterator it = children.iterator(); it.hasNext();) {
+            for (Iterator it = children.iterator(); it.hasNext(); ) {
                 Element nd = (Element) it.next();
 
                 minLat = (Float.parseFloat(nd.getAttribute("minlat").getValue()));
@@ -327,7 +392,7 @@ public class ControllerImport {
             Element root = doc.getRootElement(); //ottenere la radice
             List children2 = root.getChildren("node"); //ottenere i figli
 
-            for (Iterator it2 = children2.iterator(); it2.hasNext();) {
+            for (Iterator it2 = children2.iterator(); it2.hasNext(); ) {
                 Element nd = (Element) it2.next();
 
                 numNodes++;
@@ -369,7 +434,48 @@ public class ControllerImport {
         return nodes;
     }
 
-    /** Print **/
+    /**
+     * Locate keys of tags
+     **/
+    public ArrayList locateTags(File file, String nameChildren) {
+        ArrayList<String> key_tags = null;
+        SAXBuilder saxBuilder = new SAXBuilder();
+
+        try {
+            Document doc = saxBuilder.build(file);
+            Element root = doc.getRootElement();
+            List children = root.getChildren(nameChildren);
+            List children2;
+
+            key_tags = new ArrayList<>();
+
+            for (Iterator it = children.iterator(); it.hasNext(); ) {
+                Element nd = (Element) it.next();
+
+                children2 = nd.getChildren("tag");
+
+                if (children2.size() > 0) {
+
+                    for (Iterator it3 = children2.iterator(); it3.hasNext(); ) {
+                        Element nd3 = (Element) it3.next();
+
+                        String key = nd3.getAttributeValue("k");
+
+                        if (!key_tags.contains(key))
+                            key_tags.add(key);
+                    }
+                }
+            }
+        } catch (IOException | NumberFormatException | JDOMException e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
+
+        return key_tags;
+    }
+
+    /**
+     * Print
+     **/
     public void printNodes(HashMap<Long, Node> nodes) {
         System.out.println("Nodes: " + nodes.size());
 
@@ -404,12 +510,18 @@ public class ControllerImport {
                 });
             }
 
-            ArrayList<String[]> tags = value.getTag();
-            if (tags != null && tags.size() > 0) {
-                tags.forEach((tag) -> {
-                    System.out.println("      k: " + tag[0] + "      v: " + tag[1]);
-                });
-            }
+            System.out.println("bicycle: " + value.isBicycle()
+                    + " food: " + value.isFoot()
+                    + " electrified: " + value.isElectrified()
+                    + " highway: " + value.getHighway()
+                    + " lanes: " + value.getLanes()
+                    + " maxpeed: " + value.getMaxspeed()
+                    + " name: " + value.getName()
+                    + " oneway: " + value.isOneway()
+                    + " bridge: " + value.isBridge()
+                    + " layer: " + value.getLayer()
+                    + " tunnel: " + value.isTunnel()
+                    + " railway: " + value.getRailway());
         });
     }
 
@@ -419,6 +531,15 @@ public class ControllerImport {
         arcs.forEach((value) -> {
             System.out.println("from: " + value.getFrom().getId()
                     + " to: " + value.getTo().getId());
+        });
+    }
+
+    public void printTags(ArrayList<String> key_tags) {
+        System.out.println("Tags: " + key_tags.size());
+
+        key_tags.forEach((key_tag) -> {
+            System.out.println(
+                    " key: " + key_tag);
         });
     }
 }
