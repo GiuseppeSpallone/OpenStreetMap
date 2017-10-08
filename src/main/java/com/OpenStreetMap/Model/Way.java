@@ -6,6 +6,7 @@ public class Way {
 
     private Long id;
     private ArrayList<Node> nd;
+    private ArrayList<Node> nd_approximate;
 
     private boolean bicycle;
     private boolean foot;
@@ -34,6 +35,14 @@ public class Way {
 
     public void setNd(ArrayList<Node> nd) {
         this.nd = nd;
+    }
+
+    public ArrayList<Node> getNd_approximate() {
+        return nd_approximate;
+    }
+
+    public void setNd_approximate(ArrayList<Node> nd_approximate) {
+        this.nd_approximate = nd_approximate;
     }
 
     public boolean isBicycle() {

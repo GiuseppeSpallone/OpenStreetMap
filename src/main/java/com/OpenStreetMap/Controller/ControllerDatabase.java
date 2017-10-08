@@ -3,6 +3,7 @@ package com.OpenStreetMap.Controller;
 import com.OpenStreetMap.Model.Node;
 import com.OpenStreetMap.Model.Way;
 import com.mongodb.*;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.BufferedWriter;
@@ -15,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ControllerDatabase {
+
     /** Connect database and get collection **/
     public DB connectDB(String host, int port, String database) {
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
@@ -42,11 +44,11 @@ public class ControllerDatabase {
 
             wayObject.append("id_way", value.getId());
 
-            ArrayList<Node> nodi = value.getNd();
-            if (nodi != null && nodi.size() > 0) {
+            ArrayList<Node> nodes = value.getNd();
+            if (nodes != null && nodes.size() > 0) {
                 ArrayList<BasicDBObject> nodesObject = new ArrayList<>();
 
-                nodi.forEach((nd) -> {
+                nodes.forEach((nd) -> {
                     BasicDBObject nodeObject = new BasicDBObject();
 
                     nodeObject.append("id_node", nd.getId());
@@ -57,6 +59,23 @@ public class ControllerDatabase {
 
                 });
                 wayObject.append("nd", nodesObject);
+            }
+
+            ArrayList<Node> nodes_approximate = value.getNd_approximate();
+            if (nodes_approximate != null && nodes_approximate.size() > 0) {
+                ArrayList<BasicDBObject> nodes_approximateObject = new ArrayList<>();
+
+                nodes_approximate.forEach((nd) -> {
+                    BasicDBObject nodeObject = new BasicDBObject();
+
+                    nodeObject.append("id_node", nd.getId());
+                    nodeObject.append("lon_node", nd.getLon());
+                    nodeObject.append("lat_node", nd.getLat());
+
+                    nodes_approximateObject.add(nodeObject);
+
+                });
+                wayObject.append("nd_approximate", nodes_approximateObject);
             }
 
             wayObject.append("bicycle", value.isBicycle());
@@ -108,10 +127,6 @@ public class ControllerDatabase {
             jsonString += cursor.next().get("nd");
         }
         return jsonString;
-    }
-
-    public String query_selectNodesById(DBCollection collectionWay, String id_node) {
-        return null;
     }
 
     /** Create JSON file from query **/

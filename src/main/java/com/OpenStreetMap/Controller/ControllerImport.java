@@ -7,15 +7,15 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 public class ControllerImport {
-    /**
-     * Open file OpenStreetMap
-     **/
+
+    /** Open file OpenStreetMap **/
     public File openFile() {
         JFileChooser jFileChooser = new JFileChooser();
         jFileChooser.setDialogTitle("Scegli file streetMap");
@@ -34,9 +34,7 @@ public class ControllerImport {
         }
     }
 
-    /**
-     * Create ways with nodes hashmap
-     **/
+    /** Create ways with nodes hashmap **/
     public HashMap createWays(File file) {
         HashMap<Long, Node> nodes = null;
         HashMap<Long, Way> ways = null;
@@ -106,6 +104,8 @@ public class ControllerImport {
                                 }
                             });
                             way.setNd(nodes_way);
+
+                            setapproximateNodes(way);
                         }
                     }
 
@@ -197,10 +197,20 @@ public class ControllerImport {
             way.setRailway(value_tag);
     }
 
-    /**
-     * Create only nodes hashmap
-     **/
-    public HashMap createOnlyNodes(File file) {
+    private void setapproximateNodes(Way way) {
+        ArrayList<Node> nodes_approximate = new ArrayList<>();
+
+        way.getNd().forEach((nd) -> {
+
+            if (way.getNd().indexOf(nd) == 0 || way.getNd().indexOf(nd) == way.getNd().size() - 1) {
+                nodes_approximate.add(nd);
+            }
+        });
+        way.setNd_approximate(nodes_approximate);
+    }
+
+    /** Create only nodes, ways, arcs hashmap **/
+    /*public HashMap createOnlyNodes(File file) {
         HashMap<Long, Node> nodes = null;
         HashSet<Node> buildings = null;
         SAXBuilder saxBuilder = new SAXBuilder();
@@ -236,9 +246,6 @@ public class ControllerImport {
         return nodes;
     }
 
-    /**
-     * Create only ways hashmap
-     **/
     public HashMap createOnlyWays(File file) {
         HashMap<Long, Way> ways = null;
         SAXBuilder saxBuilder = new SAXBuilder();
@@ -298,9 +305,6 @@ public class ControllerImport {
         return ways;
     }
 
-    /**
-     * Create only arcs hashmap
-     **/
     public HashSet createArcs(HashMap<Long, Way> ways) {
         HashSet<Arc> arcs = new HashSet<>();
 
@@ -317,36 +321,9 @@ public class ControllerImport {
             }
         });
         return arcs;
-    }
+    }*/
 
-    /**
-     * Others
-     **/
-    public HashMap simplificationWays(HashMap<Long, Way> ways) {
-
-        HashMap<Long, Way> newWays = new HashMap<>();
-
-        ways.forEach((key, value) -> {
-
-            Way way = new Way();
-            way.setId(key);
-
-            //int sizeNodes = value.getNd().size();
-            //System.out.println(sizeNodes);
-            ArrayList<Node> nodes = new ArrayList<>();
-
-            value.getNd().forEach((nd) -> {
-
-                if (value.getNd().indexOf(nd) == 0 || value.getNd().indexOf(nd) == value.getNd().size() - 1) {
-                    nodes.add(nd);
-                    way.setNd(nodes);
-                    newWays.put(way.getId(), way);
-                }
-            });
-        });
-        return newWays;
-    }
-
+    /** Others **/
     public int approximationNodesItaly(File file) {
         SAXBuilder saxBuilder = new SAXBuilder();
 
@@ -434,9 +411,7 @@ public class ControllerImport {
         return nodes;
     }
 
-    /**
-     * Locate keys of tags
-     **/
+    /** Locate keys of tags **/
     public ArrayList locateTags(File file, String nameChildren) {
         ArrayList<String> key_tags = null;
         SAXBuilder saxBuilder = new SAXBuilder();
@@ -473,9 +448,7 @@ public class ControllerImport {
         return key_tags;
     }
 
-    /**
-     * Print
-     **/
+    /** Print **/
     public void printNodes(HashMap<Long, Node> nodes) {
         System.out.println("Nodes: " + nodes.size());
 
@@ -503,10 +476,18 @@ public class ControllerImport {
 
         ways.forEach((key, value) -> {
             System.out.println("id: " + value.getId());
-            ArrayList<Node> nodi = value.getNd();
-            if (nodi != null && nodi.size() > 0) {
-                nodi.forEach((nd) -> {
+
+            ArrayList<Node> nodes = value.getNd();
+            if (nodes != null && nodes.size() > 0) {
+                nodes.forEach((nd) -> {
                     System.out.println("   nd: " + nd.getId() + "   lat: " + nd.getLat() + "   lon: " + nd.getLon());
+                });
+            }
+
+            ArrayList<Node> nodes_approximate = value.getNd_approximate();
+            if (nodes_approximate != null && nodes_approximate.size() > 0) {
+                nodes_approximate.forEach((nd_approximate) -> {
+                    System.out.println("   nd approximate: " + nd_approximate.getId() + "   lat: " + nd_approximate.getLat() + "   lon: " + nd_approximate.getLon());
                 });
             }
 
