@@ -15,7 +15,9 @@ import java.util.*;
 
 public class ControllerImport {
 
-    /** Open file OpenStreetMap **/
+    /**
+     * Open file OpenStreetMap
+     **/
     public File openFile() {
         JFileChooser jFileChooser = new JFileChooser();
         jFileChooser.setDialogTitle("Scegli file streetMap");
@@ -34,7 +36,9 @@ public class ControllerImport {
         }
     }
 
-    /** Create ways with nodes hashmap **/
+    /**
+     * Create ways hashmap
+     **/
     public HashMap createWays(File file) {
         HashMap<Long, Node> nodes = null;
         HashMap<Long, Way> ways = null;
@@ -105,7 +109,7 @@ public class ControllerImport {
                             });
                             way.setNd(nodes_way);
 
-                            setapproximateNodes(way);
+                            setApproximateNodes(way);
                         }
                     }
 
@@ -117,7 +121,7 @@ public class ControllerImport {
                             String key_tag = nd3.getAttributeValue("k");
                             String value_tag = nd3.getAttributeValue("v");
 
-                            setTag(way, key_tag, value_tag);
+                            setWayTag(way, key_tag, value_tag);
                         }
                     }
                     ways.put(way.getId(), way);
@@ -130,7 +134,7 @@ public class ControllerImport {
         return ways;
     }
 
-    private void setTag(Way way, String key_tag, String value_tag) {
+    private void setWayTag(Way way, String key_tag, String value_tag) {
         if (key_tag.equals("bicycle")) {
             if (value_tag.equals("yes")) {
                 way.setBicycle(true);
@@ -197,7 +201,7 @@ public class ControllerImport {
             way.setRailway(value_tag);
     }
 
-    private void setapproximateNodes(Way way) {
+    private void setApproximateNodes(Way way) {
         ArrayList<Node> nodes_approximate = new ArrayList<>();
 
         way.getNd().forEach((nd) -> {
@@ -209,102 +213,199 @@ public class ControllerImport {
         way.setNd_approximate(nodes_approximate);
     }
 
-    /** Create only nodes, ways, arcs hashmap **/
-    /*public HashMap createOnlyNodes(File file) {
+    /**
+     * Create nodes hashmap
+     **/
+    public HashMap createNodes(File file) {
         HashMap<Long, Node> nodes = null;
-        HashSet<Node> buildings = null;
         SAXBuilder saxBuilder = new SAXBuilder();
 
         try {
-            Document doc = saxBuilder.build(file); //ottenere il documento
-            Element root = doc.getRootElement(); //ottenere la radice
-            List children = root.getChildren("node"); //ottenere i figli
-            List children2;
+            Document doc = saxBuilder.build(file);
+            Element root = doc.getRootElement();
+            List children_node = root.getChildren("node");
+            List children_node_tag;
 
-            nodes = new HashMap<>();
-            buildings = new HashSet<>();
 
-            for (Iterator it = children.iterator(); it.hasNext(); ) {
-                Element nd = (Element) it.next();
-                Node node = new Node();
+            if (children_node.size() > 0) {
+                nodes = new HashMap<>();
 
-                node.setId(Long.parseLong(nd.getAttribute("id").getValue()));
-                node.setLat(Float.parseFloat(nd.getAttribute("lat").getValue()));
-                node.setLon(Float.parseFloat(nd.getAttribute("lon").getValue()));
+                for (Iterator it = children_node.iterator(); it.hasNext(); ) {
+                    Element nd = (Element) it.next();
+                    Node node = new Node();
 
-                nodes.put(node.getId(), node);
+                    node.setId(Long.parseLong(nd.getAttribute("id").getValue()));
+                    node.setLat(Float.parseFloat(nd.getAttribute("lat").getValue()));
+                    node.setLon(Float.parseFloat(nd.getAttribute("lon").getValue()));
 
-                if (nd.getChildren().size() > 0) {
-                    buildings.add(node);
+                    children_node_tag = nd.getChildren("tag");
+
+                    if (children_node_tag.size() > 0) {
+                        for (Iterator it3 = children_node_tag.iterator(); it3.hasNext(); ) {
+                            Element nd3 = (Element) it3.next();
+
+                            String key_tag = nd3.getAttributeValue("k");
+                            String value_tag = nd3.getAttributeValue("v");
+
+                            setNodeTag(node, key_tag, value_tag);
+                        }
+                    }
+                    nodes.put(node.getId(), node);
                 }
             }
         } catch (IOException | NumberFormatException | JDOMException e) {
             System.out.println("Exception: " + e.getMessage());
         }
 
-        //printBuildings(buildings);
         return nodes;
     }
 
-    public HashMap createOnlyWays(File file) {
-        HashMap<Long, Way> ways = null;
-        SAXBuilder saxBuilder = new SAXBuilder();
+    private void setNodeTag(Node node, String key_tag, String value_tag) {
 
-        try {
-            Document doc = saxBuilder.build(file); //ottenere il documento
-            Element root = doc.getRootElement(); //ottenere la radice
-            List children = root.getChildren("way"); //ottenere i figli
-            List children2, children3;
+        if (key_tag.equals("highway"))
+            node.setHighway(value_tag);
 
-            ways = new HashMap<>();
+        if (key_tag.equals("traffic_calming"))
+            node.setTraffic_calming(value_tag);
 
-            for (Iterator it = children.iterator(); it.hasNext(); ) {
-                Element nd = (Element) it.next();
-                Way way = new Way();
+        if (key_tag.equals("addr:city"))
+            node.setAddr_city(value_tag);
 
-                way.setId(Long.parseLong(nd.getAttribute("id").getValue()));
+        if (key_tag.equals("addr:country"))
+            node.setAddr_country(value_tag);
 
-                children2 = nd.getChildren("nd");
-                children3 = nd.getChildren("tag");
+        if (key_tag.equals("addr:housenumber"))
+            node.setAddr_housenumber(Integer.parseInt(value_tag));
 
-                ArrayList<Node> nodes = new ArrayList<>();
-                ArrayList<String[]> tags = new ArrayList<>();
+        if (key_tag.equals("addr:street"))
+            node.setAddr_street(value_tag);
 
-                if (children2.size() > 0) {
-                    for (Iterator it2 = children2.iterator(); it2.hasNext(); ) {
-                        Element nd2 = (Element) it2.next();
+        if (key_tag.equals("amenity"))
+            node.setAmenity(value_tag);
 
-                        Node node = new Node();
+        if (key_tag.equals("name"))
+            node.setName(value_tag);
 
-                        node.setId(Long.parseLong(nd2.getAttribute("ref").getValue()));
+        if (key_tag.equals("phone"))
+            node.setPhone(value_tag);
 
-                        nodes.add(node);
-                        way.setNd(nodes);
-                    }
-                }
-
-                if (children3.size() > 0) {
-                    for (Iterator it3 = children3.iterator(); it3.hasNext(); ) {
-                        Element nd3 = (Element) it3.next();
-
-                        String tag[] = new String[2];
-
-                        tag[0] = nd3.getAttributeValue("k");
-                        tag[1] = nd3.getAttributeValue("v");
-
-                        tags.add(tag);
-                        way.setTag(tags);
-                    }
-                }
-                ways.put(way.getId(), way);
+        if (key_tag.equals("atm")) {
+            if (value_tag.equals("yes")) {
+                node.setAtm(true);
+            } else {
+                node.setAtm(false);
             }
-        } catch (IOException | NumberFormatException | JDOMException e) {
-            System.out.println("Exception: " + e.getMessage());
         }
 
-        return ways;
+        if (key_tag.equals("tourism"))
+            node.setTourism(value_tag);
+
+        if (key_tag.equals("fee")) {
+            if (value_tag.equals("yes")) {
+                node.setFee(true);
+            } else {
+                node.setFee(false);
+            }
+        }
+
+        if (key_tag.equals("dispensing")) {
+            if (value_tag.equals("yes")) {
+                node.setDispensing(true);
+            } else {
+                node.setDispensing(false);
+            }
+        }
+
+        if (key_tag.equals("building"))
+            node.setBuilding(value_tag);
+
+        if (key_tag.equals("parking"))
+            node.setParking(value_tag);
+
+        if (key_tag.equals("access")) {
+            if (value_tag.equals("yes")) {
+                node.setAccess(true);
+            } else {
+                node.setAccess(false);
+            }
+        }
+
+        if (key_tag.equals("barrier"))
+            node.setBarrier(value_tag);
+
+        if (key_tag.equals("bicycle")) {
+            if (value_tag.equals("yes")) {
+                node.setBicycle(true);
+            } else {
+                node.setBicycle(false);
+            }
+        }
+
+        if (key_tag.equals("foot")) {
+            if (value_tag.equals("yes")) {
+                node.setFoot(true);
+            } else {
+                node.setFoot(false);
+            }
+        }
+
+        if (key_tag.equals("shop"))
+            node.setShop(value_tag);
+
+        if (key_tag.equals("natural"))
+            node.setNatural(value_tag);
+
+        if (key_tag.equals("office"))
+            node.setOffice(value_tag);
+
+        if (key_tag.equals("bus")) {
+            if (value_tag.equals("yes")) {
+                node.setBus(true);
+            } else {
+                node.setBus(false);
+            }
+        }
+
+        if (key_tag.equals("public_transport"))
+            node.setPublic_transport(value_tag);
+
+        if (key_tag.equals("leisure"))
+            node.setLeisure(value_tag);
+
+        if (key_tag.equals("vehicle")) {
+            if (value_tag.equals("yes")) {
+                node.setVehicle(true);
+            } else {
+                node.setVehicle(false);
+            }
+        }
+
+        if (key_tag.equals("aeroway"))
+            node.setAeroway(value_tag);
+
+        if (key_tag.equals("entrance")) {
+            if (value_tag.equals("yes")) {
+                node.setEntrance(true);
+            } else {
+                node.setEntrance(false);
+            }
+        }
+
+        if (key_tag.equals("wheelchair")) {
+            if (value_tag.equals("yes")) {
+                node.setWheelchair(true);
+            } else {
+                node.setWheelchair(false);
+            }
+        }
+
+        if (key_tag.equals("man_made"))
+            node.setMan_made(value_tag);
     }
 
+    /**
+     * Create arcs hashmap
+     **/
     public HashSet createArcs(HashMap<Long, Way> ways) {
         HashSet<Arc> arcs = new HashSet<>();
 
@@ -321,9 +422,11 @@ public class ControllerImport {
             }
         });
         return arcs;
-    }*/
+    }
 
-    /** Others **/
+    /**
+     * Others
+     **/
     public int approximationNodesItaly(File file) {
         SAXBuilder saxBuilder = new SAXBuilder();
 
@@ -388,6 +491,73 @@ public class ControllerImport {
         return numNodesItaly;
     }
 
+    public HashMap simulateWays(int numNodes, int numWays) {
+        HashMap<Long, Node> nodes = null;
+        HashMap<Long, Way> ways = null;
+
+        //Esamino i nodi
+        if (numNodes > 0) {
+            nodes = new HashMap<>();
+
+            for (int i = 0; i < numNodes; i++) {
+                Node node = new Node();
+
+                node.setId(0 + (long) (Math.random() * 1000000));
+                node.setLat(0 + (float) (Math.random() * 45));
+                node.setLon(0 + (float) (Math.random() * 45));
+
+                nodes.put(node.getId(), node);
+
+            }
+        }
+
+        //esamino le strade
+        if (numWays > 0) {
+            ways = new HashMap<>();
+
+            for (int i2 = 0; i2 < numWays; i2++) {
+                Way way = new Way();
+
+                way.setId(0 + (long) (Math.random() * 1000000));
+
+                int num_nds = 2 + (int) (Math.random() * 20);
+                int num_tags = 0 + (int) (Math.random() * 10);
+
+                ArrayList<Node> nodes_way = new ArrayList<>();
+
+                //esamino i nodi delle strade
+                if (num_nds > 0) {
+                    for (int i3 = 0; i3 < num_nds; i3++) {
+                        Node node = new Node();
+
+                        //nodi
+                        node.setId(0 + (long) (Math.random() * 1000000));
+                        node.setLat(0 + (float) (Math.random() * 45));
+                        node.setLon(0 + (float) (Math.random() * 45));
+
+                        nodes_way.add(node);
+
+                        way.setNd(nodes_way);
+
+                        setApproximateNodes(way);
+                    }
+                }
+
+                //esamino i tag delle strade
+                if (num_tags > 0) {
+                    for (int i4 = 0; i4 < num_nds; i4++) {
+                        String key_tag = null;
+                        String value_tag = null;
+
+                        //setTag(way, key_tag, value_tag);
+                    }
+                }
+                ways.put(way.getId(), way);
+            }
+        }
+        return ways;
+    }
+
     public HashMap simulationCreateNodes(int numNodes) {
         HashMap<Long, Node> nodes = new HashMap<>();
 
@@ -411,8 +581,10 @@ public class ControllerImport {
         return nodes;
     }
 
-    /** Locate keys of tags **/
-    public ArrayList locateTags(File file, String nameChildren) {
+    /**
+     * Identify keys of tags
+     **/
+    public ArrayList identifyTags(File file, String nameChildren) {
         ArrayList<String> key_tags = null;
         SAXBuilder saxBuilder = new SAXBuilder();
 
@@ -448,7 +620,9 @@ public class ControllerImport {
         return key_tags;
     }
 
-    /** Print **/
+    /**
+     * Print
+     **/
     public void printNodes(HashMap<Long, Node> nodes) {
         System.out.println("Nodes: " + nodes.size());
 

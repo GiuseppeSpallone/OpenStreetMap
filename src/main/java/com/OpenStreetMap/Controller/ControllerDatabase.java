@@ -3,7 +3,6 @@ package com.OpenStreetMap.Controller;
 import com.OpenStreetMap.Model.Node;
 import com.OpenStreetMap.Model.Way;
 import com.mongodb.*;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.BufferedWriter;
@@ -17,7 +16,9 @@ import java.util.logging.Logger;
 
 public class ControllerDatabase {
 
-    /** Connect database and get collection **/
+    /**
+     * Connect database and get collection
+     **/
     public DB connectDB(String host, int port, String database) {
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
         mongoLogger.setLevel(Level.SEVERE);
@@ -37,7 +38,9 @@ public class ControllerDatabase {
         return dbCollection;
     }
 
-    /** Insert database **/
+    /**
+     * Insert database
+     **/
     public void insertWaysDB(DBCollection collectionWay, HashMap<Long, Way> ways) {
         ways.forEach((key, value) -> {
             BasicDBObject wayObject = new BasicDBObject();
@@ -95,8 +98,63 @@ public class ControllerDatabase {
         });
     }
 
-    /** Query database **/
+    public void insertNodesDB(DBCollection collectionWay, HashMap<Long, Node> nodes) {
+        nodes.forEach((key, value) -> {
+            BasicDBObject nodeObject = new BasicDBObject();
+
+            nodeObject.append("id_node", value.getId());
+            nodeObject.append("lat", value.getLat());
+            nodeObject.append("lon", value.getLon());
+            nodeObject.append("highway", value.getHighway());
+            nodeObject.append("traffic_calming", value.getTraffic_calming());
+            nodeObject.append("addr_city", value.getAddr_city());
+            nodeObject.append("addr_country", value.getAddr_country());
+            nodeObject.append("addr_housenumber", value.getAddr_housenumber());
+            nodeObject.append("postcode", value.getPostcode());
+            nodeObject.append("addr_street", value.getAddr_street());
+            nodeObject.append("amenity", value.getAmenity());
+            nodeObject.append("name", value.getName());
+            nodeObject.append("phone", value.getPhone());
+            nodeObject.append("atm", value.isAtm());
+            nodeObject.append("tourism", value.getTourism());
+            nodeObject.append("fee", value.isFee());
+            nodeObject.append("dispensing", value.isDispensing());
+            nodeObject.append("building", value.getBuilding());
+            nodeObject.append("parking", value.getParking());
+            nodeObject.append("access", value.isAccess());
+            nodeObject.append("barrier", value.getBarrier());
+            nodeObject.append("bicycle", value.isBicycle());
+            nodeObject.append("foot", value.isFoot());
+            nodeObject.append("shop", value.getShop());
+            nodeObject.append("natural", value.getNatural());
+            nodeObject.append("office", value.getOffice());
+            nodeObject.append("bus", value.isBus());
+            nodeObject.append("public_transport", value.getPublic_transport());
+            nodeObject.append("leisure", value.getLeisure());
+            nodeObject.append("vehicle", value.isVehicle());
+            nodeObject.append("aeroway", value.getAeroway());
+            nodeObject.append("entrance", value.isEntrance());
+            nodeObject.append("wheelchair", value.isWheelchair());
+            nodeObject.append("man_made", value.getMan_made());
+
+            collectionWay.insert(nodeObject);
+        });
+    }
+
+    /**
+     * Query database
+     **/
     public String query_selectAllWays(DBCollection collectionWay) {
+        String jsonString = "";
+        DBCursor cursor = collectionWay.find();
+
+        while (cursor.hasNext()) {
+            jsonString += cursor.next();
+        }
+        return jsonString;
+    }
+
+    public String query_selectAllNodes(DBCollection collectionWay) {
         String jsonString = "";
         DBCursor cursor = collectionWay.find();
 
@@ -119,7 +177,7 @@ public class ControllerDatabase {
         return jsonString;
     }
 
-    public String query_selectAllNodes(DBCollection collectionWay) {
+    public String query_selectAllNodesFromWays(DBCollection collectionWay) {
         String jsonString = "";
         DBCursor cursor = collectionWay.find();
 
@@ -129,7 +187,23 @@ public class ControllerDatabase {
         return jsonString;
     }
 
-    /** Create JSON file from query **/
+    public String query_selectNodeById(DBCollection collectionWay, String id_node) {
+        String jsonString = "";
+        BasicDBObject query = new BasicDBObject();
+        query.put("nd.1.id_node", Long.parseLong(id_node));
+
+
+        DBCursor cursor = collectionWay.find(query);
+
+        while (cursor.hasNext()) {
+            jsonString += cursor.next();
+        }
+        return jsonString;
+    }
+
+    /**
+     * Create JSON file from query
+     **/
     public void createFileJson(String json) {
         FileNameExtensionFilter jsonFilter = new FileNameExtensionFilter("json files (*.json)", "json");
 
