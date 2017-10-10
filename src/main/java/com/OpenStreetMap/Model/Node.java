@@ -1,5 +1,7 @@
 package com.OpenStreetMap.Model;
 
+import java.util.ArrayList;
+
 public class Node {
     
     private Long id;
@@ -10,7 +12,6 @@ public class Node {
     private int x;
     private int y;
     private int z;
-
 
     public Long getId() {
         return id;

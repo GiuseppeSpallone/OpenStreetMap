@@ -17,6 +17,15 @@ import java.util.*;
 
 public class ControllerImport {
 
+    public HashMap<Long, Node> nodes = null;
+    public HashMap<Long, Way> ways = null;
+    public HashSet<Arc> arcs = null;
+
+    float minlat = 0;
+    float minlon = 0;
+    float maxlat = 0;
+    float maxlon = 0;
+
     /**
      * Open file OpenStreetMap
      **/
@@ -38,30 +47,31 @@ public class ControllerImport {
         }
     }
 
-    /**
-     * Create nodes hashmap
-     **/
-    public HashMap createNodes(File file) {
-        HashMap<Long, Node> nodes = null;
-        SAXBuilder saxBuilder = new SAXBuilder();
+    public void create(File file) {
 
-        float minlat = 0;
-        float minlon = 0;
-        float maxlat = 0;
-        float maxlon = 0;
+        SAXBuilder saxBuilder = new SAXBuilder();
+        saxBuilder.setValidation(false);
 
         try {
             Document doc = saxBuilder.build(file);
             Element root = doc.getRootElement();
-            List children_node = root.getChildren("node");
 
+            //ottengo min e max di lat e lon
             Element bounds = root.getChild("bounds");
+            if (bounds != null) {
+                minlat = Float.parseFloat(bounds.getAttribute("minlat").getValue());
+                minlon = Float.parseFloat(bounds.getAttribute("minlon").getValue());
+                maxlat = Float.parseFloat(bounds.getAttribute("maxlat").getValue());
+                maxlon = Float.parseFloat(bounds.getAttribute("maxlon").getValue());
+            }
 
-            minlat = Float.parseFloat(bounds.getAttribute("minlat").getValue());
-            minlon = Float.parseFloat(bounds.getAttribute("minlon").getValue());
-            maxlat = Float.parseFloat(bounds.getAttribute("maxlat").getValue());
-            maxlon = Float.parseFloat(bounds.getAttribute("maxlon").getValue());
+            float minlatT = minlat - 10.0f * (maxlat - minlat) / 100.0f;
+            float minlonT = minlon - 10.0f * (maxlon - minlon) / 100.0f;
+            float maxlatT = maxlat + 10.0f * (maxlat - minlat) / 100.0f;
+            float maxlonT = maxlon + 10.0f * (maxlon - minlon) / 100.0f;
 
+            //ottengo i nodi
+            List children_node = root.getChildren("node");
             if (children_node.size() > 0) {
                 nodes = new HashMap<>();
 
@@ -76,16 +86,87 @@ public class ControllerImport {
                     nodes.put(node.getId(), node);
                 }
             }
+
+            //set indice nodi
+            int i = 0;
+            for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+                Node n = it.next();
+                n.setIndex(i++);
+            }
+
+            //ottengo le strade
+            List children_way = root.getChildren("way");
+            if (children_way.size() > 0) {
+                ways = new HashMap<>();
+                List children_way_nd;
+
+                for (Iterator it = children_way.iterator(); it.hasNext(); ) {
+                    Element nd = (Element) it.next();
+                    Way way = new Way();
+
+                    way.setId(Long.parseLong(nd.getAttribute("id").getValue()));
+
+                    children_way_nd = nd.getChildren("nd");
+
+                    ArrayList<Node> nodes_way = new ArrayList<>();
+
+                    //esamino i nodi delle strade
+                    if (children_way_nd.size() > 0) {
+                        for (Iterator it2 = children_way_nd.iterator(); it2.hasNext(); ) {
+                            Element nd2 = (Element) it2.next();
+
+                            Node node = new Node();
+
+                            Long ref = Long.parseLong(nd2.getAttribute("ref").getValue());
+
+                            //aggiungo informazioni ai nodi delle strade
+                            nodes.forEach((key, value) -> {
+                                if (Objects.equals(value.getId(), ref)) {
+
+                                    node.setIndex(value.getIndex());
+                                    node.setId(value.getId());
+                                    node.setLat(value.getLat());
+                                    node.setLon(value.getLon());
+
+                                    nodes_way.add(node);
+                                }
+                            });
+                            way.setNd(nodes_way);
+                        }
+                    }
+                    ways.put(way.getId(), way);
+                }
+            }
+
+            //creo archi
+            arcs = new HashSet<>();
+            for (Iterator<Way> it = ways.values().iterator(); it.hasNext(); ) {
+                Way w = it.next();
+                Node old = null;
+
+                for (Iterator<Node> it1 = w.getNd().iterator(); it1.hasNext(); ) {
+                    Node n = it1.next();
+
+                    if (old != null) {
+                        Arc a = new Arc(old, n);
+
+                        arcs.add(a);
+                    }
+                    old = n;
+                }
+            }
+
+            applyDimension(nodes, minlatT, maxlatT, minlonT, maxlonT);
+
+            //exportALL(nodes, arcs);
+
+
         } catch (IOException | NumberFormatException | JDOMException e) {
             System.out.println("Exception: " + e.getMessage());
         }
-
-        applyDimension(nodes, minlat, maxlat, minlon, maxlon);
-
-        return nodes;
     }
 
-    private void applyDimension(HashMap<Long, Node> nodes, float minlat, float maxlat, float minlon, float maxlon) {
+    private static void applyDimension(HashMap<Long, Node> nodes, float minlat, float maxlat, float minlon, float maxlon) {
         int i = 0;
         double dmax = distance(minlat, maxlat, minlon, minlon, 0, 0);
         for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
@@ -116,90 +197,16 @@ public class ControllerImport {
     }
 
     /**
-     * Create ways hashmap
-     **/
-    public HashMap createWays(File file) {
-        HashMap<Long, Way> ways = null;
-        SAXBuilder saxBuilder = new SAXBuilder();
-
-        try {
-            Document doc = saxBuilder.build(file);
-            Element root = doc.getRootElement();
-            List children_way = root.getChildren("way");
-
-            //esamino le strade
-            if (children_way.size() > 0) {
-                ways = new HashMap<>();
-
-                List children_way_nd;
-
-                for (Iterator it = children_way.iterator(); it.hasNext(); ) {
-                    Element nd = (Element) it.next();
-                    Way way = new Way();
-
-                    way.setId(Long.parseLong(nd.getAttribute("id").getValue()));
-
-                    children_way_nd = nd.getChildren("nd");
-
-                    ArrayList<Node> nodes_way = new ArrayList<>();
-
-                    //esamino i nodi delle strade
-                    if (children_way_nd.size() > 0) {
-                        for (Iterator it2 = children_way_nd.iterator(); it2.hasNext(); ) {
-                            Element nd2 = (Element) it2.next();
-
-                            Node node = new Node();
-
-                            node.setId(Long.parseLong(nd2.getAttribute("ref").getValue()));
-                            //settare anche latitudine e longitudine
-                            nodes_way.add(node);
-
-                            way.setNd(nodes_way);
-                        }
-                    }
-                    ways.put(way.getId(), way);
-                }
-            }
-        } catch (IOException | NumberFormatException | JDOMException e) {
-            System.out.println("Exception: " + e.getMessage());
-        }
-        return ways;
-    }
-
-    /**
-     * Create arcs hashmap
-     **/
-    public HashSet createArcs(HashMap<Long, Way> ways) {
-        HashSet<Arc> arcs = new HashSet<>();
-
-        ways.values().forEach((way) -> {
-            Node newNode = null;
-
-            for (Node node : way.getNd()) {
-                if (newNode != null) {
-                    Arc arc = new Arc(node, newNode);
-
-                    arcs.add(arc);
-                }
-                newNode = node;
-            }
-        });
-        return arcs;
-    }
-
-    /**
      * Export
      **/
     public void exportALL(HashMap<Long, Node> nodes, HashSet<Arc> arcs) {
-        String pathFile = "C:\\Users\\Giuseppe\\Desktop\\prova.osm.grf";
+        String pathFile = "C:\\Users\\Giuseppe\\Desktop\\map.osm.grf";
         File file = new File(pathFile);
         FileWriter outFile = null;
 
         try {
-
             outFile = new FileWriter(file);
             PrintWriter out = new PrintWriter(outFile);
-            System.out.println(nodes.size() + " " + arcs.size() + " " + 0);
             out.println(nodes.size() + " " + arcs.size() + " " + 0);
 
             for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
@@ -207,9 +214,10 @@ public class ControllerImport {
                 out.println(n.getIndex() + " " + n.getX() + " " + n.getY() + " " + n.getZ() + " " + n.getLat() + " " + n.getLon());
             }
 
+
             for (Iterator<Arc> it = arcs.iterator(); it.hasNext(); ) {
                 Arc a = it.next();
-                out.println(a.getFrom().getIndex() + " " + a.getTo().getIndex() + " " + 0);
+                out.println(a.getFrom().getIndex() + " " + a.getTo().getIndex() + " " + a.getLength());
             }
 
             out.close();
@@ -225,62 +233,12 @@ public class ControllerImport {
     }
 
     /**
-     * Identify keys of tags
-     **/
-    public ArrayList identifyTags(File file, String nameChildren) {
-        ArrayList<String> key_tags = null;
-        SAXBuilder saxBuilder = new SAXBuilder();
-
-        try {
-            Document doc = saxBuilder.build(file);
-            Element root = doc.getRootElement();
-            List children = root.getChildren(nameChildren);
-            List children2;
-
-            key_tags = new ArrayList<>();
-
-            for (Iterator it = children.iterator(); it.hasNext(); ) {
-                Element nd = (Element) it.next();
-
-                children2 = nd.getChildren("tag");
-
-                if (children2.size() > 0) {
-
-                    for (Iterator it3 = children2.iterator(); it3.hasNext(); ) {
-                        Element nd3 = (Element) it3.next();
-
-                        String key = nd3.getAttributeValue("k");
-
-                        if (!key_tags.contains(key))
-                            key_tags.add(key);
-                    }
-                }
-            }
-        } catch (IOException | NumberFormatException | JDOMException e) {
-            System.out.println("Exception: " + e.getMessage());
-        }
-
-        return key_tags;
-    }
-
-    /**
      * Print
      **/
     public void printNodes(HashMap<Long, Node> nodes) {
         System.out.println("Nodes: " + nodes.size());
 
         nodes.forEach((key, value) -> {
-            System.out.println(
-                    " id: " + value.getId()
-                            + " lat: " + value.getLat()
-                            + " lon: " + value.getLon());
-        });
-    }
-
-    public void printBuildings(HashSet<Node> buildings) {
-        System.out.println("Buildings: " + buildings.size());
-
-        buildings.forEach((value) -> {
             System.out.println(
                     " id: " + value.getId()
                             + " lat: " + value.getLat()
@@ -300,6 +258,13 @@ public class ControllerImport {
                     System.out.println("   nd: " + nd.getId() + "   lat: " + nd.getLat() + "   lon: " + nd.getLon());
                 });
             }
+
+            ArrayList<Node> nodes_approximate = value.getNd_approximate();
+            if (nodes_approximate != null && nodes_approximate.size() > 0) {
+                nodes_approximate.forEach((nd_approximate) -> {
+                    System.out.println("   nd_approximate: " + nd_approximate.getId() + "   lat: " + nd_approximate.getLat() + "   lon: " + nd_approximate.getLon());
+                });
+            }
         });
     }
 
@@ -307,17 +272,8 @@ public class ControllerImport {
         System.out.println("Arcs: " + arcs.size());
 
         arcs.forEach((value) -> {
-            System.out.println("from: " + value.getFrom().getId()
-                    + " to: " + value.getTo().getId());
-        });
-    }
-
-    public void printTags(ArrayList<String> key_tags) {
-        System.out.println("Tags: " + key_tags.size());
-
-        key_tags.forEach((key_tag) -> {
-            System.out.println(
-                    " key: " + key_tag);
+            System.out.println("from: " + value.getFrom().getIndex()
+                    + " to: " + value.getTo().getIndex());
         });
     }
 }

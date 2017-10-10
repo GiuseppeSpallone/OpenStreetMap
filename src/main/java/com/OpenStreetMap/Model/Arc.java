@@ -4,6 +4,7 @@ public class Arc {
 
     private Node from;
     private Node to;
+    private int length;
 
     public Arc(Node from, Node to) {
         this.from = from;
@@ -18,4 +19,7 @@ public class Arc {
         return from;
     }
 
+    public int getLength() {
+        return length;
+    }
 }
