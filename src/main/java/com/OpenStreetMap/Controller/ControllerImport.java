@@ -26,28 +26,6 @@ public class ControllerImport {
     float maxlat = 0;
     float maxlon = 0;
 
-    /**
-     * Open file OpenStreetMap
-     **/
-    public File openFile() {
-        JFileChooser jFileChooser = new JFileChooser();
-        jFileChooser.setDialogTitle("Scegli file streetMap");
-
-        if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            String pathFile = jFileChooser.getSelectedFile().getPath();
-
-            File file = new File(pathFile);
-
-            System.out.println("SCELTA FILE");
-            System.out.println("   Aperto file: " + pathFile);
-
-            return file;
-        } else {
-            System.out.println("Nessun file selezionato");
-            return null;
-        }
-    }
-
     public void create(File file) {
 
         SAXBuilder saxBuilder = new SAXBuilder();
@@ -164,7 +142,7 @@ public class ControllerImport {
 
             applyDimension(nodes, minlatT, maxlatT, minlonT, maxlonT);
 
-            exportALL(nodes, arcs);
+            //exportALL(nodes, arcs);
 
 
         } catch (IOException | NumberFormatException | JDOMException e) {
@@ -206,21 +184,9 @@ public class ControllerImport {
     /**
      * Export
      **/
-    public void exportALL(HashMap<Long, Node> nodes, HashSet<Arc> arcs) {
-        FileNameExtensionFilter grfFilter = new FileNameExtensionFilter("osm.grf files (*osm.grf)", "osm.grf");
+    public void exportALL(File file, HashMap<Long, Node> nodes, HashSet<Arc> arcs) {
 
-        JFileChooser jFileChooser = new JFileChooser();
-        jFileChooser.setDialogTitle("Scegli cartella destinazione");
-        jFileChooser.addChoosableFileFilter(grfFilter);
-        jFileChooser.setFileFilter(grfFilter);
-
-        File file = null;
         FileWriter outFile = null;
-
-        if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
-            file = jFileChooser.getSelectedFile();
-
-        }
 
         try {
             outFile = new FileWriter(file);

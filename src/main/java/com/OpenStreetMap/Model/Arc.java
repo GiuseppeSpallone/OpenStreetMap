@@ -23,4 +23,5 @@ public class Arc {
     public double getLength() {
         return length;
     }
+
 }

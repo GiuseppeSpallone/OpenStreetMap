@@ -19,9 +19,6 @@ public class App {
         ControllerImport controllerImport = new ControllerImport();
         ControllerDatabase controllerDatabase = new ControllerDatabase();
 
-        File file = controllerImport.openFile();
-        controllerImport.create(file);
-
         //HashMap<Long, Way> ways = controllerImport.ways;
         //HashMap<Long, Node> nodes = controllerImport.nodes;
         //HashSet<Arc> arcs = controllerImport.arcs;
