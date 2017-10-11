@@ -22,18 +22,18 @@ public class App {
         File file = controllerImport.openFile();
         controllerImport.create(file);
 
-        HashMap<Long, Way> ways = controllerImport.ways;
-        HashMap<Long, Node> nodes = controllerImport.nodes;
-        HashSet<Arc> arcs = controllerImport.arcs;
+        //HashMap<Long, Way> ways = controllerImport.ways;
+        //HashMap<Long, Node> nodes = controllerImport.nodes;
+        //HashSet<Arc> arcs = controllerImport.arcs;
 
-        DB dbStreetMap = controllerDatabase.connectDB("localhost", 27017, "StreetMap");
-        DBCollection collectionNode = controllerDatabase.getCollection(dbStreetMap, "Node");
-        DBCollection collectionWay = controllerDatabase.getCollection(dbStreetMap, "Way");
-        DBCollection collectionArc = controllerDatabase.getCollection(dbStreetMap, "Arc");
+        //DB dbStreetMap = controllerDatabase.connectDB("localhost", 27017, "StreetMap");
+        //DBCollection collectionNode = controllerDatabase.getCollection(dbStreetMap, "Node");
+        //DBCollection collectionWay = controllerDatabase.getCollection(dbStreetMap, "Way");
+        //DBCollection collectionArc = controllerDatabase.getCollection(dbStreetMap, "Arc");
 
-        controllerDatabase.insertNodesDB(collectionNode, nodes);
-        controllerDatabase.insertWaysDB(collectionWay, ways);
-        controllerDatabase.insertArcsDB(collectionArc, arcs);
+        //controllerDatabase.insertNodesDB(collectionNode, nodes);
+        //controllerDatabase.insertWaysDB(collectionWay, ways);
+        //controllerDatabase.insertArcsDB(collectionArc, arcs);
 
         //String query1 = controllerDatabase.query_selectAllWays(collectionWay);
         //String query2 = controllerDatabase.query_selectWayById(collectionWay, "265529297");

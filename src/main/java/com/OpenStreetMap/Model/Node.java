@@ -1,6 +1,6 @@
 package com.OpenStreetMap.Model;
 
-import java.util.ArrayList;
+import com.OpenStreetMap.Controller.ControllerImport;
 
 public class Node {
     
@@ -12,6 +12,10 @@ public class Node {
     private int x;
     private int y;
     private int z;
+
+    double distanzaLatLog(Node n) {
+        return ControllerImport.distance(lat, n.getLat(), lon, n.getLon(), 0, 0);
+    }
 
     public Long getId() {
         return id;

@@ -4,11 +4,12 @@ public class Arc {
 
     private Node from;
     private Node to;
-    private int length;
+    private double length;
 
     public Arc(Node from, Node to) {
         this.from = from;
         this.to = to;
+        length = from.distanzaLatLog(to);
     }
 
     public Node getTo() {
@@ -19,7 +20,7 @@ public class Arc {
         return from;
     }
 
-    public int getLength() {
+    public double getLength() {
         return length;
     }
 }

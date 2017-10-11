@@ -88,6 +88,7 @@ public class ControllerDatabase {
 
             arcObject.append("id_node_from", value.getFrom().getId());
             arcObject.append("id_node_to", value.getTo().getId());
+            arcObject.append("length", value.getLength());
 
             collectionArc.insert(arcObject);
         });

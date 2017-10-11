@@ -7,8 +7,8 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,7 +38,8 @@ public class ControllerImport {
 
             File file = new File(pathFile);
 
-            System.out.println("Aperto file: " + pathFile);
+            System.out.println("SCELTA FILE");
+            System.out.println("   Aperto file: " + pathFile);
 
             return file;
         } else {
@@ -55,6 +56,8 @@ public class ControllerImport {
         try {
             Document doc = saxBuilder.build(file);
             Element root = doc.getRootElement();
+
+            System.out.println("CREAZIONE");
 
             //ottengo min e max di lat e lon
             Element bounds = root.getChild("bounds");
@@ -86,6 +89,7 @@ public class ControllerImport {
                     nodes.put(node.getId(), node);
                 }
             }
+            System.out.println("   Creati nodi num: " + nodes.size());
 
             //set indice nodi
             int i = 0;
@@ -137,6 +141,7 @@ public class ControllerImport {
                     ways.put(way.getId(), way);
                 }
             }
+            System.out.println("   Create strade num: " + ways.size());
 
             //creo archi
             arcs = new HashSet<>();
@@ -155,10 +160,11 @@ public class ControllerImport {
                     old = n;
                 }
             }
+            System.out.println("   Creati archi num: " + arcs.size());
 
             applyDimension(nodes, minlatT, maxlatT, minlonT, maxlonT);
 
-            //exportALL(nodes, arcs);
+            exportALL(nodes, arcs);
 
 
         } catch (IOException | NumberFormatException | JDOMException e) {
@@ -166,18 +172,19 @@ public class ControllerImport {
         }
     }
 
-    private static void applyDimension(HashMap<Long, Node> nodes, float minlat, float maxlat, float minlon, float maxlon) {
+    private static void applyDimension(HashMap<Long, Node> nodes, float minlatT, float maxlatT, float minlonT, float maxlonT) {
         int i = 0;
-        double dmax = distance(minlat, maxlat, minlon, minlon, 0, 0);
+        double dmax = distance(minlatT, maxlatT, minlonT, maxlonT, 0, 0);
+
         for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
             Node n = it.next();
             n.setIndex(i++);
-            n.setX((int) (1.00f * (distance(minlat, minlat, minlon, n.getLon(), 0, 0))));
-            n.setY((int) (1.00f * (dmax - distance(minlat, n.getLat(), minlon, minlon, 0, 0))));
+            n.setX((int) (1.00f * (distance(minlatT, minlatT, minlonT, n.getLon(), 0, 0))));
+            n.setY((int) (1.00f * (dmax - distance(minlatT, n.getLat(), minlonT, minlonT, 0, 0))));
         }
     }
 
-    private static double distance(double lat1, double lat2, double lon1, double lon2, double el1, double el2) {
+    public static double distance(double lat1, double lat2, double lon1, double lon2, double el1, double el2) {
 
         final int R = 6371; // Radius of the earth
 
@@ -200,16 +207,32 @@ public class ControllerImport {
      * Export
      **/
     public void exportALL(HashMap<Long, Node> nodes, HashSet<Arc> arcs) {
-        String pathFile = "C:\\Users\\Giuseppe\\Desktop\\map.osm.grf";
-        File file = new File(pathFile);
+        FileNameExtensionFilter grfFilter = new FileNameExtensionFilter("osm.grf files (*osm.grf)", "osm.grf");
+
+        JFileChooser jFileChooser = new JFileChooser();
+        jFileChooser.setDialogTitle("Scegli cartella destinazione");
+        jFileChooser.addChoosableFileFilter(grfFilter);
+        jFileChooser.setFileFilter(grfFilter);
+
+        File file = null;
         FileWriter outFile = null;
+
+        if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+            file = jFileChooser.getSelectedFile();
+
+        }
 
         try {
             outFile = new FileWriter(file);
             PrintWriter out = new PrintWriter(outFile);
+
+            System.out.println("EXPORT: " + file.getName());
+            System.out.println("   Creato file: " + file.getName());
+            System.out.println("     nodi: " + nodes.size() + " archi: " + arcs.size() + " buildings: " + 0);
             out.println(nodes.size() + " " + arcs.size() + " " + 0);
 
-            for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+
+            for (Iterator<Node> it = nodes.values().iterator(); it.hasNext();) {
                 Node n = it.next();
                 out.println(n.getIndex() + " " + n.getX() + " " + n.getY() + " " + n.getZ() + " " + n.getLat() + " " + n.getLon());
             }
@@ -217,7 +240,8 @@ public class ControllerImport {
 
             for (Iterator<Arc> it = arcs.iterator(); it.hasNext(); ) {
                 Arc a = it.next();
-                out.println(a.getFrom().getIndex() + " " + a.getTo().getIndex() + " " + a.getLength());
+                double ll = Math.round(a.getLength() * 100.0) / 100.0;
+                out.println(a.getFrom().getIndex() + " " + a.getTo().getIndex() + " " + ll);
             }
 
             out.close();
