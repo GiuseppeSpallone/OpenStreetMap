@@ -21,6 +21,9 @@ public class ControllerImport {
     public HashMap<Long, Way> ways = null;
     public HashSet<Arc> arcs = null;
 
+    public HashMap<Long, Node> nodes_approximate = null;
+    public HashSet<Arc> arcs_approximate = null;
+
     float minlat = 0;
     float minlon = 0;
     float maxlat = 0;
@@ -114,6 +117,8 @@ public class ControllerImport {
                                 }
                             });
                             way.setNd(nodes_way);
+
+                            setapproximateNodes(way);
                         }
                     }
                     ways.put(way.getId(), way);
@@ -138,6 +143,7 @@ public class ControllerImport {
                     old = n;
                 }
             }
+
             System.out.println("   Creati archi num: " + arcs.size());
 
             applyDimension(nodes, minlatT, maxlatT, minlonT, maxlonT);
@@ -179,6 +185,52 @@ public class ControllerImport {
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
 
         return Math.sqrt(distance);
+    }
+
+    public void approximate(HashMap<Long, Way> ways){
+        nodes_approximate = new HashMap<>();
+
+        ways.forEach((key, value)->{
+            ArrayList<Node> array_nodes_approximate = new ArrayList<>();
+
+            value.getNd().forEach((nd)->{
+                if(value.getNd().indexOf(nd) == 0 || value.getNd().indexOf(nd) == value.getNd().size() -1){
+                    nodes_approximate.put(nd.getId(), nd);
+                    array_nodes_approximate.add(nd);
+                }
+            });
+            value.setNd_approximate(array_nodes_approximate);
+        });
+
+        //creo archi
+        arcs_approximate = new HashSet<>();
+        for (Iterator<Way> it = ways.values().iterator(); it.hasNext(); ) {
+            Way w = it.next();
+            Node old = null;
+
+            for (Iterator<Node> it1 = w.getNd_approximate().iterator(); it1.hasNext(); ) {
+                Node n = it1.next();
+
+                if (old != null) {
+                    Arc a = new Arc(old, n);
+
+                    arcs.add(a);
+                }
+                old = n;
+            }
+        }
+    }
+
+    private void setapproximateNodes(Way way) {
+        ArrayList<Node> nodes_approximate = new ArrayList<>();
+
+        way.getNd().forEach((nd) -> {
+
+            if (way.getNd().indexOf(nd) == 0 || way.getNd().indexOf(nd) == way.getNd().size() - 1) {
+                nodes_approximate.add(nd);
+            }
+        });
+        way.setNd_approximate(nodes_approximate);
     }
 
     /**

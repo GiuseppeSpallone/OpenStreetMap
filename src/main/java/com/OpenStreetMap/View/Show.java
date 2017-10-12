@@ -21,6 +21,7 @@ import net.miginfocom.swing.*;
 
 public class Show extends JFrame {
     ControllerImport controllerImport = new ControllerImport();
+
     private File file_open = null;
     private File file_export = null;
     private File file_open_export = null;
@@ -37,24 +38,37 @@ public class Show extends JFrame {
 
         file_open = openFile();
 
-        if (file_open != null)
+        if (file_open != null) {
             label1.setText(file_open.getPath());
-        button2.setEnabled(true);
+            button2.setEnabled(true);
+            checkBox1.setEnabled(true);
+        }
+
     }
 
     private void button2ActionPerformed(ActionEvent e) {
 
         controllerImport.create(file_open);
 
-        if (!controllerImport.nodes.isEmpty() || !controllerImport.arcs.isEmpty())
+        if (checkBox1.isSelected())
+            controllerImport.approximate(controllerImport.ways);
+
+        if (!controllerImport.nodes.isEmpty() || !controllerImport.arcs.isEmpty()) {
             label2.setText("Nodi: " + controllerImport.nodes.size() + " Archi: " + controllerImport.arcs.size());
-        button3.setEnabled(true);
+            button3.setEnabled(true);
+            checkBox1.setEnabled(false);
+        }
+
 
     }
 
     private void button3ActionPerformed(ActionEvent e) {
         file_export = selectPath();
-        controllerImport.exportALL(file_export, controllerImport.nodes, controllerImport.arcs);
+        if(!checkBox1.isSelected()){
+            controllerImport.exportALL(file_export, controllerImport.nodes, controllerImport.arcs);
+        }else{
+            controllerImport.exportALL(file_export, controllerImport.nodes_approximate, controllerImport.arcs_approximate);
+        }
 
         if (file_export != null)
             label3.setText("Esportato con successo");
@@ -80,8 +94,8 @@ public class Show extends JFrame {
         button2 = new JButton();
         label2 = new JLabel();
         button3 = new JButton();
-        label3 = new JLabel();
         button4 = new JButton();
+        checkBox1 = new JCheckBox();
         panel1 = new JPanel(){
 
             @Override
@@ -91,143 +105,114 @@ public class Show extends JFrame {
             }
 
         };
+        label3 = new JLabel();
 
         //======== this ========
         Container contentPane = getContentPane();
-        contentPane.setLayout(new MigLayout(
-            "hidemode 3",
-            // columns
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]" +
-            "[fill]",
-            // rows
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]"));
 
         //---- button1 ----
         button1.setText("CARICA");
         button1.addActionListener(e -> button1ActionPerformed(e));
-        contentPane.add(button1, "cell 2 1");
 
         //---- label1 ----
         label1.setBackground(Color.gray);
-        contentPane.add(label1, "cell 6 1 18 1");
 
         //---- button2 ----
         button2.setText("CREA ");
         button2.setEnabled(false);
         button2.addActionListener(e -> button2ActionPerformed(e));
-        contentPane.add(button2, "cell 2 3");
-        contentPane.add(label2, "cell 6 3 21 1");
 
         //---- button3 ----
         button3.setText("ESPORTA");
         button3.setEnabled(false);
         button3.addActionListener(e -> button3ActionPerformed(e));
-        contentPane.add(button3, "cell 2 5");
-        contentPane.add(label3, "cell 6 5 20 1");
 
         //---- button4 ----
         button4.setText("DISEGNA");
         button4.addActionListener(e -> button4ActionPerformed(e));
-        contentPane.add(button4, "cell 2 7");
+
+        //---- checkBox1 ----
+        checkBox1.setEnabled(false);
 
         //======== panel1 ========
         {
-            panel1.setBackground(new Color(255, 255, 255));
-            panel1.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0), 2));
+            panel1.setBackground(Color.white);
+            panel1.setBorder(new LineBorder(Color.black, 2));
 
-            GroupLayout panel1aLayout = new javax.swing.GroupLayout(panel1);
-            panel1.setLayout(panel1aLayout);
-            panel1aLayout.setHorizontalGroup(
-                    panel1aLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGap(0, 723, Short.MAX_VALUE)
+            // JFormDesigner evaluation mark
+            panel1.setBorder(new javax.swing.border.CompoundBorder(
+                new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+                    "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+                    javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+                    java.awt.Color.red), panel1.getBorder())); panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
+
+
+            GroupLayout panel1Layout = new GroupLayout(panel1);
+            panel1.setLayout(panel1Layout);
+            panel1Layout.setHorizontalGroup(
+                panel1Layout.createParallelGroup()
+                    .addGap(0, 984, Short.MAX_VALUE)
             );
-            panel1aLayout.setVerticalGroup(
-                    panel1aLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGap(0, 394, Short.MAX_VALUE)
+            panel1Layout.setVerticalGroup(
+                panel1Layout.createParallelGroup()
+                    .addGap(0, 520, Short.MAX_VALUE)
             );
         }
-        contentPane.add(panel1, "cell 0 8 60 16");
+
+        GroupLayout contentPaneLayout = new GroupLayout(contentPane);
+        contentPane.setLayout(contentPaneLayout);
+        contentPaneLayout.setHorizontalGroup(
+            contentPaneLayout.createParallelGroup()
+                .addGroup(contentPaneLayout.createSequentialGroup()
+                    .addGap(17, 17, 17)
+                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                            .addComponent(button3, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(label3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                            .addComponent(button1, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                            .addGap(12, 12, 12)
+                            .addComponent(label1, GroupLayout.PREFERRED_SIZE, 275, GroupLayout.PREFERRED_SIZE)))
+                    .addGap(18, 18, 18)
+                    .addGroup(contentPaneLayout.createParallelGroup()
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                            .addComponent(button2, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(checkBox1)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(label2, GroupLayout.PREFERRED_SIZE, 296, GroupLayout.PREFERRED_SIZE))
+                        .addComponent(button4, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap(94, Short.MAX_VALUE))
+                .addGroup(contentPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap())
+        );
+        contentPaneLayout.setVerticalGroup(
+            contentPaneLayout.createParallelGroup()
+                .addGroup(contentPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(contentPaneLayout.createParallelGroup()
+                        .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
+                            .addGroup(contentPaneLayout.createParallelGroup()
+                                .addComponent(label1, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(button2, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(button1, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED))
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                            .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                .addComponent(checkBox1, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(label2, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE))
+                            .addGap(5, 5, 5)))
+                    .addGroup(contentPaneLayout.createParallelGroup()
+                        .addComponent(button3, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(label3, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(button4, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap())
+        );
         pack();
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
@@ -240,9 +225,10 @@ public class Show extends JFrame {
     private JButton button2;
     private JLabel label2;
     private JButton button3;
-    private JLabel label3;
     private JButton button4;
+    private JCheckBox checkBox1;
     private JPanel panel1;
+    private JLabel label3;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     private File openFile() {
