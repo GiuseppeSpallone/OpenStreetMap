@@ -5,6 +5,7 @@ import com.OpenStreetMap.Controller.ControllerImport;
 import com.OpenStreetMap.Model.Arc;
 import com.OpenStreetMap.Model.Node;
 import com.OpenStreetMap.Model.Way;
+import com.OpenStreetMap.View.Show;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 
@@ -16,8 +17,8 @@ import java.util.HashSet;
 public class App {
 
     public static void main(String[] args) {
-        ControllerImport controllerImport = new ControllerImport();
-        ControllerDatabase controllerDatabase = new ControllerDatabase();
+        //ControllerImport controllerImport = new ControllerImport();
+        //ControllerDatabase controllerDatabase = new ControllerDatabase();
 
         //HashMap<Long, Way> ways = controllerImport.ways;
         //HashMap<Long, Node> nodes = controllerImport.nodes;

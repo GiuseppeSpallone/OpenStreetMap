@@ -4,8 +4,8 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {seq l {space :p:17:p, par t:::p {seq {comp button3:::p:130:p, space :::p, comp label3:::::x}, seq {comp button1:::p:130:p, space :p:12:p, comp label1:::p:275:p}}, space s:::p, par l {seq {comp button2:::p:130:p, space :::p, comp checkBox1:::p::p, space :::p, comp label2:::p:296:p}, comp button4:::p:130:p}, space ::94:x}, seq l {space :::p, comp panel1:::::x, space :::p}}"
-			"$verticalGroup": "par l {seq l {space :::p, par l {seq t {par l {comp label1:::p:45:p, comp button2::l:p:45:p, comp button1:::p:45:p}, space :::p}, seq l {par t {comp checkBox1:::p:45:p, comp label2:::p:46:p}, space :p:5:p}}, par l {comp button3:::p:45:p, comp label3:::p:45:p, comp button4:::p:45:p}, space :::p, comp panel1:::::x, space :::p}}"
+			"$horizontalGroup": "par l {seq l {space :p:17:p, par l {seq l {comp button1:::p:130:p, space u:::p, comp label1:::p:275:p}, seq l {comp button3:::p:130:p, space u:::p, comp label3:::p:281:p}}, space :p:24:p, par l {seq {comp button2:::p:130:p, space u:::p, comp label2:::p:179:p}, comp button4:::p:130:p}, space ::15:x}, seq l {space :::p, comp panel1:::::x, space :::p}}"
+			"$verticalGroup": "par l {seq l {space :::p, par l {comp button2::l:p:45:p, comp button1::l:p:45:p, comp label1::l:p:45:p, comp label2:::p:46:p}, space :::p, par l {comp button3:::p:45:p, comp button4:::p:45:p, comp label3::l:p:45:p}, space :::p, comp panel1:::::x, space :::p}}"
 		} ) {
 			name: "this"
 			add( new FormComponent( "javax.swing.JButton" ) {
@@ -37,17 +37,13 @@ new FormModel {
 				"text": "DISEGNA"
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button4ActionPerformed", true ) )
 			} )
-			add( new FormComponent( "javax.swing.JCheckBox" ) {
-				name: "checkBox1"
-				"enabled": false
-			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-				"$horizontalGroup": "par l {space :0:984:x}"
-				"$verticalGroup": "par l {space :0:520:x}"
+				"$horizontalGroup": "par l {space :0:784:x}"
+				"$verticalGroup": "par l {space :0:391:x}"
 			} ) {
 				name: "panel1"
 				"background": new java.awt.Color( 255, 255, 255, 255 )
-				"border": new javax.swing.border.LineBorder( sfield java.awt.Color black, 2, false )
+				"border": new javax.swing.border.LineBorder( sfield java.awt.Color black, 1, false )
 				auxiliary() {
 					"JavaCodeGenerator.customCreateCode": "new JPanel(){\n\n    @Override\n    public void paint(Graphics g) {\n        super.paint(g);\n        disegna(g);\n    }\n\n};"
 				}
@@ -61,3 +57,4 @@ new FormModel {
 		} )
 	}
 }
+

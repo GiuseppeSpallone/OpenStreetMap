@@ -2,13 +2,13 @@ package com.OpenStreetMap.Controller;
 
 import com.OpenStreetMap.Model.Arc;
 import com.OpenStreetMap.Model.Node;
+import com.OpenStreetMap.Model.Visit;
 import com.OpenStreetMap.Model.Way;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,16 +20,24 @@ public class ControllerImport {
     public HashMap<Long, Node> nodes = null;
     public HashMap<Long, Way> ways = null;
     public HashSet<Arc> arcs = null;
+    public HashSet<Node> buildings = null;
 
-    public HashMap<Long, Node> nodes_approximate = null;
-    public HashSet<Arc> arcs_approximate = null;
+    private float SGL = 5.0f;
+    private float RIS = 100.0f;
+    private float prop = 1.00f;
+    private static final float maxD = 40.00f;
 
-    float minlat = 0;
-    float minlon = 0;
-    float maxlat = 0;
-    float maxlon = 0;
 
-    public void create(File file) {
+    private float minlat = 0;
+    private float minlon = 0;
+    private float maxlat = 0;
+    private float maxlon = 0;
+
+    public void create(File file, float sogliaCurva, float unitiSuzeMt, float risoluzioneMt, boolean import_building, boolean import_cycleway) {
+
+        prop = 1 / unitiSuzeMt;
+        SGL = sogliaCurva;
+        RIS = risoluzioneMt;
 
         SAXBuilder saxBuilder = new SAXBuilder();
         saxBuilder.setValidation(false);
@@ -40,24 +48,31 @@ public class ControllerImport {
 
             System.out.println("CREAZIONE");
 
-            //ottengo min e max di lat e lon
+            // min e max latitudine e longitudine
             Element bounds = root.getChild("bounds");
             if (bounds != null) {
                 minlat = Float.parseFloat(bounds.getAttribute("minlat").getValue());
                 minlon = Float.parseFloat(bounds.getAttribute("minlon").getValue());
                 maxlat = Float.parseFloat(bounds.getAttribute("maxlat").getValue());
                 maxlon = Float.parseFloat(bounds.getAttribute("maxlon").getValue());
+            } else {
+                Element box = root.getChild("bound");
+                if (box != null) {
+                    String s = box.getAttribute("box").getValue();
+                    String ss[] = s.split(",");
+                    minlat = Float.parseFloat(ss[0]);
+                    minlon = Float.parseFloat(ss[1]);
+                    maxlat = Float.parseFloat(ss[2]);
+                    maxlon = Float.parseFloat(ss[3]);
+                }
             }
+            System.out.println("MIN LAT: " + minlat + "; MAX LAT: " + maxlat + "; MIN LON: " + minlon + "; MAX LON: " + maxlon);
 
-            float minlatT = minlat - 10.0f * (maxlat - minlat) / 100.0f;
-            float minlonT = minlon - 10.0f * (maxlon - minlon) / 100.0f;
-            float maxlatT = maxlat + 10.0f * (maxlat - minlat) / 100.0f;
-            float maxlonT = maxlon + 10.0f * (maxlon - minlon) / 100.0f;
-
-            //ottengo i nodi
+            // nodi
             List children_node = root.getChildren("node");
             if (children_node.size() > 0) {
                 nodes = new HashMap<>();
+                buildings = new HashSet<>();
 
                 for (Iterator it = children_node.iterator(); it.hasNext(); ) {
                     Element nd = (Element) it.next();
@@ -68,30 +83,219 @@ public class ControllerImport {
                     node.setLon(Float.parseFloat(nd.getAttribute("lon").getValue()));
 
                     nodes.put(node.getId(), node);
+
+                    // edifici
+                    if (nd.getChildren().size() > 0) {
+                        buildings.add(node);
+                    }
                 }
             }
-            System.out.println("   Creati nodi num: " + nodes.size());
-
-            //set indice nodi
-            int i = 0;
-            for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
-                Node n = it.next();
-                n.setIndex(i++);
-            }
+            System.out.println("NODES: " + nodes.size());
+            System.out.println("BUILDINGS: " + buildings.size());
 
             //ottengo le strade
-            List children_way = root.getChildren("way");
-            if (children_way.size() > 0) {
-                ways = new HashMap<>();
-                List children_way_nd;
+            if (import_cycleway) {
+                ways = createCycleway(root);
+                System.out.println("CREATE --> CYCLEWAY: " + ways.size());
+            } else {
+                ways = createWay(root);
+                System.out.println("CREATE --> WAYS: " + ways.size());
+            }
 
-                for (Iterator it = children_way.iterator(); it.hasNext(); ) {
-                    Element nd = (Element) it.next();
+            float minlatT = minlat - 10.0f * (maxlat - minlat) / 100.0f;
+            float minlonT = minlon - 10.0f * (maxlon - minlon) / 100.0f;
+            float maxlatT = maxlat + 10.0f * (maxlat - minlat) / 100.0f;
+            float maxlonT = maxlon + 10.0f * (maxlon - minlon) / 100.0f;
+            System.out.println("MIN LAT_T: " + minlatT + "; MAX LAT_T: " + maxlatT + "; MIN LON_T: " + minlonT + "; MAX LON_T: " + maxlonT);
+
+            //rimozione nodi ed edifici
+            removeNodes_Buildings(minlatT, maxlatT, minlonT, maxlonT);
+            System.out.println("REMOVE -->: NODES: " + nodes.size() + " BUILDINGS: " + buildings.size());
+
+            //creo archi
+            arcs = createArcs(ways);
+            System.out.println("ARCS: " + arcs.size());
+
+            if (!import_building) {
+                buildings.clear();
+                System.out.println("CLEAR --> BUILDINGS ");
+            }
+
+            applyDimension(nodes, buildings, minlatT, maxlatT, minlonT, maxlonT);
+            System.out.println("APPLY DIMENSION");
+            normalize(nodes, arcs);
+            System.out.println("NORMALIZE");
+            applyOneway(arcs);
+            System.out.println("APPLY ONEWAY");
+            removeRepetition(arcs);
+            System.out.println("REMOVE REPETITION");
+
+            /*Node rif = Visit.removeUnconnected(nodes, arcs);
+            System.out.println("REMOVE UNCONNECTED");
+            Visit.removeNotStrongConnected(nodes, arcs, rif);
+            System.out.println("REMOVE NOT STRONG CONNECTED");
+            removeMiters(buildings, arcs);
+            System.out.println("REMOVE MITERS");*/
+
+            setIndexNodes(nodes);
+
+        } catch (IOException | NumberFormatException | JDOMException e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
+    }
+
+    private HashMap<Long, Way> createCycleway(Element root) {
+
+        HashSet<String> tipiStrade = new HashSet<>();
+        tipiStrade.add("primary");
+        tipiStrade.add("primary_link");
+        tipiStrade.add("secondary");
+        tipiStrade.add("tertiary");
+        tipiStrade.add("unclassified");
+        tipiStrade.add("residential");
+        tipiStrade.add("service");
+        tipiStrade.add("secondary_link");
+        tipiStrade.add("tertiary_link");
+        tipiStrade.add("living_street");
+        tipiStrade.add("mini_roundabout");
+        tipiStrade.add("pedestrian");
+        tipiStrade.add("cycleway");
+
+        List children_way = root.getChildren("way");
+
+        if (children_way.size() > 0) {
+            ways = new HashMap<>();
+
+            HashSet<String> tipiNuovi = new HashSet<>();
+            HashMap<String, Integer> tag = new HashMap<>();
+
+            List children_way_nd, children_way_tag;
+
+            for (Iterator it = children_way.iterator(); it.hasNext(); ) {
+                Element we = (Element) it.next();
+
+                boolean imp = false;
+                boolean oneway = false;
+                boolean building = false;
+                boolean tunnel = false;
+                boolean stopImp = false;
+                boolean cycleway_lane = false;
+                boolean cycleway_opposite_lane = false;
+
+                children_way_tag = we.getChildren("tag");
+
+                //esamino i tag delle strade
+                if (children_way_tag.size() > 0) {
+                    for (Iterator it1 = children_way_tag.iterator(); it1.hasNext(); ) {
+                        Element nd = (Element) it1.next();
+
+                        String k = nd.getAttribute("k").getValue();
+                        String v = nd.getAttribute("v").getValue();
+
+                        if (k != null) {
+                            if (test(k, "tunnel")) {
+                                tunnel = true;
+                            }
+                            if (test(k, "highway")) {
+                                if (v != null) {
+                                    if (tipiStrade.contains(v)) {
+                                        imp = true;
+                                    } else {
+                                        tipiNuovi.add(v);
+                                    }
+                                }
+                            }
+                            if (test(k, "junction")) {
+                                imp = true;
+                            }
+                            if (test(k, "oneway")) {
+                                oneway = true;
+                            }
+
+                            if (test(k, "area", v, "yes")) {
+                                stopImp = true;
+                            }
+                            if (test(k, "access", v, "private")) {
+                                stopImp = true;
+                            }
+                            if (test(k, "building")) {
+                                building = true;
+                            }
+
+                            if (test(k, "cycleway")) {
+                                if (test(v, "no")) {
+                                    stopImp = true;
+                                } else {
+                                    imp = true;
+                                }
+                            }
+                            if (testStart(k, "cycleway:left") || testStart(k, "cycleway:right")) {
+                                imp = true;
+                                if (test(v, "opposite_lane")) {
+                                    cycleway_opposite_lane = true;
+                                } else if (test(v, "lane")) {
+                                    cycleway_lane = true;
+                                }
+                            }
+
+                            if (testStart(k, "bicycle")) {
+                                if (test(v, "no")) {
+                                    stopImp = true;
+                                } else {
+                                    imp = true;
+                                }
+                            }
+
+                            if (testStart(k, "maxspeed:bicycle")) {
+                                imp = true;
+                            }
+
+                            if (testStart(k, "oneway:bicycle")) {
+                                imp = true;
+                                if (test(v, "no")) {
+                                    cycleway_opposite_lane = true;
+                                    cycleway_lane = true;
+                                } else {
+                                    oneway = true;
+                                }
+                            }
+
+                            if (testStart(k, "tracktype")) {
+                                if (test(v, "grade1")) {
+                                    imp = true;
+                                }
+                                if (test(v, "grade2")) {
+                                    imp = true;
+                                }
+                                if (test(v, "grade3")) {
+                                    imp = true;
+                                }
+                            }
+
+
+                            Integer i = tag.get(k);
+                            if (i != null) {
+                                i = i.intValue() + 1;
+                            } else {
+                                i = 1;
+                            }
+                            tag.put(k, i);
+                        }
+                    }
+
+                    if (cycleway_lane && cycleway_opposite_lane) {
+                        oneway = false;
+                    }
+                }
+
+                if (imp && !stopImp) {
                     Way way = new Way();
 
-                    way.setId(Long.parseLong(nd.getAttribute("id").getValue()));
+                    way.setId(Long.parseLong(we.getAttribute("id").getValue()));
+                    way.setOneway(oneway);
+                    way.setTunnel(tunnel);
 
-                    children_way_nd = nd.getChildren("nd");
+                    children_way_nd = we.getChildren("nd");
 
                     ArrayList<Node> nodes_way = new ArrayList<>();
 
@@ -100,71 +304,286 @@ public class ControllerImport {
                         for (Iterator it2 = children_way_nd.iterator(); it2.hasNext(); ) {
                             Element nd2 = (Element) it2.next();
 
-                            Node node = new Node();
+                            ArrayList<Way> ways_node = new ArrayList<>();
 
                             Long ref = Long.parseLong(nd2.getAttribute("ref").getValue());
 
-                            //aggiungo informazioni ai nodi delle strade
-                            nodes.forEach((key, value) -> {
-                                if (Objects.equals(value.getId(), ref)) {
+                            if (nodes.containsKey(ref)) {
+                                Node node = nodes.get(ref); //creo nodo
+                                nodes_way.add(node); //aggiungo nodo in array
+                                ways_node.add(way); //aggiungo strada in array
+                                node.setNd_ways(ways_node); //set array di strade in nodo
+                                ways.put(way.getId(), way); //aggiungo strada in hashmap strade
+                            }
+                        }
+                        way.setNd(nodes_way); //set array di nodi in strada
+                        if (oneway && cycleway_opposite_lane) {
+                            Collections.reverse(way.getNd());
+                        }
 
-                                    node.setIndex(value.getIndex());
-                                    node.setId(value.getId());
-                                    node.setLat(value.getLat());
-                                    node.setLon(value.getLon());
+                    }
+                } else {
+                    if (building) {
+                        children_way_nd = we.getChildren("nd");
+                        for (Iterator it1 = children_way_nd.iterator(); it1.hasNext(); ) {
+                            Element nd = (Element) it1.next();
+                            long ref = Long.parseLong(nd.getAttribute("ref").getValue());
+                            if (!nodes.containsKey(ref)) {
+                                System.out.println("Ref Not Found! " + ref);
+                            } else {
+                                Node n = nodes.get(ref);
+                                buildings.add(n);
+                                break;
+                            }
 
-                                    nodes_way.add(node);
-                                }
-                            });
-                            way.setNd(nodes_way);
-
-                            setapproximateNodes(way);
                         }
                     }
-                    ways.put(way.getId(), way);
-                }
-            }
-            System.out.println("   Create strade num: " + ways.size());
-
-            //creo archi
-            arcs = new HashSet<>();
-            for (Iterator<Way> it = ways.values().iterator(); it.hasNext(); ) {
-                Way w = it.next();
-                Node old = null;
-
-                for (Iterator<Node> it1 = w.getNd().iterator(); it1.hasNext(); ) {
-                    Node n = it1.next();
-
-                    if (old != null) {
-                        Arc a = new Arc(old, n);
-
-                        arcs.add(a);
-                    }
-                    old = n;
                 }
             }
 
-            System.out.println("   Creati archi num: " + arcs.size());
-
-            applyDimension(nodes, minlatT, maxlatT, minlonT, maxlonT);
-
-            //exportALL(nodes, arcs);
-
-
-        } catch (IOException | NumberFormatException | JDOMException e) {
-            System.out.println("Exception: " + e.getMessage());
+            /*for (String tipiNuovi1 : tipiNuovi) {
+                System.out.println("-->" + tipiNuovi1);
+            }
+            for (Iterator<Map.Entry<String, Integer>> it = tag.entrySet().iterator(); it.hasNext(); ) {
+                Map.Entry<String, Integer> entry = it.next();
+                System.out.println(entry.getKey() + " " + entry.getValue());
+            }*/
         }
+        return ways;
     }
 
-    private static void applyDimension(HashMap<Long, Node> nodes, float minlatT, float maxlatT, float minlonT, float maxlonT) {
-        int i = 0;
-        double dmax = distance(minlatT, maxlatT, minlonT, maxlonT, 0, 0);
+    private HashMap<Long, Way> createWay(Element root) {
 
+        HashSet<String> tipiStrade = new HashSet<>();
+        tipiStrade.add("motorway");
+        tipiStrade.add("trunk");
+        tipiStrade.add("primary");
+        tipiStrade.add("secondary");
+        tipiStrade.add("tertiary");
+        tipiStrade.add("unclassified");
+        tipiStrade.add("residential");
+        tipiStrade.add("service");
+        tipiStrade.add("motorway_link");
+        tipiStrade.add("trunk_link");
+        tipiStrade.add("primary_link");
+        tipiStrade.add("secondary_link");
+        tipiStrade.add("tertiary_link");
+        tipiStrade.add("living_street");
+        tipiStrade.add("mini_roundabout");
+
+        List children_way = root.getChildren("way");
+
+        if (children_way.size() > 0) {
+            ways = new HashMap<>();
+
+            HashSet<String> tipiNuovi = new HashSet<>();
+            HashMap<String, Integer> tag = new HashMap<>();
+
+            List children_way_nd, children_way_tag;
+
+            for (Iterator it = children_way.iterator(); it.hasNext(); ) {
+                Element we = (Element) it.next();
+
+                boolean imp = false;
+                boolean oneway = false;
+                boolean building = false;
+                boolean tunnel = false;
+                boolean impCycleway = false;
+                boolean stopImp = false;
+                boolean cycleway_lane = false;
+                boolean cycleway_opposite_lane = false;
+
+                children_way_tag = we.getChildren("tag");
+
+                //esamino i tag delle strade
+                if (children_way_tag.size() > 0) {
+                    for (Iterator it1 = children_way_tag.iterator(); it1.hasNext(); ) {
+                        Element nd = (Element) it1.next();
+
+                        String k = nd.getAttribute("k").getValue();
+                        String v = nd.getAttribute("v").getValue();
+
+                        if (k != null) {
+                            if (test(k, "tunnel")) {
+                                tunnel = true;
+                            }
+                            if (test(k, "highway")) {
+                                if (v != null) {
+                                    if (tipiStrade.contains(v)) {
+                                        imp = true;
+                                    } else {
+                                        tipiNuovi.add(v);
+                                    }
+                                }
+                            }
+                            if (test(k, "junction")) {
+                                imp = true;
+                            }
+                            if (test(k, "oneway")) {
+                                oneway = true;
+                            }
+
+                            if (test(k, "area", v, "yes")) {
+                                stopImp = true;
+                            }
+                            if (test(k, "access", v, "private")) {
+                                stopImp = true;
+                            }
+                            if (test(k, "building")) {
+                                building = true;
+                            }
+
+                            Integer i = tag.get(k);
+                            if (i != null) {
+                                i = i.intValue() + 1;
+                            } else {
+                                i = 1;
+                            }
+                            tag.put(k, i);
+                        }
+                    }
+                }
+
+                if (imp && !stopImp) {
+                    Way way = new Way();
+
+                    way.setId(Long.parseLong(we.getAttribute("id").getValue()));
+                    way.setOneway(oneway);
+                    way.setTunnel(tunnel);
+
+                    children_way_nd = we.getChildren("nd");
+
+                    ArrayList<Node> nodes_way = new ArrayList<>();
+
+                    //esamino i nodi delle strade
+                    if (children_way_nd.size() > 0) {
+                        for (Iterator it2 = children_way_nd.iterator(); it2.hasNext(); ) {
+                            Element nd2 = (Element) it2.next();
+
+                            ArrayList<Way> ways_node = new ArrayList<>();
+
+                            Long ref = Long.parseLong(nd2.getAttribute("ref").getValue());
+
+                            if (nodes.containsKey(ref)) {
+                                Node node = nodes.get(ref); //creo nodo
+                                nodes_way.add(node); //aggiungo nodo in array
+                                ways_node.add(way); //aggiungo strada in array
+                                node.setNd_ways(ways_node); //set array di strade in nodo
+                                ways.put(way.getId(), way); //aggiungo strada in hashmap strade
+                            }
+                        }
+                        way.setNd(nodes_way); //set array di nodi in strada
+                    }
+                } else {
+                    if (building) {
+                        children_way_nd = we.getChildren("nd");
+                        for (Iterator it1 = children_way_nd.iterator(); it1.hasNext(); ) {
+                            Element nd = (Element) it1.next();
+                            long ref = Long.parseLong(nd.getAttribute("ref").getValue());
+                            if (!nodes.containsKey(ref)) {
+                                System.out.println("Ref Not Found! " + ref);
+                            } else {
+                                Node n = nodes.get(ref);
+                                buildings.add(n);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            /*for (String tipiNuovi1 : tipiNuovi) {
+                System.out.println("-->" + tipiNuovi1);
+            }
+            for (Iterator<Map.Entry<String, Integer>> it = tag.entrySet().iterator(); it.hasNext(); ) {
+                Map.Entry<String, Integer> entry = it.next();
+                System.out.println(entry.getKey() + " " + entry.getValue());
+            }*/
+        }
+        return ways;
+    }
+
+    private boolean test(String a, String rif_a) {
+        if (a == null || rif_a == null) {
+            return false;
+        }
+        return a.equals(rif_a);
+    }
+
+    private boolean test(String a, String rif_a, String b, String rif_b) {
+        return test(a, rif_a) && test(b, rif_b);
+    }
+
+    private boolean testStart(String a, String rif_a) {
+        if (a == null || rif_a == null) {
+            return false;
+        }
+        return a.startsWith(rif_a);
+    }
+
+    private HashSet<Arc> createArcs(HashMap<Long, Way> ways) {
+        arcs = new HashSet<>();
+        ArrayList<Arc> arcs_node = null;
+
+        for (Iterator<Way> it = ways.values().iterator(); it.hasNext(); ) {
+            Way w = it.next();
+            Node old = null;
+
+            for (Iterator<Node> it1 = w.getNd().iterator(); it1.hasNext(); ) {
+                Node n = it1.next();
+
+                arcs_node = new ArrayList<>();
+
+                if (old != null) {
+                    Arc a = new Arc(old, n);
+
+                    a.setOneway(w.isOneway()); //set oneway dell'arco
+                    a.setTunnel(w.isTunnel()); //set tunnel dell'arco
+
+                    if (a.isTunnel()) {
+                        old.setTunnel(true);
+                        n.setTunnel(true);
+                    }
+
+                    arcs.add(a); //aggiungo arco in hashset archi
+                    arcs_node.add(a); //aggiungo arco in array
+                    n.setNd_arcs(arcs_node); //set array di archi in nodo n
+                    old.setNd_arcs(arcs_node); //set array di archi in nodo old
+
+                }
+                old = n;
+            }
+        }
+        return arcs;
+    }
+
+    private void setIndexNodes(HashMap<Long, Node> nodes) {
+        int i = 0;
         for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
             Node n = it.next();
             n.setIndex(i++);
-            n.setX((int) (1.00f * (distance(minlatT, minlatT, minlonT, n.getLon(), 0, 0))));
-            n.setY((int) (1.00f * (dmax - distance(minlatT, n.getLat(), minlonT, minlonT, 0, 0))));
+        }
+    }
+
+    private void applyDimension(HashMap<Long, Node> nodes, HashSet<Node> buildings, float minlatT, float maxlatT, float minlonT, float maxlonT) {
+
+        double dmax = distance(minlatT, maxlatT, minlonT, minlonT, 0, 0);
+
+        int i = 0;
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+            Node n = it.next();
+            n.setIndex(i++);
+            n.setX((int) (prop * (distance(minlatT, minlatT, minlonT, n.getLon(), 0, 0))));
+            n.setY((int) (prop * (dmax - distance(minlatT, n.getLat(), minlonT, minlonT, 0, 0))));
+        }
+
+        for (Iterator<Node> it = buildings.iterator(); it.hasNext(); ) {
+            Node n = it.next();
+            if (!nodes.containsKey(n.getId())) {
+                n.setIndex(i++);
+                n.setIndex((int) (prop * (distance(minlatT, minlatT, minlonT, n.getLon(), 0, 0))));
+                n.setY((int) (prop * (dmax - distance(minlatT, n.getLat(), minlonT, minlonT, 0, 0))));
+            }
         }
     }
 
@@ -187,56 +606,205 @@ public class ControllerImport {
         return Math.sqrt(distance);
     }
 
-    public void approximate(HashMap<Long, Way> ways){
-        nodes_approximate = new HashMap<>();
+    public void removeNodes_Buildings(float minlatT, float maxlatT, float minlonT, float maxlonT) {
+        ArrayList<Node> del = new ArrayList<>();
 
-        ways.forEach((key, value)->{
-            ArrayList<Node> array_nodes_approximate = new ArrayList<>();
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+            Node n = it.next();
 
-            value.getNd().forEach((nd)->{
-                if(value.getNd().indexOf(nd) == 0 || value.getNd().indexOf(nd) == value.getNd().size() -1){
-                    nodes_approximate.put(nd.getId(), nd);
-                    array_nodes_approximate.add(nd);
+            if (n.getNd_ways().size() <= 0) {
+                del.add(n);
+            } else {
+                if (n.getLat() < minlatT) {
+                    del.add(n);
+                } else if (n.getLat() > maxlatT) {
+                    del.add(n);
+                } else if (n.getLon() < minlonT) {
+                    del.add(n);
+                } else if (n.getLon() > maxlonT) {
+                    del.add(n);
                 }
-            });
-            value.setNd_approximate(array_nodes_approximate);
-        });
-
-        //creo archi
-        arcs_approximate = new HashSet<>();
-        for (Iterator<Way> it = ways.values().iterator(); it.hasNext(); ) {
-            Way w = it.next();
-            Node old = null;
-
-            for (Iterator<Node> it1 = w.getNd_approximate().iterator(); it1.hasNext(); ) {
-                Node n = it1.next();
-
-                if (old != null) {
-                    Arc a = new Arc(old, n);
-
-                    arcs.add(a);
-                }
-                old = n;
             }
+        }
+
+        for (Iterator<Node> it = del.iterator(); it.hasNext(); ) {
+            Node n = it.next();
+            nodes.remove(n.getId());
+            for (Iterator<Way> it1 = n.getNd_ways().iterator(); it1.hasNext(); ) {
+                Way way = it1.next();
+                way.getNd().remove(n);
+            }
+        }
+        del.clear();
+
+        for (Iterator<Node> it = buildings.iterator(); it.hasNext(); ) {
+            Node n = it.next();
+            if (n.getLat() < minlatT) {
+                del.add(n);
+            } else if (n.getLat() > maxlatT) {
+                del.add(n);
+            } else if (n.getLon() < minlonT) {
+                del.add(n);
+            } else if (n.getLon() > maxlonT) {
+                del.add(n);
+            }
+        }
+
+        for (Iterator<Node> it = del.iterator(); it.hasNext(); ) {
+            Node n = it.next();
+            buildings.remove(n);
         }
     }
 
-    private void setapproximateNodes(Way way) {
-        ArrayList<Node> nodes_approximate = new ArrayList<>();
+    private void normalize(HashMap<Long, Node> nodes, HashSet<Arc> arcs) {
+        ArrayList<Node> del = new ArrayList<>(nodes.size());
+        ArrayList<Node> nd = new ArrayList<>(nodes.values());
 
-        way.getNd().forEach((nd) -> {
+        Collections.shuffle(nd);
 
-            if (way.getNd().indexOf(nd) == 0 || way.getNd().indexOf(nd) == way.getNd().size() - 1) {
-                nodes_approximate.add(nd);
+        for (Iterator<Node> it = nd.iterator(); it.hasNext(); ) {
+            Node n = it.next();
+
+            if (n.getNd_arcs().size() == 2) {
+                if (n.getNd_arcs().get(0).isOneway() == n.getNd_arcs().get(1).isOneway()) {
+                    Node nA, nB;
+                    Arc a = n.getNd_arcs().get(0);
+                    double l = a.getLength();
+                    boolean inv = false;
+                    if (a.getFrom() == n) {
+                        nA = a.getTo();
+                        inv = true;
+                    } else {
+                        nA = a.getFrom();
+                    }
+                    a = n.getNd_arcs().get(1);
+                    l += a.getLength();
+                    if (a.getFrom() == n) {
+                        nB = a.getTo();
+                    } else {
+                        nB = a.getFrom();
+                    }
+                    if (nA != n && n != nB && nA != nB && testDel(nA, n, nB, l)) {
+                        del.add(n);
+
+                        nA.getNd_arcs().remove(n.getNd_arcs().get(0));
+                        nB.getNd_arcs().remove(n.getNd_arcs().get(1));
+                        arcs.remove(n.getNd_arcs().get(0));
+                        arcs.remove(n.getNd_arcs().get(1));
+                        Arc ar = null;
+                        if (inv) {
+                            ar = new Arc(nB, nA, l);
+                        } else {
+                            ar = new Arc(nA, nB, l);
+                        }
+                        ar.setOneway(n.getNd_arcs().get(0).isOneway());
+                        arcs.add(ar);
+                        nA.getNd_arcs().add(ar);
+                        nB.getNd_arcs().add(ar);
+                    }
+                }
             }
-        });
-        way.setNd_approximate(nodes_approximate);
+        }
+
+        for (Iterator<Node> it = del.iterator(); it.hasNext(); ) {
+            Node n = it.next();
+            nodes.remove(n.getId());
+        }
+        int i = 0;
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+            Node n = it.next();
+            n.setIndex(i++);
+        }
+    }
+
+    private boolean testDel(Node nA, Node n, Node nB, double l) {
+
+        float d1 = nA.distanza(n);
+        float d2 = n.distanza(nB);
+
+        if (d1 > RIS || d2 > RIS) {
+            return false;
+        }
+
+        double dAB = nA.distanzaLatLog(nB);
+        if (l > dAB + SGL) {
+            return false;
+        }
+        return true;
+    }
+
+    private void applyOneway(HashSet<Arc> arc) {
+        ArrayList<Arc> arcAdd = new ArrayList<>();
+
+        for (Iterator<Arc> it = arc.iterator(); it.hasNext(); ) {
+            Arc a = it.next();
+            if (!a.isOneway()) {
+                arcAdd.add(a);
+            }
+        }
+        for (Iterator<Arc> it = arcAdd.iterator(); it.hasNext(); ) {
+            Arc a = it.next();
+            a.setOneway(true);
+            Arc b = new Arc(a.getTo(), a.getFrom(), a.getLength());
+            b.setOneway(true);
+            a.getTo().getNd_arcs().add(b);
+            a.getFrom().getNd_arcs().add(b);
+            arc.add(b);
+        }
+    }
+
+    private void removeRepetition(HashSet<Arc> arc) {
+        HashSet<String> arcM = new HashSet<>(arc.size());
+        ArrayList<Arc> del = new ArrayList<>(arc.size());
+
+        for (Iterator<Arc> it = arc.iterator(); it.hasNext(); ) {
+            Arc a = it.next();
+            String s = a.getFrom() + "-" + a.getTo();
+            if (arcM.contains(s)) {
+                del.add(a);
+            } else {
+                arcM.add(s);
+            }
+        }
+
+        for (Iterator<Arc> it = del.iterator(); it.hasNext(); ) {
+            Arc a = it.next();
+            arc.remove(a);
+            a.getFrom().getNd_arcs().remove(a);
+            a.getTo().getNd_arcs().remove(a);
+        }
+    }
+
+    private void removeMiters(HashSet<Node> buildings, HashSet<Arc> arc) {
+
+        for (Iterator<Node> it = buildings.iterator(); it.hasNext(); ) {
+            Node node = it.next();
+            node.setFlag1(false);
+        }
+        for (Iterator<Arc> it = arc.iterator(); it.hasNext(); ) {
+            Arc a = it.next();
+            for (Iterator<Node> it2 = buildings.iterator(); it2.hasNext(); ) {
+                Node node = it2.next();
+                if (!node.isFlag1()) {
+                    if (node.distToEdge(a) < maxD) {
+                        node.setFlag1(true);
+                    }
+                }
+            }
+        }
+        ArrayList<Node> del = new ArrayList<>();
+        for (Iterator<Node> it = buildings.iterator(); it.hasNext(); ) {
+            Node node = it.next();
+            if (!node.isFlag1()) {
+                del.add(node);
+            }
+        }
     }
 
     /**
      * Export
      **/
-    public void exportALL(File file, HashMap<Long, Node> nodes, HashSet<Arc> arcs) {
+    public void export(File file, HashMap<Long, Node> nodes, HashSet<Arc> arcs) {
 
         FileWriter outFile = null;
 
@@ -246,13 +814,12 @@ public class ControllerImport {
 
             System.out.println("EXPORT: " + file.getName());
             System.out.println("   Creato file: " + file.getName());
-            System.out.println("     nodi: " + nodes.size() + " archi: " + arcs.size() + " buildings: " + 0);
-            out.println(nodes.size() + " " + arcs.size() + " " + 0);
 
+            out.println(nodes.size() + " " + arcs.size());
 
-            for (Iterator<Node> it = nodes.values().iterator(); it.hasNext();) {
+            for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
                 Node n = it.next();
-                out.println(n.getIndex() + " " + n.getX() + " " + n.getY() + " " + n.getZ() + " " + n.getLat() + " " + n.getLon());
+                out.println(n.getIndex() + " " + n.getX() + " " + n.getY() + " " + n.getLat() + " " + n.getLon());
             }
 
 
@@ -277,12 +844,20 @@ public class ControllerImport {
     /**
      * Print
      **/
+
+    public void printALL() {
+        System.out.println("   Nodi num: " + nodes.size());
+        System.out.println("   Archi num: " + arcs.size());
+        System.out.println("   Strade num: " + ways.size());
+    }
+
     public void printNodes(HashMap<Long, Node> nodes) {
         System.out.println("Nodes: " + nodes.size());
 
         nodes.forEach((key, value) -> {
             System.out.println(
-                    " id: " + value.getId()
+                    " index: " + value.getIndex() +
+                            " id: " + value.getId()
                             + " lat: " + value.getLat()
                             + " lon: " + value.getLon());
         });
@@ -296,26 +871,28 @@ public class ControllerImport {
 
             ArrayList<Node> nodes = value.getNd();
             if (nodes != null && nodes.size() > 0) {
+                System.out.println("nodes: " + nodes.size());
                 nodes.forEach((nd) -> {
                     System.out.println("   nd: " + nd.getId() + "   lat: " + nd.getLat() + "   lon: " + nd.getLon());
                 });
             }
-
-            ArrayList<Node> nodes_approximate = value.getNd_approximate();
-            if (nodes_approximate != null && nodes_approximate.size() > 0) {
-                nodes_approximate.forEach((nd_approximate) -> {
-                    System.out.println("   nd_approximate: " + nd_approximate.getId() + "   lat: " + nd_approximate.getLat() + "   lon: " + nd_approximate.getLon());
-                });
-            }
+            System.out.println("   oneway: " + value.isOneway() + "   tunnel: " + value.isTunnel());
         });
     }
 
     public void printArcs(HashSet<Arc> arcs) {
         System.out.println("Arcs: " + arcs.size());
+        int i = 0;
+        for (Iterator<Arc> it = arcs.iterator(); it.hasNext(); ) {
+            Arc a = it.next();
+            System.out.println(i + " from: " + a.getFrom().getId()
+                    + " to: " + a.getTo().getId());
+            i++;
+        }
 
-        arcs.forEach((value) -> {
-            System.out.println("from: " + value.getFrom().getIndex()
-                    + " to: " + value.getTo().getIndex());
-        });
+        /*arcs.forEach((value) -> {
+            System.out.println("from: " + value.getFrom().getId()
+                    + " to: " + value.getTo().getId());
+        });*/
     }
 }

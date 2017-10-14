@@ -7,7 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="MongoDB" />
+        <module name="OpenStreetMap" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="OpenStreetMap" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

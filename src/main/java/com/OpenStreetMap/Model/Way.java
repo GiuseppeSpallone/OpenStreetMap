@@ -5,8 +5,10 @@ import java.util.ArrayList;
 public class Way {
 
     private Long id;
-    private ArrayList<Node> nd;
-    private ArrayList<Node> nd_approximate;
+    private boolean oneway = false;
+    private boolean tunnel=false;
+
+    private ArrayList<Node> nd = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -14,6 +16,22 @@ public class Way {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public boolean isOneway() {
+        return oneway;
+    }
+
+    public void setOneway(boolean oneway) {
+        this.oneway = oneway;
+    }
+
+    public boolean isTunnel() {
+        return tunnel;
+    }
+
+    public void setTunnel(boolean tunnel) {
+        this.tunnel = tunnel;
     }
 
     public ArrayList<Node> getNd() {
@@ -24,11 +42,4 @@ public class Way {
         this.nd = nd;
     }
 
-    public ArrayList<Node> getNd_approximate() {
-        return nd_approximate;
-    }
-
-    public void setNd_approximate(ArrayList<Node> nd_approximate) {
-        this.nd_approximate = nd_approximate;
-    }
 }

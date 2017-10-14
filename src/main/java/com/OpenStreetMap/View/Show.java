@@ -41,22 +41,17 @@ public class Show extends JFrame {
         if (file_open != null) {
             label1.setText(file_open.getPath());
             button2.setEnabled(true);
-            checkBox1.setEnabled(true);
         }
 
     }
 
     private void button2ActionPerformed(ActionEvent e) {
 
-        controllerImport.create(file_open);
-
-        if (checkBox1.isSelected())
-            controllerImport.approximate(controllerImport.ways);
+        controllerImport.create(file_open, 5, 2, 100, true, false);
 
         if (!controllerImport.nodes.isEmpty() || !controllerImport.arcs.isEmpty()) {
             label2.setText("Nodi: " + controllerImport.nodes.size() + " Archi: " + controllerImport.arcs.size());
             button3.setEnabled(true);
-            checkBox1.setEnabled(false);
         }
 
 
@@ -64,11 +59,7 @@ public class Show extends JFrame {
 
     private void button3ActionPerformed(ActionEvent e) {
         file_export = selectPath();
-        if(!checkBox1.isSelected()){
-            controllerImport.exportALL(file_export, controllerImport.nodes, controllerImport.arcs);
-        }else{
-            controllerImport.exportALL(file_export, controllerImport.nodes_approximate, controllerImport.arcs_approximate);
-        }
+        controllerImport.export(file_export, controllerImport.nodes, controllerImport.arcs);
 
         if (file_export != null)
             label3.setText("Esportato con successo");
@@ -78,8 +69,10 @@ public class Show extends JFrame {
     private void button4ActionPerformed(ActionEvent e) {
         file_open_export = openFile();
 
-        if (readFile(file_open_export))
-            panel1.repaint();
+        if(file_open_export != null){
+            if (readFile(file_open_export))
+                panel1.repaint();
+        }
     }
 
     private void panel1PropertyChange(PropertyChangeEvent e) {
@@ -95,8 +88,7 @@ public class Show extends JFrame {
         label2 = new JLabel();
         button3 = new JButton();
         button4 = new JButton();
-        checkBox1 = new JCheckBox();
-        panel1 = new JPanel(){
+        panel1 = new JPanel() {
 
             @Override
             public void paint(Graphics g) {
@@ -131,87 +123,81 @@ public class Show extends JFrame {
         button4.setText("DISEGNA");
         button4.addActionListener(e -> button4ActionPerformed(e));
 
-        //---- checkBox1 ----
-        checkBox1.setEnabled(false);
-
         //======== panel1 ========
         {
             panel1.setBackground(Color.white);
-            panel1.setBorder(new LineBorder(Color.black, 2));
+            panel1.setBorder(LineBorder.createBlackLineBorder());
 
             // JFormDesigner evaluation mark
             panel1.setBorder(new javax.swing.border.CompoundBorder(
-                new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-                    "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
-                    javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-                    java.awt.Color.red), panel1.getBorder())); panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
+                    new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+                            "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+                            javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+                            java.awt.Color.red), panel1.getBorder()));
+            panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+                public void propertyChange(java.beans.PropertyChangeEvent e) {
+                    if ("border".equals(e.getPropertyName())) throw new RuntimeException();
+                }
+            });
 
 
             GroupLayout panel1Layout = new GroupLayout(panel1);
             panel1.setLayout(panel1Layout);
             panel1Layout.setHorizontalGroup(
-                panel1Layout.createParallelGroup()
-                    .addGap(0, 984, Short.MAX_VALUE)
+                    panel1Layout.createParallelGroup()
+                            .addGap(0, 784, Short.MAX_VALUE)
             );
             panel1Layout.setVerticalGroup(
-                panel1Layout.createParallelGroup()
-                    .addGap(0, 520, Short.MAX_VALUE)
+                    panel1Layout.createParallelGroup()
+                            .addGap(0, 391, Short.MAX_VALUE)
             );
         }
 
         GroupLayout contentPaneLayout = new GroupLayout(contentPane);
         contentPane.setLayout(contentPaneLayout);
         contentPaneLayout.setHorizontalGroup(
-            contentPaneLayout.createParallelGroup()
-                .addGroup(contentPaneLayout.createSequentialGroup()
-                    .addGap(17, 17, 17)
-                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+                contentPaneLayout.createParallelGroup()
                         .addGroup(contentPaneLayout.createSequentialGroup()
-                            .addComponent(button3, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(label3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(17, 17, 17)
+                                .addGroup(contentPaneLayout.createParallelGroup()
+                                        .addGroup(contentPaneLayout.createSequentialGroup()
+                                                .addComponent(button1, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(label1, GroupLayout.PREFERRED_SIZE, 275, GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(contentPaneLayout.createSequentialGroup()
+                                                .addComponent(button3, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(label3, GroupLayout.PREFERRED_SIZE, 281, GroupLayout.PREFERRED_SIZE)))
+                                .addGap(24, 24, 24)
+                                .addGroup(contentPaneLayout.createParallelGroup()
+                                        .addGroup(contentPaneLayout.createSequentialGroup()
+                                                .addComponent(button2, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(label2, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(button4, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(15, Short.MAX_VALUE))
                         .addGroup(contentPaneLayout.createSequentialGroup()
-                            .addComponent(button1, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
-                            .addGap(12, 12, 12)
-                            .addComponent(label1, GroupLayout.PREFERRED_SIZE, 275, GroupLayout.PREFERRED_SIZE)))
-                    .addGap(18, 18, 18)
-                    .addGroup(contentPaneLayout.createParallelGroup()
-                        .addGroup(contentPaneLayout.createSequentialGroup()
-                            .addComponent(button2, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(checkBox1)
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(label2, GroupLayout.PREFERRED_SIZE, 296, GroupLayout.PREFERRED_SIZE))
-                        .addComponent(button4, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap(94, Short.MAX_VALUE))
-                .addGroup(contentPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap())
+                                .addContainerGap()
+                                .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         contentPaneLayout.setVerticalGroup(
-            contentPaneLayout.createParallelGroup()
-                .addGroup(contentPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(contentPaneLayout.createParallelGroup()
-                        .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
-                            .addGroup(contentPaneLayout.createParallelGroup()
-                                .addComponent(label1, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(button2, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(button1, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED))
+                contentPaneLayout.createParallelGroup()
                         .addGroup(contentPaneLayout.createSequentialGroup()
-                            .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                .addComponent(checkBox1, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(label2, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE))
-                            .addGap(5, 5, 5)))
-                    .addGroup(contentPaneLayout.createParallelGroup()
-                        .addComponent(button3, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(label3, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(button4, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap())
+                                .addContainerGap()
+                                .addGroup(contentPaneLayout.createParallelGroup()
+                                        .addComponent(button2, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(button1, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(label1, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(label2, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(contentPaneLayout.createParallelGroup()
+                                        .addComponent(button3, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(button4, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(label3, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         pack();
         setLocationRelativeTo(getOwner());
@@ -226,7 +212,6 @@ public class Show extends JFrame {
     private JLabel label2;
     private JButton button3;
     private JButton button4;
-    private JCheckBox checkBox1;
     private JPanel panel1;
     private JLabel label3;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
@@ -261,9 +246,14 @@ public class Show extends JFrame {
 
         if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             file = jFileChooser.getSelectedFile();
+
+            return file;
+        }else{
+            System.out.println("Nessun percorso selezionato");
+            return null;
         }
 
-        return file;
+
     }
 
     private boolean readFile(File file) {
@@ -289,15 +279,13 @@ public class Show extends JFrame {
 
                 int x = Integer.parseInt(vs[1]);
                 int y = Integer.parseInt(vs[2]);
-                int z = Integer.parseInt(vs[3]);
-                float lat = Float.parseFloat(vs[4]);
-                float lon = Float.parseFloat(vs[5]);
+                float lat = Float.parseFloat(vs[3]);
+                float lon = Float.parseFloat(vs[4]);
 
                 Node n = new Node();
 
                 n.setX(x);
                 n.setY(y);
-                n.setZ(z);
                 n.setLat(lat);
                 n.setLon(lon);
                 n.setIndex(i);
@@ -311,9 +299,11 @@ public class Show extends JFrame {
 
                 long from = Integer.parseInt(vs[0]);
                 long to = Integer.parseInt(vs[1]);
-                //double length = Float.parseFloat(vs[2]);
+                double length = Float.parseFloat(vs[2]);
 
                 Arc a = new Arc(nodes_export.get(from), nodes_export.get(to));
+                a.setLength(length);
+                a.setIndex(i);
 
                 arcs_export.add(a);
             }
@@ -365,12 +355,6 @@ public class Show extends JFrame {
                 if (n.getY() < minY) {
                     minY = n.getY();
                 }
-                if (n.getZ() > maxZ) {
-                    maxZ = n.getZ();
-                }
-                if (n.getZ() < minZ) {
-                    minZ = n.getZ();
-                }
             }
 
             double w = ((maxX - minX));
@@ -399,7 +383,7 @@ public class Show extends JFrame {
             for (Node n : nodes_export.values()) {
                 double x1 = (n.getX() - minX * 1.0) * rap;
                 double y1 = (n.getY() - minY * 1.0) * rap;
-                if (nodes_export.size() <= 10000) {
+                if (nodes_export.size() <= 100) {
                     g.setColor(Color.blue);
                     g.setFont(g.getFont().deriveFont(10f));
                     g.drawString("" + n.getIndex(), (int) x1, (int) y1);

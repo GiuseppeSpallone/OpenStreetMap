@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="jdom">
+  <library name="mongo-java-driver-3.5.0">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/jdom.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mongo-java-driver-3.5.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
