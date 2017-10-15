@@ -13,6 +13,7 @@ public class Node {
     private int index;
     private int x;
     private int y;
+    private int mark;
 
     private int num_studenti;
     private int comp;
@@ -152,5 +153,13 @@ public class Node {
 
     public void setTunnel(boolean tunnel) {
         this.tunnel = tunnel;
+    }
+
+    public int getMark() {
+        return mark;
+    }
+
+    public void setMark(int mark) {
+        this.mark = mark;
     }
 }

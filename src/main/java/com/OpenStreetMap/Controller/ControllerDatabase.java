@@ -35,6 +35,26 @@ public class ControllerDatabase {
         return null;
     }
 
+    public boolean connectUser(DB db, String username, String password){
+        boolean connect = false;
+        String json = null;
+        DBCollection user = db.getCollection("User");
+
+        BasicDBObject query = new BasicDBObject();
+        query.put("username", username);
+        query.put("password", password);
+
+        DBCursor cursor = user.find(query);
+
+        while (cursor.hasNext()) {
+            json += cursor.next();
+        }
+        if(json != null){
+            connect = true;
+        }
+        return connect;
+    }
+
     public DBCollection getCollection(DB db, String collection) {
         DBCollection dbCollection = db.getCollection(collection);
         return dbCollection;

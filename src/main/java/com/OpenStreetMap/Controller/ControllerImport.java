@@ -1,9 +1,6 @@
 package com.OpenStreetMap.Controller;
 
-import com.OpenStreetMap.Model.Arc;
-import com.OpenStreetMap.Model.Node;
-import com.OpenStreetMap.Model.Visit;
-import com.OpenStreetMap.Model.Way;
+import com.OpenStreetMap.Model.*;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -66,7 +63,14 @@ public class ControllerImport {
                     maxlon = Float.parseFloat(ss[3]);
                 }
             }
-            System.out.println("MIN LAT: " + minlat + "; MAX LAT: " + maxlat + "; MIN LON: " + minlon + "; MAX LON: " + maxlon);
+
+            float minlatT = minlat - 10.0f * (maxlat - minlat) / 100.0f;
+            float minlonT = minlon - 10.0f * (maxlon - minlon) / 100.0f;
+            float maxlatT = maxlat + 10.0f * (maxlat - minlat) / 100.0f;
+            float maxlonT = maxlon + 10.0f * (maxlon - minlon) / 100.0f;
+
+            System.out.println("     MIN LAT: " + minlat + "; MAX LAT: " + maxlat + "; MIN LON: " + minlon + "; MAX LON: " + maxlon);
+            System.out.println("     MIN LAT_T: " + minlatT + "; MAX LAT_T: " + maxlatT + "; MIN LON_T: " + minlonT + "; MAX LON_T: " + maxlonT);
 
             // nodi
             List children_node = root.getChildren("node");
@@ -90,35 +94,29 @@ public class ControllerImport {
                     }
                 }
             }
-            System.out.println("NODES: " + nodes.size());
-            System.out.println("BUILDINGS: " + buildings.size());
+            System.out.println("     CREATE --> NODES: " + nodes.size());
+            System.out.println("     CREATE --> BUILDINGS: " + buildings.size());
 
             //ottengo le strade
             if (import_cycleway) {
                 ways = createCycleway(root);
-                System.out.println("CREATE --> CYCLEWAY: " + ways.size());
+                System.out.println("     CREATE --> CYCLEWAY: " + ways.size());
             } else {
                 ways = createWay(root);
-                System.out.println("CREATE --> WAYS: " + ways.size());
+                System.out.println("     CREATE --> WAYS: " + ways.size());
             }
-
-            float minlatT = minlat - 10.0f * (maxlat - minlat) / 100.0f;
-            float minlonT = minlon - 10.0f * (maxlon - minlon) / 100.0f;
-            float maxlatT = maxlat + 10.0f * (maxlat - minlat) / 100.0f;
-            float maxlonT = maxlon + 10.0f * (maxlon - minlon) / 100.0f;
-            System.out.println("MIN LAT_T: " + minlatT + "; MAX LAT_T: " + maxlatT + "; MIN LON_T: " + minlonT + "; MAX LON_T: " + maxlonT);
 
             //rimozione nodi ed edifici
             removeNodes_Buildings(minlatT, maxlatT, minlonT, maxlonT);
-            System.out.println("REMOVE -->: NODES: " + nodes.size() + " BUILDINGS: " + buildings.size());
+            System.out.println("     REMOVE -->: NODES: " + nodes.size() + " BUILDINGS: " + buildings.size());
 
             //creo archi
             arcs = createArcs(ways);
-            System.out.println("ARCS: " + arcs.size());
+            System.out.println("     CREATE --> ARCS: " + arcs.size());
 
             if (!import_building) {
                 buildings.clear();
-                System.out.println("CLEAR --> BUILDINGS ");
+                System.out.println("     CLEAR --> BUILDINGS ");
             }
 
             applyDimension(nodes, buildings, minlatT, maxlatT, minlonT, maxlonT);
@@ -136,6 +134,17 @@ public class ControllerImport {
             System.out.println("REMOVE NOT STRONG CONNECTED");
             removeMiters(buildings, arcs);
             System.out.println("REMOVE MITERS");*/
+
+            String startingNodeId = "1189844712";
+            Long node = Long.parseLong(startingNodeId);
+
+            if(nodes.containsKey(node)){
+                Node nod = nodes.get(node);
+                Visite visite = new Visite();
+                visite.visitaDFS(nodes, nod);
+            }else{
+                System.out.println("Nodo non presente");
+            }
 
             setIndexNodes(nodes);
 
@@ -466,13 +475,15 @@ public class ControllerImport {
 
                             if (nodes.containsKey(ref)) {
                                 Node node = nodes.get(ref); //creo nodo
+
                                 nodes_way.add(node); //aggiungo nodo in array
+                                way.setNd(nodes_way); //set array di nodi in strada
+
                                 ways_node.add(way); //aggiungo strada in array
                                 node.setNd_ways(ways_node); //set array di strade in nodo
-                                ways.put(way.getId(), way); //aggiungo strada in hashmap strade
                             }
                         }
-                        way.setNd(nodes_way); //set array di nodi in strada
+                        ways.put(way.getId(), way); //aggiungo strada in hashmap strade
                     }
                 } else {
                     if (building) {
@@ -611,7 +622,6 @@ public class ControllerImport {
 
         for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
             Node n = it.next();
-
             if (n.getNd_ways().size() <= 0) {
                 del.add(n);
             } else {

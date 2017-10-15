@@ -14,13 +14,19 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.OpenStreetMap.Controller.ControllerDatabase;
 import com.OpenStreetMap.Controller.ControllerImport;
 import com.OpenStreetMap.Model.Arc;
 import com.OpenStreetMap.Model.Node;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
 import net.miginfocom.swing.*;
 
 public class Show extends JFrame {
     ControllerImport controllerImport = new ControllerImport();
+    ControllerDatabase controllerDatabase = new ControllerDatabase();
+
+    DB dbStreetMap = null;
 
     private File file_open = null;
     private File file_export = null;
@@ -34,39 +40,58 @@ public class Show extends JFrame {
         initComponents();
     }
 
-    private void button1ActionPerformed(ActionEvent e) {
 
+    private void panel1PropertyChange(PropertyChangeEvent e) {
+        // TODO add your code here
+    }
+
+    private void menuItem2ActionPerformed(ActionEvent e) {
+        dbStreetMap = controllerDatabase.connectDB("localhost", 27017, "StreetMap");
+        if(dbStreetMap != null)
+            menuItem1.setEnabled(true);
+    }
+
+    private void menuItem1ActionPerformed(ActionEvent e) {
+        DBCollection collectionNode = controllerDatabase.getCollection(dbStreetMap, "Node");
+        DBCollection collectionWay = controllerDatabase.getCollection(dbStreetMap, "Way");
+        DBCollection collectionArc = controllerDatabase.getCollection(dbStreetMap, "Arc");
+
+        controllerDatabase.insertNodesDB(collectionNode, controllerImport.nodes);
+        controllerDatabase.insertWaysDB(collectionWay, controllerImport.ways);
+        controllerDatabase.insertArcsDB(collectionArc, controllerImport.arcs);
+    }
+
+    private void menuItem3ActionPerformed(ActionEvent e) {
+        System.exit(0);
+    }
+
+    private void menuItem4ActionPerformed(ActionEvent e) {
         file_open = openFile();
 
         if (file_open != null) {
-            label1.setText(file_open.getPath());
-            button2.setEnabled(true);
+            //label1.setText(file_open.getPath());
+            menuItem5.setEnabled(true);
         }
-
     }
 
-    private void button2ActionPerformed(ActionEvent e) {
-
+    private void menuItem5ActionPerformed(ActionEvent e) {
         controllerImport.create(file_open, 5, 2, 100, true, false);
 
         if (!controllerImport.nodes.isEmpty() || !controllerImport.arcs.isEmpty()) {
-            label2.setText("Nodi: " + controllerImport.nodes.size() + " Archi: " + controllerImport.arcs.size());
-            button3.setEnabled(true);
+            //label2.setText("Nodi: " + controllerImport.nodes.size() + " Archi: " + controllerImport.arcs.size());
+            menuItem6.setEnabled(true);
         }
-
-
     }
 
-    private void button3ActionPerformed(ActionEvent e) {
+    private void menuItem6ActionPerformed(ActionEvent e) {
         file_export = selectPath();
         controllerImport.export(file_export, controllerImport.nodes, controllerImport.arcs);
 
-        if (file_export != null)
-            label3.setText("Esportato con successo");
-
+        if (file_export != null){}
+            //label3.setText("Esportato con successo");
     }
 
-    private void button4ActionPerformed(ActionEvent e) {
+    private void menuItem7ActionPerformed(ActionEvent e) {
         file_open_export = openFile();
 
         if(file_open_export != null){
@@ -75,20 +100,20 @@ public class Show extends JFrame {
         }
     }
 
-    private void panel1PropertyChange(PropertyChangeEvent e) {
-        // TODO add your code here
-    }
-
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner Evaluation license - Giuseppe Spallone
-        button1 = new JButton();
-        label1 = new JLabel();
-        button2 = new JButton();
-        label2 = new JLabel();
-        button3 = new JButton();
-        button4 = new JButton();
-        panel1 = new JPanel() {
+        menuBar1 = new JMenuBar();
+        menu2 = new JMenu();
+        menuItem4 = new JMenuItem();
+        menuItem5 = new JMenuItem();
+        menuItem6 = new JMenuItem();
+        menuItem7 = new JMenuItem();
+        menuItem3 = new JMenuItem();
+        menu1 = new JMenu();
+        menuItem2 = new JMenuItem();
+        menuItem1 = new JMenuItem();
+        panel1 = new JPanel(){
 
             @Override
             public void paint(Graphics g) {
@@ -97,31 +122,64 @@ public class Show extends JFrame {
             }
 
         };
-        label3 = new JLabel();
 
         //======== this ========
         Container contentPane = getContentPane();
 
-        //---- button1 ----
-        button1.setText("CARICA");
-        button1.addActionListener(e -> button1ActionPerformed(e));
+        //======== menuBar1 ========
+        {
 
-        //---- label1 ----
-        label1.setBackground(Color.gray);
+            //======== menu2 ========
+            {
+                menu2.setText("Mappa");
 
-        //---- button2 ----
-        button2.setText("CREA ");
-        button2.setEnabled(false);
-        button2.addActionListener(e -> button2ActionPerformed(e));
+                //---- menuItem4 ----
+                menuItem4.setText("Carica");
+                menuItem4.addActionListener(e -> menuItem4ActionPerformed(e));
+                menu2.add(menuItem4);
 
-        //---- button3 ----
-        button3.setText("ESPORTA");
-        button3.setEnabled(false);
-        button3.addActionListener(e -> button3ActionPerformed(e));
+                //---- menuItem5 ----
+                menuItem5.setText("Crea");
+                menuItem5.setEnabled(false);
+                menuItem5.addActionListener(e -> menuItem5ActionPerformed(e));
+                menu2.add(menuItem5);
 
-        //---- button4 ----
-        button4.setText("DISEGNA");
-        button4.addActionListener(e -> button4ActionPerformed(e));
+                //---- menuItem6 ----
+                menuItem6.setText("Esporta");
+                menuItem6.setEnabled(false);
+                menuItem6.addActionListener(e -> menuItem6ActionPerformed(e));
+                menu2.add(menuItem6);
+
+                //---- menuItem7 ----
+                menuItem7.setText("Disegna");
+                menuItem7.addActionListener(e -> menuItem7ActionPerformed(e));
+                menu2.add(menuItem7);
+
+                //---- menuItem3 ----
+                menuItem3.setText("Esci");
+                menuItem3.addActionListener(e -> menuItem3ActionPerformed(e));
+                menu2.add(menuItem3);
+            }
+            menuBar1.add(menu2);
+
+            //======== menu1 ========
+            {
+                menu1.setText("Database");
+
+                //---- menuItem2 ----
+                menuItem2.setText("Connetti");
+                menuItem2.addActionListener(e -> menuItem2ActionPerformed(e));
+                menu1.add(menuItem2);
+
+                //---- menuItem1 ----
+                menuItem1.setText("Inserisci");
+                menuItem1.setEnabled(false);
+                menuItem1.addActionListener(e -> menuItem1ActionPerformed(e));
+                menu1.add(menuItem1);
+            }
+            menuBar1.add(menu1);
+        }
+        setJMenuBar(menuBar1);
 
         //======== panel1 ========
         {
@@ -130,74 +188,39 @@ public class Show extends JFrame {
 
             // JFormDesigner evaluation mark
             panel1.setBorder(new javax.swing.border.CompoundBorder(
-                    new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-                            "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
-                            javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-                            java.awt.Color.red), panel1.getBorder()));
-            panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-                public void propertyChange(java.beans.PropertyChangeEvent e) {
-                    if ("border".equals(e.getPropertyName())) throw new RuntimeException();
-                }
-            });
+                new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+                    "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+                    javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+                    java.awt.Color.red), panel1.getBorder())); panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
 
 
             GroupLayout panel1Layout = new GroupLayout(panel1);
             panel1.setLayout(panel1Layout);
             panel1Layout.setHorizontalGroup(
-                    panel1Layout.createParallelGroup()
-                            .addGap(0, 784, Short.MAX_VALUE)
+                panel1Layout.createParallelGroup()
+                    .addGap(0, 786, Short.MAX_VALUE)
             );
             panel1Layout.setVerticalGroup(
-                    panel1Layout.createParallelGroup()
-                            .addGap(0, 391, Short.MAX_VALUE)
+                panel1Layout.createParallelGroup()
+                    .addGap(0, 473, Short.MAX_VALUE)
             );
         }
 
         GroupLayout contentPaneLayout = new GroupLayout(contentPane);
         contentPane.setLayout(contentPaneLayout);
         contentPaneLayout.setHorizontalGroup(
-                contentPaneLayout.createParallelGroup()
-                        .addGroup(contentPaneLayout.createSequentialGroup()
-                                .addGap(17, 17, 17)
-                                .addGroup(contentPaneLayout.createParallelGroup()
-                                        .addGroup(contentPaneLayout.createSequentialGroup()
-                                                .addComponent(button1, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(label1, GroupLayout.PREFERRED_SIZE, 275, GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(contentPaneLayout.createSequentialGroup()
-                                                .addComponent(button3, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(label3, GroupLayout.PREFERRED_SIZE, 281, GroupLayout.PREFERRED_SIZE)))
-                                .addGap(24, 24, 24)
-                                .addGroup(contentPaneLayout.createParallelGroup()
-                                        .addGroup(contentPaneLayout.createSequentialGroup()
-                                                .addComponent(button2, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(label2, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(button4, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(15, Short.MAX_VALUE))
-                        .addGroup(contentPaneLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addContainerGap())
+            contentPaneLayout.createParallelGroup()
+                .addGroup(contentPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap())
         );
         contentPaneLayout.setVerticalGroup(
-                contentPaneLayout.createParallelGroup()
-                        .addGroup(contentPaneLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(contentPaneLayout.createParallelGroup()
-                                        .addComponent(button2, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(button1, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(label1, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(label2, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(contentPaneLayout.createParallelGroup()
-                                        .addComponent(button3, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(button4, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(label3, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addContainerGap())
+            contentPaneLayout.createParallelGroup()
+                .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap())
         );
         pack();
         setLocationRelativeTo(getOwner());
@@ -206,14 +229,17 @@ public class Show extends JFrame {
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner Evaluation license - Giuseppe Spallone
-    private JButton button1;
-    private JLabel label1;
-    private JButton button2;
-    private JLabel label2;
-    private JButton button3;
-    private JButton button4;
+    private JMenuBar menuBar1;
+    private JMenu menu2;
+    private JMenuItem menuItem4;
+    private JMenuItem menuItem5;
+    private JMenuItem menuItem6;
+    private JMenuItem menuItem7;
+    private JMenuItem menuItem3;
+    private JMenu menu1;
+    private JMenuItem menuItem2;
+    private JMenuItem menuItem1;
     private JPanel panel1;
-    private JLabel label3;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     private File openFile() {

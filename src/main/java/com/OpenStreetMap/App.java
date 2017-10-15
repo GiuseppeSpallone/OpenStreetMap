@@ -17,12 +17,6 @@ import java.util.HashSet;
 public class App {
 
     public static void main(String[] args) {
-        //ControllerImport controllerImport = new ControllerImport();
-        //ControllerDatabase controllerDatabase = new ControllerDatabase();
-
-        //HashMap<Long, Way> ways = controllerImport.ways;
-        //HashMap<Long, Node> nodes = controllerImport.nodes;
-        //HashSet<Arc> arcs = controllerImport.arcs;
 
         //DB dbStreetMap = controllerDatabase.connectDB("localhost", 27017, "StreetMap");
         //DBCollection collectionNode = controllerDatabase.getCollection(dbStreetMap, "Node");
