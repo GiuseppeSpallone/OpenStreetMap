@@ -135,16 +135,11 @@ public class ControllerImport {
             removeMiters(buildings, arcs);
             System.out.println("REMOVE MITERS");*/
 
-            String startingNodeId = "1189844712";
-            Long node = Long.parseLong(startingNodeId);
+            Node startingNode = randomNode(nodes);
 
-            if(nodes.containsKey(node)){
-                Node nod = nodes.get(node);
-                Visite visite = new Visite();
-                visite.visitaDFS(nodes, nod);
-            }else{
-                System.out.println("Nodo non presente");
-            }
+            Visite visite = new Visite();
+            visite.visitaDFS(nodes, startingNode);
+
 
             setIndexNodes(nodes);
 
@@ -811,6 +806,23 @@ public class ControllerImport {
         }
     }
 
+    private Node randomNode(HashMap<Long, Node> nodes) {
+        int random = 0 + (int) (Math.random() * nodes.size());
+
+        Node node = null;
+
+        int i = 0;
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+            Node nd = it.next();
+
+            if (i == random) {
+                node = nd;
+            }
+            i++;
+        }
+        return node;
+    }
+
     /**
      * Export
      **/
@@ -829,7 +841,7 @@ public class ControllerImport {
 
             for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
                 Node n = it.next();
-                out.println(n.getIndex() + " " + n.getX() + " " + n.getY() + " " + n.getLat() + " " + n.getLon());
+                out.println(n.getIndex() + " " + n.getX() + " " + n.getY() + " " + n.getLat() + " " + n.getLon() + " " + n.getMark());
             }
 
 

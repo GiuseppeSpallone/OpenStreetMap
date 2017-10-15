@@ -23,7 +23,8 @@ public class Visite {
                 marked++;
             }
         }
-        System.out.println("VISIT --> NODES: " + nodes.size() + "; MARKED: " + marked);
+        System.out.println("VISIT --> FROM: " + startingNode.getId());
+        System.out.println("     NODES: " + nodes.size() + "; MARKED: " + marked);
         return marked;
     }
 

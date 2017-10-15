@@ -307,6 +307,7 @@ public class Show extends JFrame {
                 int y = Integer.parseInt(vs[2]);
                 float lat = Float.parseFloat(vs[3]);
                 float lon = Float.parseFloat(vs[4]);
+                int mark = Integer.parseInt(vs[5]);
 
                 Node n = new Node();
 
@@ -315,6 +316,7 @@ public class Show extends JFrame {
                 n.setLat(lat);
                 n.setLon(lon);
                 n.setIndex(i);
+                n.setMark(mark);
 
                 nodes_export.put(new Long(i), n);
             }
@@ -409,11 +411,21 @@ public class Show extends JFrame {
             for (Node n : nodes_export.values()) {
                 double x1 = (n.getX() - minX * 1.0) * rap;
                 double y1 = (n.getY() - minY * 1.0) * rap;
+                /*if(n.getMark() > 0){
+                    g.setColor(Color.blue);
+                    g.setFont(g.getFont().deriveFont(10f));
+                    g.drawString("" + n.getIndex(), (int) x1, (int) y1);
+                }else{
+                    g.setColor(Color.red);
+                    g.setFont(g.getFont().deriveFont(10f));
+                    g.drawString("" + n.getIndex(), (int) x1, (int) y1);
+                }
+
                 if (nodes_export.size() <= 100) {
                     g.setColor(Color.blue);
                     g.setFont(g.getFont().deriveFont(10f));
                     g.drawString("" + n.getIndex(), (int) x1, (int) y1);
-                }
+                }*/
             }
         }
     }
