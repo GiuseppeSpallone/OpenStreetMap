@@ -20,8 +20,12 @@ public class Node {
     private boolean flag1;
     private boolean tunnel = false;
 
-    private ArrayList<Way> nd_ways = new ArrayList<>();
-    private ArrayList<Arc> nd_arcs = new ArrayList<>();
+    //Dijkstra
+    private double distanza;
+    private Node predecessore;
+
+    public ArrayList<Way> nd_ways = new ArrayList<>();
+    public ArrayList<Arc> nd_arcs = new ArrayList<>();
 
     public double distanzaLatLog(Node n) {
         return ControllerImport.distance(lat, n.getLat(), lon, n.getLon(), 0, 0);
@@ -161,5 +165,21 @@ public class Node {
 
     public void setMark(int mark) {
         this.mark = mark;
+    }
+
+    public double getDistanza() {
+        return distanza;
+    }
+
+    public void setDistanza(double distanza) {
+        this.distanza = distanza;
+    }
+
+    public Node getPredecessore() {
+        return predecessore;
+    }
+
+    public void setPredecessore(Node predecessore) {
+        this.predecessore = predecessore;
     }
 }

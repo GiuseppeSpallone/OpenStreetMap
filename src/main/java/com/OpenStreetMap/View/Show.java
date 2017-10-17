@@ -20,6 +20,7 @@ import com.OpenStreetMap.Model.Arc;
 import com.OpenStreetMap.Model.Node;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import jdk.nashorn.internal.scripts.JD;
 import net.miginfocom.swing.*;
 
 public class Show extends JFrame {
@@ -47,7 +48,7 @@ public class Show extends JFrame {
 
     private void menuItem2ActionPerformed(ActionEvent e) {
         dbStreetMap = controllerDatabase.connectDB("localhost", 27017, "StreetMap");
-        if(dbStreetMap != null)
+        if (dbStreetMap != null)
             menuItem1.setEnabled(true);
     }
 
@@ -87,17 +88,26 @@ public class Show extends JFrame {
         file_export = selectPath();
         controllerImport.export(file_export, controllerImport.nodes, controllerImport.arcs);
 
-        if (file_export != null){}
-            //label3.setText("Esportato con successo");
+        if (file_export != null) {
+        }
+        //label3.setText("Esportato con successo");
     }
 
     private void menuItem7ActionPerformed(ActionEvent e) {
         file_open_export = openFile();
 
-        if(file_open_export != null){
+        if (file_open_export != null) {
             if (readFile(file_open_export))
                 panel1.repaint();
         }
+    }
+
+    private void panel1MouseClicked(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+
+        Node n = getNodoVicino(x, y);
+        System.out.println("index: " + n.getIndex() + "; id: " + n.getId() + ";" + n.getLat() + "," + n.getLon());
     }
 
     private void initComponents() {
@@ -185,6 +195,12 @@ public class Show extends JFrame {
         {
             panel1.setBackground(Color.white);
             panel1.setBorder(LineBorder.createBlackLineBorder());
+            panel1.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    panel1MouseClicked(e);
+                }
+            });
 
             // JFormDesigner evaluation mark
             panel1.setBorder(new javax.swing.border.CompoundBorder(
@@ -198,11 +214,11 @@ public class Show extends JFrame {
             panel1.setLayout(panel1Layout);
             panel1Layout.setHorizontalGroup(
                 panel1Layout.createParallelGroup()
-                    .addGap(0, 786, Short.MAX_VALUE)
+                    .addGap(0, 986, Short.MAX_VALUE)
             );
             panel1Layout.setVerticalGroup(
                 panel1Layout.createParallelGroup()
-                    .addGap(0, 473, Short.MAX_VALUE)
+                    .addGap(0, 594, Short.MAX_VALUE)
             );
         }
 
@@ -274,7 +290,7 @@ public class Show extends JFrame {
             file = jFileChooser.getSelectedFile();
 
             return file;
-        }else{
+        } else {
             System.out.println("Nessun percorso selezionato");
             return null;
         }
@@ -303,14 +319,16 @@ public class Show extends JFrame {
                 s = in.readLine();
                 vs = splitta(s);
 
-                int x = Integer.parseInt(vs[1]);
-                int y = Integer.parseInt(vs[2]);
-                float lat = Float.parseFloat(vs[3]);
-                float lon = Float.parseFloat(vs[4]);
-                int mark = Integer.parseInt(vs[5]);
+                long id = Long.parseLong(vs[1]);
+                int x = Integer.parseInt(vs[2]);
+                int y = Integer.parseInt(vs[3]);
+                float lat = Float.parseFloat(vs[4]);
+                float lon = Float.parseFloat(vs[5]);
+                int mark = Integer.parseInt(vs[6]);
 
                 Node n = new Node();
 
+                n.setId(id);
                 n.setX(x);
                 n.setY(y);
                 n.setLat(lat);
@@ -356,6 +374,63 @@ public class Show extends JFrame {
         }
         return s.split(" ");
     }
+
+    private Node getNodoVicino(int x, int y) {
+
+        Node ndOut = null;
+
+        int minX = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int minY = Integer.MAX_VALUE;
+        int maxY = Integer.MIN_VALUE;
+        int minZ = Integer.MAX_VALUE;
+        int maxZ = Integer.MIN_VALUE;
+
+        if (nodes_export != null && arcs_export != null) {
+            for (Node n : nodes_export.values()) {
+                if (n.getX() > maxX) {
+                    maxX = n.getX();
+                }
+                if (n.getX() < minX) {
+                    minX = n.getX();
+                }
+                if (n.getY() > maxY) {
+                    maxY = n.getY();
+                }
+                if (n.getY() < minY) {
+                    minY = n.getY();
+                }
+            }
+
+            double w = ((maxX - minX));
+            double h = ((maxY - minY));
+
+            double rap = 1;
+            double rh = h / w;
+            double rhC = (panel1.getSize().height * 1.0) / (panel1.getSize().width * 1.0);
+            if (rh > rhC) {
+                rap = (panel1.getSize().height * 1.0) / h;
+            } else {
+                rap = (panel1.getSize().width * 1.0) / w;
+            }
+
+            double dist = Double.MAX_VALUE;
+
+            //Stampa nodi
+            for (Node n : nodes_export.values()) {
+                double x1 = (n.getX() - minX * 1.0) * rap;
+                double y1 = (n.getY() - minY * 1.0) * rap;
+                double d = (x - x1) * (x - x1) + (y - y1) * (y - y1);
+                if (d < dist) {
+                    dist = d;
+                    ndOut = n;
+                }
+
+            }
+        }
+        return ndOut;
+    }
+
 
     private void disegna(Graphics gg) {
 
@@ -411,16 +486,22 @@ public class Show extends JFrame {
             for (Node n : nodes_export.values()) {
                 double x1 = (n.getX() - minX * 1.0) * rap;
                 double y1 = (n.getY() - minY * 1.0) * rap;
-                /*if(n.getMark() > 0){
+
+                /*if(n.getMark() == 0){
+                    g.setColor(Color.black);
+                    g.setFont(g.getFont().deriveFont(10f));
+                    g.drawString("" + n.getIndex(), (int) x1, (int) y1);
+                }*/
+                if (n.getMark() > 0) {
                     g.setColor(Color.blue);
                     g.setFont(g.getFont().deriveFont(10f));
                     g.drawString("" + n.getIndex(), (int) x1, (int) y1);
-                }else{
+                } else {
                     g.setColor(Color.red);
                     g.setFont(g.getFont().deriveFont(10f));
                     g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                 }
-
+/*
                 if (nodes_export.size() <= 100) {
                     g.setColor(Color.blue);
                     g.setFont(g.getFont().deriveFont(10f));

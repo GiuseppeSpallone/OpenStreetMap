@@ -8,7 +8,7 @@ public class Way {
     private boolean oneway = false;
     private boolean tunnel=false;
 
-    private ArrayList<Node> nd = new ArrayList<>();
+    public ArrayList<Node> nd = new ArrayList<>();
 
     public Long getId() {
         return id;

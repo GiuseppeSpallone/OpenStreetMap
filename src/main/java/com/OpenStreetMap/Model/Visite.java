@@ -1,21 +1,25 @@
 package com.OpenStreetMap.Model;
 
+import sun.misc.Queue;
+
 import java.util.*;
 
 public class Visite {
 
-    public int visitaDFS(HashMap<Long, Node> nodes, Node startingNode) {
+    public void visita(HashMap<Long, Node> nodes, Node startingNode) {
 
         int marked = 0;
-        HashSet<Long> queue = new HashSet<>(nodes.size());
-        queue.add(startingNode.getId());
+        //HashSet<Long> queue = new HashSet<>(nodes.size());
+        //queue.add(startingNode.getId());
 
         for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
             Node node = it.next();
             node.setMark(0);
         }
 
+        //visita in profondità
         visitaFrom(startingNode);
+
 
         for (Iterator<Node> it1 = nodes.values().iterator(); it1.hasNext(); ) {
             Node node = it1.next();
@@ -25,7 +29,6 @@ public class Visite {
         }
         System.out.println("VISIT --> FROM: " + startingNode.getId());
         System.out.println("     NODES: " + nodes.size() + "; MARKED: " + marked);
-        return marked;
     }
 
     private void visitaFrom(Node node) {

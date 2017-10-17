@@ -106,13 +106,21 @@ public class ControllerImport {
                 System.out.println("     CREATE --> WAYS: " + ways.size());
             }
 
+
             //rimozione nodi ed edifici
             removeNodes_Buildings(minlatT, maxlatT, minlonT, maxlonT);
             System.out.println("     REMOVE -->: NODES: " + nodes.size() + " BUILDINGS: " + buildings.size());
+            int i = 0;
+            for (Iterator<Way> it = ways.values().iterator(); it.hasNext(); ) {
+                Way w = it.next();
+                i += w.getNd().size();
+            }
+            System.out.println("--> " + i);
 
             //creo archi
             arcs = createArcs(ways);
             System.out.println("     CREATE --> ARCS: " + arcs.size());
+
 
             if (!import_building) {
                 buildings.clear();
@@ -136,10 +144,29 @@ public class ControllerImport {
             System.out.println("REMOVE MITERS");*/
 
             Node startingNode = randomNode(nodes);
+            /*Node startingNode2 = null;
+
+            Long idNode = 2314744735L;
+            Long idNode = 2314745275L;
+            Long idNode = 1567596942L;
+
+            if (nodes.containsKey(idNode)) {
+                startingNode2 = nodes.get(idNode);
+            } else {
+                System.out.println("Nodo non presente");
+            }*/
 
             Visite visite = new Visite();
-            visite.visitaDFS(nodes, startingNode);
+            visite.visita(nodes, startingNode);
 
+            /*Algorithms algorithms = new Algorithms();
+            Long s = 2314745656L;
+            Long d = 2314745190L;
+
+            Node sorgente = nodes.get(s);
+            Node destinazione = nodes.get(d);
+
+            algorithms.dijkstra(sorgente, destinazione, nodes);*/
 
             setIndexNodes(nodes);
 
@@ -469,13 +496,14 @@ public class ControllerImport {
                             Long ref = Long.parseLong(nd2.getAttribute("ref").getValue());
 
                             if (nodes.containsKey(ref)) {
-                                Node node = nodes.get(ref); //creo nodo
-
-                                nodes_way.add(node); //aggiungo nodo in array
-                                way.setNd(nodes_way); //set array di nodi in strada
-
-                                ways_node.add(way); //aggiungo strada in array
-                                node.setNd_ways(ways_node); //set array di strade in nodo
+                                Node node = nodes.get(ref);
+                                way.nd.add(node);
+                                node.nd_ways.add(way);
+//                                Node node = nodes.get(ref); //creo nodo
+//                                nodes_way.add(node); //aggiungo nodo in array
+//                                way.setNd(nodes_way); //set array di nodi in strada
+//                                ways_node.add(way); //aggiungo strada in array
+//                                node.setNd_ways(ways_node); //set array di strade in nodo
                             }
                         }
                         ways.put(way.getId(), way); //aggiungo strada in hashmap strade
@@ -551,10 +579,14 @@ public class ControllerImport {
                         n.setTunnel(true);
                     }
 
-                    arcs.add(a); //aggiungo arco in hashset archi
+                    arcs.add(a);
+                    n.nd_arcs.add(a);
+                    old.nd_arcs.add(a);
+
+                    /*arcs.add(a); //aggiungo arco in hashset archi
                     arcs_node.add(a); //aggiungo arco in array
                     n.setNd_arcs(arcs_node); //set array di archi in nodo n
-                    old.setNd_arcs(arcs_node); //set array di archi in nodo old
+                    old.setNd_arcs(arcs_node); //set array di archi in nodo old*/
 
                 }
                 old = n;
@@ -632,6 +664,20 @@ public class ControllerImport {
             }
         }
 
+        int i = 0;
+        for (Iterator<Way> it = ways.values().iterator(); it.hasNext(); ) {
+            Way w = it.next();
+            i += w.getNd().size();
+        }
+        System.out.println("prima -> " + i);
+
+        int a = 0;
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+            Node n = it.next();
+            a += n.getNd_ways().size();
+        }
+        System.out.println("pp " + a);
+
         for (Iterator<Node> it = del.iterator(); it.hasNext(); ) {
             Node n = it.next();
             nodes.remove(n.getId());
@@ -641,6 +687,13 @@ public class ControllerImport {
             }
         }
         del.clear();
+
+        int c = 0;
+        for (Iterator<Way> it = ways.values().iterator(); it.hasNext(); ) {
+            Way w = it.next();
+            c += w.getNd().size();
+        }
+        System.out.println("dopo -> " + c);
 
         for (Iterator<Node> it = buildings.iterator(); it.hasNext(); ) {
             Node n = it.next();
@@ -841,7 +894,7 @@ public class ControllerImport {
 
             for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
                 Node n = it.next();
-                out.println(n.getIndex() + " " + n.getX() + " " + n.getY() + " " + n.getLat() + " " + n.getLon() + " " + n.getMark());
+                out.println(n.getIndex() + " " + n.getId() + " " + n.getX() + " " + n.getY() + " " + n.getLat() + " " + n.getLon() + " " + n.getMark());
             }
 
 
