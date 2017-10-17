@@ -578,7 +578,6 @@ public class ControllerImport {
                         old.setTunnel(true);
                         n.setTunnel(true);
                     }
-
                     arcs.add(a);
                     n.nd_arcs.add(a);
                     old.nd_arcs.add(a);
