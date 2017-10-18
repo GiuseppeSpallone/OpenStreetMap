@@ -19,29 +19,28 @@ public class Algorithms {
 
 
     public void dijkstra(Node sorgente, Node destinazione, HashMap<Long, Node> nodes) {
+        System.out.println("DIJKSTRA --> ");
+        System.out.println("             SORGENTE id: " + sorgente.getId() + "; index: " + sorgente.getIndex() + "; coordinate: " + sorgente.getLat() + "," + sorgente.getLon());
+        System.out.println("             DESTINAZIONE id: " + destinazione.getId() + "; index: " + destinazione.getIndex() + "; coordinate: " + destinazione.getLat() + "," + destinazione.getLon());
 
         //reset distanza e predecessore
         reset(nodes);
 
-        //PriorityQueue<Node> queue = new PriorityQueue<>();
-        ArrayList<Node> queue = new ArrayList<>();
+        PriorityQueue<Node> queue = new PriorityQueue<>(nodes.size(), new Comparator<Node>() {
+            @Override
+            public int compare(Node n1, Node n2) {
+                return (int) (n1.getDistanza() - n2.getDistanza());
+            }
+        });
 
-        ArrayList<Double> distanzaPercorso = new ArrayList<>();
-        ArrayList<Node> percorso = new ArrayList<>();
-
-        sorgente.setDistanza(5);
+        sorgente.setDistanza(0);
         sorgente.setPredecessore(null);
-        queue.add(sorgente);
+        queue.add(sorgente); //inserisco sorgente nella coda
 
-        Node node = queue.get(0);
+        Node node = sorgente;
 
         while (node != destinazione) {
-            double min = queue.get(0).getDistanza();
-            for (Node i : queue) {
-                if (i.getDistanza() < min) {
-                    node = i;
-                }
-            }
+            node = queue.poll(); //estraggo nodo con distanza minore
 
             for (Iterator<Arc> it1 = node.getNd_arcs().iterator(); it1.hasNext(); ) {
                 Arc arc = it1.next();
@@ -52,43 +51,46 @@ public class Algorithms {
                 if (to.getDistanza() == Double.MAX_VALUE) {
                     to.setDistanza(from.getDistanza() + arc.getLength());
                     to.setPredecessore(from);
-                    queue.add(to);
 
-                    percorso.add(from);
-                    distanzaPercorso.add(from.getDistanza());
+                    queue.add(to);
 
                 } else {
                     if (to.getDistanza() > from.getDistanza() + arc.getLength()) {
                         queue.remove(to);
-                        percorso.remove(to);
-                        distanzaPercorso.remove(to.getDistanza());
 
                         to.setDistanza(from.getDistanza() + arc.getLength());
                         to.setPredecessore(from);
+
                         queue.add(to);
-
-                        percorso.add(from);
-                        distanzaPercorso.add(to.getDistanza());
-
-
                     }
                 }
 
             }
         }
 
-        System.out.println("ciaoooo");
-        for (Iterator<Double> it = distanzaPercorso.iterator(); it.hasNext(); ) {
-            double distanza = it.next();
-            System.out.println("distanza" + distanza);
-        }
+        System.out.println("             DISTANZA --> " + destinazione.getDistanza());
+        percorso(sorgente, destinazione);
 
-        for (Iterator<Node> it = percorso.iterator(); it.hasNext(); ) {
-            Node nodo = it.next();
-            System.out.println("percorso --> index: " + nodo.getIndex() + "; id: " + nodo.getId());
-        }
     }
 
+    public void percorso(Node sorgente, Node destinazione) {
+        System.out.println("             PERCORSO --> ");
+
+        System.out.println("                            id: " + destinazione.getId() + "; index: " + destinazione.getIndex());
+        destinazione.setMark(1);
+
+        Node nd = destinazione.getPredecessore();
+
+
+        while (nd != sorgente) {
+            System.out.println("                            id: " + nd.getId() + "; index: " + nd.getIndex());
+            nd = nd.getPredecessore();
+            nd.setMark(1);
+        }
+
+        System.out.println("                            id: " + sorgente.getId() + "; index: " + sorgente.getIndex());
+        sorgente.setMark(1);
+    }
 
 }
 

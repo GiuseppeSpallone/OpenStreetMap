@@ -107,7 +107,7 @@ public class Show extends JFrame {
         int y = e.getY();
 
         Node n = getNodoVicino(x, y);
-        System.out.println("index: " + n.getIndex() + "; id: " + n.getId() + ";" + n.getLat() + "," + n.getLon());
+        System.out.println("index: " + n.getIndex() + "; id: " + n.getId() + "; " + n.getLat() + "," + n.getLon());
     }
 
     private void initComponents() {
