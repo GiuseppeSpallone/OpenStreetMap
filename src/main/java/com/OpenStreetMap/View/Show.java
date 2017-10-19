@@ -10,21 +10,20 @@ import java.beans.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.OpenStreetMap.Controller.ControllerDatabase;
-import com.OpenStreetMap.Controller.ControllerImport;
+import com.OpenStreetMap.Controller.*;
 import com.OpenStreetMap.Model.Arc;
 import com.OpenStreetMap.Model.Node;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import jdk.nashorn.internal.scripts.JD;
-import net.miginfocom.swing.*;
 
 public class Show extends JFrame {
     ControllerImport controllerImport = new ControllerImport();
+    ControllerExport controllerExport = new ControllerExport();
     ControllerDatabase controllerDatabase = new ControllerDatabase();
 
     DB dbStreetMap = null;
@@ -80,12 +79,13 @@ public class Show extends JFrame {
 
         if (!controllerImport.nodes.isEmpty() || !controllerImport.arcs.isEmpty()) {
             //label2.setText("Nodi: " + controllerImport.nodes.size() + " Archi: " + controllerImport.arcs.size());
+            menuItem6.setEnabled(true);
         }
     }
 
     private void menuItem6ActionPerformed(ActionEvent e) {
         file_export = selectPath();
-        controllerImport.export(file_export, controllerImport.nodes, controllerImport.arcs);
+        controllerExport.export(file_export, controllerImport.nodes, controllerImport.arcs);
 
         if (file_export != null) {
         }
@@ -96,8 +96,12 @@ public class Show extends JFrame {
         file_open_export = openFile();
 
         if (file_open_export != null) {
-            if (readFile(file_open_export))
+            if (readFile(file_open_export)) {
                 panel1.repaint();
+                menu3.setEnabled(true);
+                menu4.setEnabled(true);
+                menuItem11.setEnabled(true);
+            }
         }
     }
 
@@ -109,6 +113,33 @@ public class Show extends JFrame {
         System.out.println("index: " + n.getIndex() + "; id: " + n.getId() + "; " + n.getLat() + "," + n.getLon());
     }
 
+    private void menuItem10ActionPerformed(ActionEvent e) {
+        Node startingNode = controllerImport.randomNode(nodes_export);
+        Visits visits = new Visits();
+        visits.visita(nodes_export, startingNode);
+        panel1.repaint();
+    }
+
+    private void menuItem9ActionPerformed(ActionEvent e) {
+        Algorithms algorithms = new Algorithms();
+        //Long s = 1567597028L;
+        //Long d = 2314745275L;
+        //Node sorgente = nodes_export.get(s);
+        //Node destinazione = nodes_export.get(d);
+        Node sorgente = controllerImport.randomNode(nodes_export);
+        Node destinazione = controllerImport.randomNode(nodes_export);
+        algorithms.dijkstra(sorgente, destinazione, nodes_export);
+        panel1.repaint();
+    }
+
+    private void menuItem11ActionPerformed(ActionEvent e) {
+        for (Iterator<Node> it = nodes_export.values().iterator(); it.hasNext(); ) {
+            Node node = it.next();
+            node.setMark(-1);
+        }
+        panel1.repaint();
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner Evaluation license - Giuseppe Spallone
@@ -118,6 +149,7 @@ public class Show extends JFrame {
         menuItem5 = new JMenuItem();
         menuItem6 = new JMenuItem();
         menuItem7 = new JMenuItem();
+        menuItem11 = new JMenuItem();
         menuItem3 = new JMenuItem();
         menu3 = new JMenu();
         menuItem10 = new JMenuItem();
@@ -126,7 +158,7 @@ public class Show extends JFrame {
         menu1 = new JMenu();
         menuItem2 = new JMenuItem();
         menuItem1 = new JMenuItem();
-        panel1 = new JPanel(){
+        panel1 = new JPanel() {
 
             @Override
             public void paint(Graphics g) {
@@ -159,6 +191,7 @@ public class Show extends JFrame {
 
                 //---- menuItem6 ----
                 menuItem6.setText("Esporta");
+                menuItem6.setEnabled(false);
                 menuItem6.addActionListener(e -> menuItem6ActionPerformed(e));
                 menu2.add(menuItem6);
 
@@ -166,6 +199,12 @@ public class Show extends JFrame {
                 menuItem7.setText("Disegna");
                 menuItem7.addActionListener(e -> menuItem7ActionPerformed(e));
                 menu2.add(menuItem7);
+
+                //---- menuItem11 ----
+                menuItem11.setText("Reset");
+                menuItem11.setEnabled(false);
+                menuItem11.addActionListener(e -> menuItem11ActionPerformed(e));
+                menu2.add(menuItem11);
 
                 //---- menuItem3 ----
                 menuItem3.setText("Esci");
@@ -177,9 +216,11 @@ public class Show extends JFrame {
             //======== menu3 ========
             {
                 menu3.setText("Visite");
+                menu3.setEnabled(false);
 
                 //---- menuItem10 ----
                 menuItem10.setText("Profondit\u00e0");
+                menuItem10.addActionListener(e -> menuItem10ActionPerformed(e));
                 menu3.add(menuItem10);
             }
             menuBar1.add(menu3);
@@ -187,9 +228,11 @@ public class Show extends JFrame {
             //======== menu4 ========
             {
                 menu4.setText("Percorso");
+                menu4.setEnabled(false);
 
                 //---- menuItem9 ----
                 menuItem9.setText("Dijkstra");
+                menuItem9.addActionListener(e -> menuItem9ActionPerformed(e));
                 menu4.add(menuItem9);
             }
             menuBar1.add(menu4);
@@ -226,39 +269,44 @@ public class Show extends JFrame {
 
             // JFormDesigner evaluation mark
             panel1.setBorder(new javax.swing.border.CompoundBorder(
-                new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-                    "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
-                    javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-                    java.awt.Color.red), panel1.getBorder())); panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
+                    new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+                            "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+                            javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+                            java.awt.Color.red), panel1.getBorder()));
+            panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+                public void propertyChange(java.beans.PropertyChangeEvent e) {
+                    if ("border".equals(e.getPropertyName())) throw new RuntimeException();
+                }
+            });
 
 
             GroupLayout panel1Layout = new GroupLayout(panel1);
             panel1.setLayout(panel1Layout);
             panel1Layout.setHorizontalGroup(
-                panel1Layout.createParallelGroup()
-                    .addGap(0, 986, Short.MAX_VALUE)
+                    panel1Layout.createParallelGroup()
+                            .addGap(0, 986, Short.MAX_VALUE)
             );
             panel1Layout.setVerticalGroup(
-                panel1Layout.createParallelGroup()
-                    .addGap(0, 592, Short.MAX_VALUE)
+                    panel1Layout.createParallelGroup()
+                            .addGap(0, 592, Short.MAX_VALUE)
             );
         }
 
         GroupLayout contentPaneLayout = new GroupLayout(contentPane);
         contentPane.setLayout(contentPaneLayout);
         contentPaneLayout.setHorizontalGroup(
-            contentPaneLayout.createParallelGroup()
-                .addGroup(contentPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap())
+                contentPaneLayout.createParallelGroup()
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         contentPaneLayout.setVerticalGroup(
-            contentPaneLayout.createParallelGroup()
-                .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap())
+                contentPaneLayout.createParallelGroup()
+                        .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         pack();
         setLocationRelativeTo(getOwner());
@@ -273,6 +321,7 @@ public class Show extends JFrame {
     private JMenuItem menuItem5;
     private JMenuItem menuItem6;
     private JMenuItem menuItem7;
+    private JMenuItem menuItem11;
     private JMenuItem menuItem3;
     private JMenu menu3;
     private JMenuItem menuItem10;
@@ -350,7 +399,7 @@ public class Show extends JFrame {
                 int y = Integer.parseInt(vs[3]);
                 float lat = Float.parseFloat(vs[4]);
                 float lon = Float.parseFloat(vs[5]);
-                int mark = Integer.parseInt(vs[6]);
+                //int mark = Integer.parseInt(vs[6]);
 
                 Node n = new Node();
 
@@ -360,7 +409,7 @@ public class Show extends JFrame {
                 n.setLat(lat);
                 n.setLon(lon);
                 n.setIndex(i);
-                n.setMark(mark);
+                //n.setMark(mark);
 
                 nodes_export.put(new Long(i), n);
             }
@@ -379,7 +428,21 @@ public class Show extends JFrame {
 
                 arcs_export.add(a);
             }
+
+
+            for (Iterator<Arc> it = arcs_export.iterator(); it.hasNext(); ) {
+                Arc a = it.next();
+
+                Node from = a.getFrom();
+                Node to = a.getTo();
+
+                from.nd_arcs.add(a);
+                to.nd_arcs.add(a);
+            }
+
             in.close();
+
+
         } catch (IOException ex) {
             ex.printStackTrace();
             return false;
@@ -409,8 +472,6 @@ public class Show extends JFrame {
         int maxX = Integer.MIN_VALUE;
         int minY = Integer.MAX_VALUE;
         int maxY = Integer.MIN_VALUE;
-        int minZ = Integer.MAX_VALUE;
-        int maxZ = Integer.MIN_VALUE;
 
         if (nodes_export != null && arcs_export != null) {
             for (Node n : nodes_export.values()) {
@@ -467,8 +528,6 @@ public class Show extends JFrame {
         int maxX = Integer.MIN_VALUE;
         int minY = Integer.MAX_VALUE;
         int maxY = Integer.MIN_VALUE;
-        int minZ = Integer.MAX_VALUE;
-        int maxZ = Integer.MIN_VALUE;
 
         if (nodes_export != null && arcs_export != null) {
             for (Node n : nodes_export.values()) {
@@ -518,17 +577,18 @@ public class Show extends JFrame {
                     g.setFont(g.getFont().deriveFont(10f));
                     g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                 }
-                if (n.getMark() > 0) {
+                if (n.getMark() == 1) {
                     g.setColor(Color.blue);
                     g.setFont(g.getFont().deriveFont(10f));
                     g.drawString("" + n.getIndex(), (int) x1, (int) y1);
-                } else {
+                }
+                if (n.getMark() == 0) {
                     g.setColor(Color.red);
                     g.setFont(g.getFont().deriveFont(10f));
                     g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                 }
-/*
-                if (nodes_export.size() <= 100) {
+
+                /*if (nodes_export.size() <= 100) {
                     g.setColor(Color.blue);
                     g.setFont(g.getFont().deriveFont(10f));
                     g.drawString("" + n.getIndex(), (int) x1, (int) y1);

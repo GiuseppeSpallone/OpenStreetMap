@@ -1,13 +1,14 @@
-package com.OpenStreetMap.Model;
+package com.OpenStreetMap.Controller;
 
+import com.OpenStreetMap.Model.Arc;
+import com.OpenStreetMap.Model.Node;
 import sun.misc.Queue;
 
 import java.util.*;
 
-public class Visite {
+public class Visits {
 
     public void visita(HashMap<Long, Node> nodes, Node startingNode) {
-
 
         reset(nodes);
 

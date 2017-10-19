@@ -151,7 +151,7 @@ public class ControllerImport {
             Visit visite = new Visite();
             visite.visita(nodes, startingNode);*/
 
-            Algorithms algorithms = new Algorithms();
+            /*Algorithms algorithms = new Algorithms();
 //            Long s = 1567597028L;
 //            Long d = 2314745275L;
 //            Node sorgente = nodes.get(s);
@@ -160,7 +160,7 @@ public class ControllerImport {
             Node destinazione = randomNode(nodes);
             algorithms.dijkstra(sorgente, destinazione, nodes);
 
-            setIndexNodes(nodes);
+            setIndexNodes(nodes);*/
 
         } catch (IOException | NumberFormatException | JDOMException e) {
             System.out.println("Exception: " + e.getMessage());
@@ -549,7 +549,7 @@ public class ControllerImport {
 
     private HashSet<Arc> createArcs(HashMap<Long, Way> ways) {
         arcs = new HashSet<>();
-        ArrayList<Arc> arcs_node = null;
+        //ArrayList<Arc> arcs_node = null;
 
         for (Iterator<Way> it = ways.values().iterator(); it.hasNext(); ) {
             Way w = it.next();
@@ -558,7 +558,7 @@ public class ControllerImport {
             for (Iterator<Node> it1 = w.getNd().iterator(); it1.hasNext(); ) {
                 Node n = it1.next();
 
-                arcs_node = new ArrayList<>();
+                //arcs_node = new ArrayList<>();
 
                 if (old != null) {
                     Arc a = new Arc(old, n);
@@ -829,7 +829,7 @@ public class ControllerImport {
         }
     }
 
-    private Node randomNode(HashMap<Long, Node> nodes) {
+    public Node randomNode(HashMap<Long, Node> nodes) {
         int random = 0 + (int) (Math.random() * nodes.size());
 
         Node node = null;
@@ -844,46 +844,6 @@ public class ControllerImport {
             i++;
         }
         return node;
-    }
-
-    /**
-     * Export
-     **/
-    public void export(File file, HashMap<Long, Node> nodes, HashSet<Arc> arcs) {
-
-        FileWriter outFile = null;
-
-        try {
-            outFile = new FileWriter(file);
-            PrintWriter out = new PrintWriter(outFile);
-
-            System.out.println("EXPORT: " + file.getName());
-            System.out.println("   Creato file: " + file.getName());
-
-            out.println(nodes.size() + " " + arcs.size());
-
-            for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
-                Node n = it.next();
-                out.println(n.getIndex() + " " + n.getId() + " " + n.getX() + " " + n.getY() + " " + n.getLat() + " " + n.getLon() + " " + n.getMark());
-            }
-
-
-            for (Iterator<Arc> it = arcs.iterator(); it.hasNext(); ) {
-                Arc a = it.next();
-                double ll = Math.round(a.getLength() * 100.0) / 100.0;
-                out.println(a.getFrom().getIndex() + " " + a.getTo().getIndex() + " " + ll);
-            }
-
-            out.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            try {
-                outFile.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
     }
 
     /**

@@ -70,7 +70,7 @@ public class Algorithms {
             Node node = it.next();
             node.setDistanza(Double.MAX_VALUE);
             node.setPredecessore(null);
-            node.setMark(0);
+            node.setMark(-1);
         }
     }
 
