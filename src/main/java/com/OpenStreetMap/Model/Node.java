@@ -13,7 +13,7 @@ public class Node {
     private int index;
     private int x;
     private int y;
-    private int mark;
+    private int mark = -1;
 
     private int num_studenti;
     private int comp;
@@ -23,6 +23,7 @@ public class Node {
     //Dijkstra
     private double distanza;
     private Node predecessore;
+    //private int mark;
 
     public ArrayList<Way> nd_ways = new ArrayList<>();
     public ArrayList<Arc> nd_arcs = new ArrayList<>();
@@ -182,4 +183,5 @@ public class Node {
     public void setPredecessore(Node predecessore) {
         this.predecessore = predecessore;
     }
+
 }

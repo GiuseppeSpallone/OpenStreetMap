@@ -7,21 +7,11 @@ import java.util.*;
 
 public class Algorithms {
 
-    private void reset(HashMap<Long, Node> nodes) {
-
-        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
-            Node node = it.next();
-            node.setDistanza(Double.MAX_VALUE);
-            node.setPredecessore(null);
-            node.setMark(0);
-        }
-    }
-
 
     public void dijkstra(Node sorgente, Node destinazione, HashMap<Long, Node> nodes) {
         System.out.println("DIJKSTRA --> ");
-        System.out.println("             SORGENTE id: " + sorgente.getId() + "; index: " + sorgente.getIndex() + "; coordinate: " + sorgente.getLat() + "," + sorgente.getLon());
-        System.out.println("             DESTINAZIONE id: " + destinazione.getId() + "; index: " + destinazione.getIndex() + "; coordinate: " + destinazione.getLat() + "," + destinazione.getLon());
+        System.out.println("             SORGENTE index: " + sorgente.getIndex() + "; id: " + sorgente.getId() + "; coordinate: " + sorgente.getLat() + "," + sorgente.getLon());
+        System.out.println("             DESTINAZIONE index: " + destinazione.getIndex() + "; id: " + destinazione.getId() + "; coordinate: " + destinazione.getLat() + "," + destinazione.getLon());
 
         //reset distanza e predecessore
         reset(nodes);
@@ -68,28 +58,48 @@ public class Algorithms {
             }
         }
 
-        System.out.println("             DISTANZA --> " + destinazione.getDistanza());
-        percorso(sorgente, destinazione);
+
+        ArrayList<Node> percorso = percorso(sorgente, destinazione);
+        printPercorso(percorso);
 
     }
 
-    public void percorso(Node sorgente, Node destinazione) {
-        System.out.println("             PERCORSO --> ");
+    private void reset(HashMap<Long, Node> nodes) {
 
-        System.out.println("                            id: " + destinazione.getId() + "; index: " + destinazione.getIndex());
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+            Node node = it.next();
+            node.setDistanza(Double.MAX_VALUE);
+            node.setPredecessore(null);
+            node.setMark(0);
+        }
+    }
+
+    private ArrayList<Node> percorso(Node sorgente, Node destinazione) {
+        ArrayList<Node> percorso = new ArrayList<>();
+
         destinazione.setMark(1);
+        percorso.add(destinazione);
 
         Node nd = destinazione.getPredecessore();
-
-
         while (nd != sorgente) {
-            System.out.println("                            id: " + nd.getId() + "; index: " + nd.getIndex());
             nd = nd.getPredecessore();
             nd.setMark(1);
+            percorso.add(nd);
         }
-
-        System.out.println("                            id: " + sorgente.getId() + "; index: " + sorgente.getIndex());
         sorgente.setMark(1);
+        percorso.add(sorgente);
+
+        return percorso;
+    }
+
+    private void printPercorso(ArrayList<Node> percorso) {
+        System.out.println("             DISTANZA --> " + percorso.get(0).getDistanza());
+
+        System.out.println("             PERCORSO --> ");
+        for (Iterator<Node> it = percorso.iterator(); it.hasNext(); ) {
+            Node nd = it.next();
+            System.out.println("                            id: " + nd.getId() + "; index: " + nd.getIndex());
+        }
     }
 
 }

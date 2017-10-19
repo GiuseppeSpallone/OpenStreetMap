@@ -8,27 +8,11 @@ public class Visite {
 
     public void visita(HashMap<Long, Node> nodes, Node startingNode) {
 
-        int marked = 0;
-        //HashSet<Long> queue = new HashSet<>(nodes.size());
-        //queue.add(startingNode.getId());
 
-        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
-            Node node = it.next();
-            node.setMark(0);
-        }
+        reset(nodes);
 
         //visita in profondità
         visitaFrom(startingNode);
-
-
-        for (Iterator<Node> it1 = nodes.values().iterator(); it1.hasNext(); ) {
-            Node node = it1.next();
-            if (node.getMark() == 1) {
-                marked++;
-            }
-        }
-        System.out.println("VISIT --> FROM: " + startingNode.getId());
-        System.out.println("     NODES: " + nodes.size() + "; MARKED: " + marked);
     }
 
     private void visitaFrom(Node node) {
@@ -42,6 +26,14 @@ public class Visite {
                     visitaFrom(arc.getTo());
                 }
             }
+        }
+    }
+
+    private void reset(HashMap<Long, Node> nodes) {
+
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+            Node node = it.next();
+            node.setMark(0);
         }
     }
 

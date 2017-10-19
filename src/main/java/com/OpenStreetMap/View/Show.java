@@ -80,7 +80,6 @@ public class Show extends JFrame {
 
         if (!controllerImport.nodes.isEmpty() || !controllerImport.arcs.isEmpty()) {
             //label2.setText("Nodi: " + controllerImport.nodes.size() + " Archi: " + controllerImport.arcs.size());
-            menuItem6.setEnabled(true);
         }
     }
 
@@ -120,6 +119,10 @@ public class Show extends JFrame {
         menuItem6 = new JMenuItem();
         menuItem7 = new JMenuItem();
         menuItem3 = new JMenuItem();
+        menu3 = new JMenu();
+        menuItem10 = new JMenuItem();
+        menu4 = new JMenu();
+        menuItem9 = new JMenuItem();
         menu1 = new JMenu();
         menuItem2 = new JMenuItem();
         menuItem1 = new JMenuItem();
@@ -156,7 +159,6 @@ public class Show extends JFrame {
 
                 //---- menuItem6 ----
                 menuItem6.setText("Esporta");
-                menuItem6.setEnabled(false);
                 menuItem6.addActionListener(e -> menuItem6ActionPerformed(e));
                 menu2.add(menuItem6);
 
@@ -171,6 +173,26 @@ public class Show extends JFrame {
                 menu2.add(menuItem3);
             }
             menuBar1.add(menu2);
+
+            //======== menu3 ========
+            {
+                menu3.setText("Visite");
+
+                //---- menuItem10 ----
+                menuItem10.setText("Profondit\u00e0");
+                menu3.add(menuItem10);
+            }
+            menuBar1.add(menu3);
+
+            //======== menu4 ========
+            {
+                menu4.setText("Percorso");
+
+                //---- menuItem9 ----
+                menuItem9.setText("Dijkstra");
+                menu4.add(menuItem9);
+            }
+            menuBar1.add(menu4);
 
             //======== menu1 ========
             {
@@ -218,7 +240,7 @@ public class Show extends JFrame {
             );
             panel1Layout.setVerticalGroup(
                 panel1Layout.createParallelGroup()
-                    .addGap(0, 594, Short.MAX_VALUE)
+                    .addGap(0, 592, Short.MAX_VALUE)
             );
         }
 
@@ -252,6 +274,10 @@ public class Show extends JFrame {
     private JMenuItem menuItem6;
     private JMenuItem menuItem7;
     private JMenuItem menuItem3;
+    private JMenu menu3;
+    private JMenuItem menuItem10;
+    private JMenu menu4;
+    private JMenuItem menuItem9;
     private JMenu menu1;
     private JMenuItem menuItem2;
     private JMenuItem menuItem1;
@@ -487,11 +513,11 @@ public class Show extends JFrame {
                 double x1 = (n.getX() - minX * 1.0) * rap;
                 double y1 = (n.getY() - minY * 1.0) * rap;
 
-                /*if(n.getMark() == 0){
+                if (n.getMark() == -1) {
                     g.setColor(Color.black);
                     g.setFont(g.getFont().deriveFont(10f));
                     g.drawString("" + n.getIndex(), (int) x1, (int) y1);
-                }*/
+                }
                 if (n.getMark() > 0) {
                     g.setColor(Color.blue);
                     g.setFont(g.getFont().deriveFont(10f));

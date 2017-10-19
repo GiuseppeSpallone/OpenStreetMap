@@ -10,6 +10,7 @@ public class Arc {
     private boolean oneway=false;
     private boolean tunnel=false;
 
+
     public Arc(Node from, Node to) {
         this.from = from;
         this.to = to;
@@ -61,4 +62,5 @@ public class Arc {
     public void setIndex(int index) {
         this.index = index;
     }
+
 }

@@ -148,7 +148,7 @@ public class ControllerImport {
             }*/
 
             /*Node startingNode = randomNode(nodes);
-            Visite visite = new Visite();
+            Visit visite = new Visite();
             visite.visita(nodes, startingNode);*/
 
             Algorithms algorithms = new Algorithms();
