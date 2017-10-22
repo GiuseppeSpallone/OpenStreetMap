@@ -27,14 +27,8 @@ new FormModel {
 					"text": "Mappa"
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "menuItem4"
-						"text": "Carica "
+						"text": "Carica / Esporta"
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "menuItem4ActionPerformed", true ) )
-					} )
-					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem6"
-						"text": "Esporta "
-						"enabled": false
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "menuItem6ActionPerformed", true ) )
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "menuItem7"

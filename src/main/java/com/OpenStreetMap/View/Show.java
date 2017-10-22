@@ -71,7 +71,19 @@ public class Show extends JFrame {
 
             if (!nodes.isEmpty() || !arcs.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Mappa creata nodi: " + nodes.size() + " archi: " + arcs.size());
-                menuItem6.setEnabled(true);
+
+                file = selectPath();
+                if(esportaMap(file)){
+                    Object[] options = {"Si", "No"};
+                    int option = JOptionPane.showOptionDialog(null, "Mappa esportata, disegnare mappa?", null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+                    if (option == 0) {
+                        disegnaMap(file);
+                    }
+                } else{
+                    JOptionPane.showMessageDialog(null, "Mappa non esportata");
+                }
+
             } else {
                 JOptionPane.showMessageDialog(null, "Mappa non creata");
             }
@@ -80,49 +92,9 @@ public class Show extends JFrame {
         }
     }
 
-    private void menuItem6ActionPerformed(ActionEvent e) {
-        file = selectPath();
-
-        if (file != null) {
-            controllerExport.export(file, nodes, arcs);
-            nodes = controllerExport.getNodes();
-            arcs = controllerExport.getArcs();
-
-            Object[] options = {"Si", "No"};
-            int option = JOptionPane.showOptionDialog(null, "Mappa esportata, disegnare mappa?", null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-
-            if (option == 0) {
-                paintGraph(file);
-            }
-
-        } else {
-            JOptionPane.showMessageDialog(null, "Mappa non esportata");
-        }
-    }
-
     private void menuItem7ActionPerformed(ActionEvent e) {
         file = openFile();
-        paintGraph(file);
-
-    }
-
-    private void paintGraph(File file) {
-        if (file != null) {
-            if (controllerFileMap.readFile(file)) {
-                nodes = controllerFileMap.getNodes();
-                arcs = controllerFileMap.getArcs();
-
-                //per risolvere bug --> disegna parte del grafo quando si crea la mappa importata
-                nodes_paint = nodes;
-                arcs_paint = arcs;
-
-                panel1.repaint();
-                menu3.setEnabled(true);
-                menu4.setEnabled(true);
-                menuItem11.setEnabled(true);
-                menuItem8.setEnabled(true);
-            }
-        }
+        disegnaMap(file);
     }
 
     private void panel1MouseClicked(MouseEvent e) {
@@ -130,6 +102,7 @@ public class Show extends JFrame {
         int y = e.getY();
 
         Node n = getNodoVicino(x, y);
+        JOptionPane.showMessageDialog(null, "index: " + n.getIndex() + "; id: " + n.getId() + "; " + n.getLat() + "," + n.getLon());
         System.out.println("index: " + n.getIndex() + "; id: " + n.getId() + "; " + n.getLat() + "," + n.getLon());
     }
 
@@ -140,6 +113,8 @@ public class Show extends JFrame {
     }
 
     private void menuItem9ActionPerformed(ActionEvent e) {
+        JPanel panelVisit = new OptionPaneVisit();
+        JOptionPane.showMessageDialog(null, panelVisit, null, JOptionPane.INFORMATION_MESSAGE);
         //Long s = 1567597028L;
         //Long d = 2314745275L;
         //Node sorgente = nodes_export.get(s);
@@ -165,11 +140,14 @@ public class Show extends JFrame {
         arcs_paint = null;
         panel1.repaint();
 
-        menuItem6.setEnabled(false);
         menuItem11.setEnabled(false);
         menuItem8.setEnabled(false);
         menu3.setEnabled(false);
         menu4.setEnabled(false);
+    }
+
+    private void menuItem6ActionPerformed(ActionEvent e) {
+        // TODO add your code here
     }
 
     private void initComponents() {
@@ -178,7 +156,6 @@ public class Show extends JFrame {
         menuBar1 = new JMenuBar();
         menu2 = new JMenu();
         menuItem4 = new JMenuItem();
-        menuItem6 = new JMenuItem();
         menuItem7 = new JMenuItem();
         menuItem11 = new JMenuItem();
         menuItem8 = new JMenuItem();
@@ -211,15 +188,9 @@ public class Show extends JFrame {
                 menu2.setText("Mappa");
 
                 //---- menuItem4 ----
-                menuItem4.setText("Carica ");
+                menuItem4.setText("Carica / Esporta");
                 menuItem4.addActionListener(e -> menuItem4ActionPerformed(e));
                 menu2.add(menuItem4);
-
-                //---- menuItem6 ----
-                menuItem6.setText("Esporta ");
-                menuItem6.setEnabled(false);
-                menuItem6.addActionListener(e -> menuItem6ActionPerformed(e));
-                menu2.add(menuItem6);
 
                 //---- menuItem7 ----
                 menuItem7.setText("Disegna ");
@@ -345,7 +316,6 @@ public class Show extends JFrame {
     private JMenuBar menuBar1;
     private JMenu menu2;
     private JMenuItem menuItem4;
-    private JMenuItem menuItem6;
     private JMenuItem menuItem7;
     private JMenuItem menuItem11;
     private JMenuItem menuItem8;
@@ -452,6 +422,41 @@ public class Show extends JFrame {
             }
         }
         return ndOut;
+    }
+
+    private boolean disegnaMap(File file) {
+        if (file != null) {
+            if (controllerFileMap.readFile(file)) {
+                nodes = controllerFileMap.getNodes();
+                arcs = controllerFileMap.getArcs();
+
+                //per risolvere bug --> disegna parte del grafo quando si crea la mappa importata
+                nodes_paint = nodes;
+                arcs_paint = arcs;
+
+                panel1.repaint();
+                menu3.setEnabled(true);
+                menu4.setEnabled(true);
+                menuItem11.setEnabled(true);
+                menuItem8.setEnabled(true);
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean esportaMap(File file) {
+        if (file != null) {
+            controllerExport.export(file, nodes, arcs);
+            nodes = controllerExport.getNodes();
+            arcs = controllerExport.getArcs();
+
+            //manca controllo nodes, arcs is empty
+            return true;
+        }
+
+        return false;
     }
 
     private void disegna(Graphics gg) {
