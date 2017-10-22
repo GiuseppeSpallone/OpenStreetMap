@@ -25,24 +25,20 @@ public class Show extends JFrame {
     ControllerImport controllerImport = new ControllerImport();
     ControllerExport controllerExport = new ControllerExport();
     ControllerDatabase controllerDatabase = new ControllerDatabase();
+    ControllerFileMap controllerFileMap = new ControllerFileMap();
+    Visits visits = new Visits();
+    Algorithms algorithms = new Algorithms();
 
-    DB dbStreetMap = null;
+    private DB dbStreetMap = null;
+    private HashMap<Long, Node> nodes = null;
+    private HashSet<Arc> arcs = null;
+    private HashMap<Long, Node> nodes_paint = null;
+    private HashSet<Arc> arcs_paint = null;
 
-    private File file_open = null;
-    private File file_export = null;
-    private File file_open_export = null;
-
-    HashMap<Long, Node> nodes_export = null;
-    HashSet<Arc> arcs_export = null;
-
+    private File file = null;
 
     public Show() {
         initComponents();
-    }
-
-
-    private void panel1PropertyChange(PropertyChangeEvent e) {
-        // TODO add your code here
     }
 
     private void menuItem2ActionPerformed(ActionEvent e) {
@@ -56,9 +52,9 @@ public class Show extends JFrame {
         DBCollection collectionWay = controllerDatabase.getCollection(dbStreetMap, "Way");
         DBCollection collectionArc = controllerDatabase.getCollection(dbStreetMap, "Arc");
 
-        controllerDatabase.insertNodesDB(collectionNode, controllerImport.nodes);
-        controllerDatabase.insertWaysDB(collectionWay, controllerImport.ways);
-        controllerDatabase.insertArcsDB(collectionArc, controllerImport.arcs);
+        controllerDatabase.insertNodesDB(collectionNode, controllerImport.getNodes());
+        controllerDatabase.insertWaysDB(collectionWay, controllerImport.getWays());
+        controllerDatabase.insertArcsDB(collectionArc, controllerImport.getArcs());
     }
 
     private void menuItem3ActionPerformed(ActionEvent e) {
@@ -66,41 +62,65 @@ public class Show extends JFrame {
     }
 
     private void menuItem4ActionPerformed(ActionEvent e) {
-        file_open = openFile();
+        file = openFile();
 
-        if (file_open != null) {
-            //label1.setText(file_open.getPath());
-            menuItem5.setEnabled(true);
-        }
-    }
+        if (file != null) {
+            controllerImport.create(file, 5, 2, 100, true, false);
+            nodes = controllerImport.getNodes();
+            arcs = controllerImport.getArcs();
 
-    private void menuItem5ActionPerformed(ActionEvent e) {
-        controllerImport.create(file_open, 5, 2, 100, true, false);
-
-        if (!controllerImport.nodes.isEmpty() || !controllerImport.arcs.isEmpty()) {
-            //label2.setText("Nodi: " + controllerImport.nodes.size() + " Archi: " + controllerImport.arcs.size());
-            menuItem6.setEnabled(true);
+            if (!nodes.isEmpty() || !arcs.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Mappa creata nodi: " + nodes.size() + " archi: " + arcs.size());
+                menuItem6.setEnabled(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Mappa non creata");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Mappa non caricata");
         }
     }
 
     private void menuItem6ActionPerformed(ActionEvent e) {
-        file_export = selectPath();
-        controllerExport.export(file_export, controllerImport.nodes, controllerImport.arcs);
+        file = selectPath();
 
-        if (file_export != null) {
+        if (file != null) {
+            controllerExport.export(file, nodes, arcs);
+            nodes = controllerExport.getNodes();
+            arcs = controllerExport.getArcs();
+
+            Object[] options = {"Si", "No"};
+            int option = JOptionPane.showOptionDialog(null, "Mappa esportata, disegnare mappa?", null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+            if (option == 0) {
+                paintGraph(file);
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Mappa non esportata");
         }
-        //label3.setText("Esportato con successo");
     }
 
     private void menuItem7ActionPerformed(ActionEvent e) {
-        file_open_export = openFile();
+        file = openFile();
+        paintGraph(file);
 
-        if (file_open_export != null) {
-            if (readFile(file_open_export)) {
+    }
+
+    private void paintGraph(File file) {
+        if (file != null) {
+            if (controllerFileMap.readFile(file)) {
+                nodes = controllerFileMap.getNodes();
+                arcs = controllerFileMap.getArcs();
+
+                //per risolvere bug --> disegna parte del grafo quando si crea la mappa importata
+                nodes_paint = nodes;
+                arcs_paint = arcs;
+
                 panel1.repaint();
                 menu3.setEnabled(true);
                 menu4.setEnabled(true);
                 menuItem11.setEnabled(true);
+                menuItem8.setEnabled(true);
             }
         }
     }
@@ -114,30 +134,42 @@ public class Show extends JFrame {
     }
 
     private void menuItem10ActionPerformed(ActionEvent e) {
-        Node startingNode = controllerImport.randomNode(nodes_export);
-        Visits visits = new Visits();
-        visits.visita(nodes_export, startingNode);
+        Node startingNode = Node.randomNode(nodes);
+        visits.visita(nodes, startingNode);
         panel1.repaint();
     }
 
     private void menuItem9ActionPerformed(ActionEvent e) {
-        Algorithms algorithms = new Algorithms();
         //Long s = 1567597028L;
         //Long d = 2314745275L;
         //Node sorgente = nodes_export.get(s);
         //Node destinazione = nodes_export.get(d);
-        Node sorgente = controllerImport.randomNode(nodes_export);
-        Node destinazione = controllerImport.randomNode(nodes_export);
-        algorithms.dijkstra(sorgente, destinazione, nodes_export);
+        Node sorgente = Node.randomNode(nodes);
+        Node destinazione = Node.randomNode(nodes);
+        algorithms.dijkstra(sorgente, destinazione, nodes);
         panel1.repaint();
     }
 
     private void menuItem11ActionPerformed(ActionEvent e) {
-        for (Iterator<Node> it = nodes_export.values().iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
             Node node = it.next();
             node.setMark(-1);
         }
         panel1.repaint();
+    }
+
+    private void menuItem8ActionPerformed(ActionEvent e) {
+        nodes = null;
+        arcs = null;
+        nodes_paint = null;
+        arcs_paint = null;
+        panel1.repaint();
+
+        menuItem6.setEnabled(false);
+        menuItem11.setEnabled(false);
+        menuItem8.setEnabled(false);
+        menu3.setEnabled(false);
+        menu4.setEnabled(false);
     }
 
     private void initComponents() {
@@ -146,10 +178,10 @@ public class Show extends JFrame {
         menuBar1 = new JMenuBar();
         menu2 = new JMenu();
         menuItem4 = new JMenuItem();
-        menuItem5 = new JMenuItem();
         menuItem6 = new JMenuItem();
         menuItem7 = new JMenuItem();
         menuItem11 = new JMenuItem();
+        menuItem8 = new JMenuItem();
         menuItem3 = new JMenuItem();
         menu3 = new JMenu();
         menuItem10 = new JMenuItem();
@@ -158,7 +190,7 @@ public class Show extends JFrame {
         menu1 = new JMenu();
         menuItem2 = new JMenuItem();
         menuItem1 = new JMenuItem();
-        panel1 = new JPanel() {
+        panel1 = new JPanel(){
 
             @Override
             public void paint(Graphics g) {
@@ -179,32 +211,32 @@ public class Show extends JFrame {
                 menu2.setText("Mappa");
 
                 //---- menuItem4 ----
-                menuItem4.setText("Carica");
+                menuItem4.setText("Carica ");
                 menuItem4.addActionListener(e -> menuItem4ActionPerformed(e));
                 menu2.add(menuItem4);
 
-                //---- menuItem5 ----
-                menuItem5.setText("Crea");
-                menuItem5.setEnabled(false);
-                menuItem5.addActionListener(e -> menuItem5ActionPerformed(e));
-                menu2.add(menuItem5);
-
                 //---- menuItem6 ----
-                menuItem6.setText("Esporta");
+                menuItem6.setText("Esporta ");
                 menuItem6.setEnabled(false);
                 menuItem6.addActionListener(e -> menuItem6ActionPerformed(e));
                 menu2.add(menuItem6);
 
                 //---- menuItem7 ----
-                menuItem7.setText("Disegna");
+                menuItem7.setText("Disegna ");
                 menuItem7.addActionListener(e -> menuItem7ActionPerformed(e));
                 menu2.add(menuItem7);
 
                 //---- menuItem11 ----
-                menuItem11.setText("Reset");
+                menuItem11.setText("Reset ");
                 menuItem11.setEnabled(false);
                 menuItem11.addActionListener(e -> menuItem11ActionPerformed(e));
                 menu2.add(menuItem11);
+
+                //---- menuItem8 ----
+                menuItem8.setText("Cancella");
+                menuItem8.setEnabled(false);
+                menuItem8.addActionListener(e -> menuItem8ActionPerformed(e));
+                menu2.add(menuItem8);
 
                 //---- menuItem3 ----
                 menuItem3.setText("Esci");
@@ -269,44 +301,39 @@ public class Show extends JFrame {
 
             // JFormDesigner evaluation mark
             panel1.setBorder(new javax.swing.border.CompoundBorder(
-                    new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-                            "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
-                            javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-                            java.awt.Color.red), panel1.getBorder()));
-            panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-                public void propertyChange(java.beans.PropertyChangeEvent e) {
-                    if ("border".equals(e.getPropertyName())) throw new RuntimeException();
-                }
-            });
+                new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+                    "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+                    javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+                    java.awt.Color.red), panel1.getBorder())); panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
 
 
             GroupLayout panel1Layout = new GroupLayout(panel1);
             panel1.setLayout(panel1Layout);
             panel1Layout.setHorizontalGroup(
-                    panel1Layout.createParallelGroup()
-                            .addGap(0, 986, Short.MAX_VALUE)
+                panel1Layout.createParallelGroup()
+                    .addGap(0, 986, Short.MAX_VALUE)
             );
             panel1Layout.setVerticalGroup(
-                    panel1Layout.createParallelGroup()
-                            .addGap(0, 592, Short.MAX_VALUE)
+                panel1Layout.createParallelGroup()
+                    .addGap(0, 592, Short.MAX_VALUE)
             );
         }
 
         GroupLayout contentPaneLayout = new GroupLayout(contentPane);
         contentPane.setLayout(contentPaneLayout);
         contentPaneLayout.setHorizontalGroup(
-                contentPaneLayout.createParallelGroup()
-                        .addGroup(contentPaneLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addContainerGap())
+            contentPaneLayout.createParallelGroup()
+                .addGroup(contentPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap())
         );
         contentPaneLayout.setVerticalGroup(
-                contentPaneLayout.createParallelGroup()
-                        .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addContainerGap())
+            contentPaneLayout.createParallelGroup()
+                .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap())
         );
         pack();
         setLocationRelativeTo(getOwner());
@@ -318,10 +345,10 @@ public class Show extends JFrame {
     private JMenuBar menuBar1;
     private JMenu menu2;
     private JMenuItem menuItem4;
-    private JMenuItem menuItem5;
     private JMenuItem menuItem6;
     private JMenuItem menuItem7;
     private JMenuItem menuItem11;
+    private JMenuItem menuItem8;
     private JMenuItem menuItem3;
     private JMenu menu3;
     private JMenuItem menuItem10;
@@ -373,97 +400,6 @@ public class Show extends JFrame {
 
     }
 
-    private boolean readFile(File file) {
-        nodes_export = new HashMap<>();
-        arcs_export = new HashSet<>();
-
-        FileReader inFile = null;
-
-        try {
-            inFile = new FileReader(file);
-            BufferedReader in = new BufferedReader(inFile);
-            String vs[] = null;
-            String s = in.readLine();
-
-            vs = splitta(s);
-
-            int nVertices = Integer.parseInt(vs[0]);
-            int nEdges = Integer.parseInt(vs[1]);
-
-            for (int i = 0; i < nVertices; i++) {
-                s = in.readLine();
-                vs = splitta(s);
-
-                long id = Long.parseLong(vs[1]);
-                int x = Integer.parseInt(vs[2]);
-                int y = Integer.parseInt(vs[3]);
-                float lat = Float.parseFloat(vs[4]);
-                float lon = Float.parseFloat(vs[5]);
-                //int mark = Integer.parseInt(vs[6]);
-
-                Node n = new Node();
-
-                n.setId(id);
-                n.setX(x);
-                n.setY(y);
-                n.setLat(lat);
-                n.setLon(lon);
-                n.setIndex(i);
-                //n.setMark(mark);
-
-                nodes_export.put(new Long(i), n);
-            }
-
-            for (int i = 0; i < nEdges; i++) {
-                s = in.readLine();
-                vs = splitta(s);
-
-                long from = Integer.parseInt(vs[0]);
-                long to = Integer.parseInt(vs[1]);
-                double length = Float.parseFloat(vs[2]);
-
-                Arc a = new Arc(nodes_export.get(from), nodes_export.get(to));
-                a.setLength(length);
-                a.setIndex(i);
-
-                arcs_export.add(a);
-            }
-
-
-            for (Iterator<Arc> it = arcs_export.iterator(); it.hasNext(); ) {
-                Arc a = it.next();
-
-                Node from = a.getFrom();
-                Node to = a.getTo();
-
-                from.nd_arcs.add(a);
-                to.nd_arcs.add(a);
-            }
-
-            in.close();
-
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return false;
-        } finally {
-            try {
-                inFile.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-        return true;
-    }
-
-    private static String[] splitta(String s) {
-        s = s.trim().replaceAll("\t", " ");
-        while (s.contains("  ")) {
-            s = s.replace("  ", " ");
-        }
-        return s.split(" ");
-    }
-
     private Node getNodoVicino(int x, int y) {
 
         Node ndOut = null;
@@ -473,8 +409,8 @@ public class Show extends JFrame {
         int minY = Integer.MAX_VALUE;
         int maxY = Integer.MIN_VALUE;
 
-        if (nodes_export != null && arcs_export != null) {
-            for (Node n : nodes_export.values()) {
+        if (nodes_paint != null && arcs_paint != null) {
+            for (Node n : nodes_paint.values()) {
                 if (n.getX() > maxX) {
                     maxX = n.getX();
                 }
@@ -504,7 +440,7 @@ public class Show extends JFrame {
             double dist = Double.MAX_VALUE;
 
             //Stampa nodi
-            for (Node n : nodes_export.values()) {
+            for (Node n : nodes_paint.values()) {
                 double x1 = (n.getX() - minX * 1.0) * rap;
                 double y1 = (n.getY() - minY * 1.0) * rap;
                 double d = (x - x1) * (x - x1) + (y - y1) * (y - y1);
@@ -518,7 +454,6 @@ public class Show extends JFrame {
         return ndOut;
     }
 
-
     private void disegna(Graphics gg) {
 
         Graphics2D g = (Graphics2D) gg;
@@ -529,8 +464,8 @@ public class Show extends JFrame {
         int minY = Integer.MAX_VALUE;
         int maxY = Integer.MIN_VALUE;
 
-        if (nodes_export != null && arcs_export != null) {
-            for (Node n : nodes_export.values()) {
+        if (nodes_paint != null && arcs_paint != null) {
+            for (Node n : nodes_paint.values()) {
                 if (n.getX() > maxX) {
                     maxX = n.getX();
                 }
@@ -558,7 +493,7 @@ public class Show extends JFrame {
             }
 
             //Stampa archi
-            for (Arc arc : arcs_export) {
+            for (Arc arc : arcs_paint) {
                 double x1 = (arc.getFrom().getX() - minX * 1.0) * rap;
                 double y1 = (arc.getFrom().getY() - minY * 1.0) * rap;
                 double x2 = (arc.getTo().getX() - minX * 1.0) * rap;
@@ -568,14 +503,12 @@ public class Show extends JFrame {
             }
 
             //Stampa nodi
-            for (Node n : nodes_export.values()) {
+            for (Node n : nodes_paint.values()) {
                 double x1 = (n.getX() - minX * 1.0) * rap;
                 double y1 = (n.getY() - minY * 1.0) * rap;
 
                 if (n.getMark() == -1) {
                     g.setColor(Color.black);
-                    g.setFont(g.getFont().deriveFont(10f));
-                    g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                 }
                 if (n.getMark() == 1) {
                     g.setColor(Color.blue);
@@ -587,12 +520,6 @@ public class Show extends JFrame {
                     g.setFont(g.getFont().deriveFont(10f));
                     g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                 }
-
-                /*if (nodes_export.size() <= 100) {
-                    g.setColor(Color.blue);
-                    g.setFont(g.getFont().deriveFont(10f));
-                    g.drawString("" + n.getIndex(), (int) x1, (int) y1);
-                }*/
             }
         }
     }

@@ -3,6 +3,8 @@ package com.OpenStreetMap.Model;
 import com.OpenStreetMap.Controller.ControllerImport;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class Node {
 
@@ -62,6 +64,23 @@ public class Node {
 
     private float sqr(float x) {
         return x * x;
+    }
+
+    public static Node randomNode(HashMap<Long, Node> nodes) {
+        int random = 0 + (int) (Math.random() * nodes.size());
+
+        Node node = null;
+
+        int i = 0;
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+            Node nd = it.next();
+
+            if (i == random) {
+                node = nd;
+            }
+            i++;
+        }
+        return node;
     }
 
     public Long getId() {

@@ -5,25 +5,21 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 
 public class ControllerImport {
 
-    public HashMap<Long, Node> nodes = null;
-    public HashMap<Long, Way> ways = null;
-    public HashSet<Arc> arcs = null;
-    public HashSet<Node> buildings = null;
+    private HashMap<Long, Node> nodes = null;
+    private HashMap<Long, Way> ways = null;
+    private HashSet<Arc> arcs = null;
+    private HashSet<Node> buildings = null;
 
     private float SGL = 5.0f;
     private float RIS = 100.0f;
     private float prop = 1.00f;
     private static final float maxD = 40.00f;
-
 
     private float minlat = 0;
     private float minlon = 0;
@@ -635,7 +631,7 @@ public class ControllerImport {
         return Math.sqrt(distance);
     }
 
-    public void removeNodes_Buildings(float minlatT, float maxlatT, float minlonT, float maxlonT) {
+    private void removeNodes_Buildings(float minlatT, float maxlatT, float minlonT, float maxlonT) {
         ArrayList<Node> del = new ArrayList<>();
 
         for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
@@ -829,21 +825,20 @@ public class ControllerImport {
         }
     }
 
-    public Node randomNode(HashMap<Long, Node> nodes) {
-        int random = 0 + (int) (Math.random() * nodes.size());
+    public HashMap<Long, Node> getNodes() {
+        return nodes;
+    }
 
-        Node node = null;
+    public HashSet<Arc> getArcs() {
+        return arcs;
+    }
 
-        int i = 0;
-        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
-            Node nd = it.next();
+    public HashMap<Long, Way> getWays() {
+        return ways;
+    }
 
-            if (i == random) {
-                node = nd;
-            }
-            i++;
-        }
-        return node;
+    public HashSet<Node> getBuildings() {
+        return buildings;
     }
 
     /**

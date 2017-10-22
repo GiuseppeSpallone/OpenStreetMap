@@ -3,15 +3,14 @@ package com.OpenStreetMap.Controller;
 import com.OpenStreetMap.Model.Arc;
 import com.OpenStreetMap.Model.Node;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
 public class ControllerExport {
+    private HashMap<Long, Node> nodes = null;
+    private HashSet<Arc> arcs = null;
 
     public void export(File file, HashMap<Long, Node> nodes, HashSet<Arc> arcs) {
 
@@ -48,5 +47,13 @@ public class ControllerExport {
                 ex.printStackTrace();
             }
         }
+    }
+
+    public HashMap<Long, Node> getNodes() {
+        return nodes;
+    }
+
+    public HashSet<Arc> getArcs() {
+        return arcs;
     }
 }

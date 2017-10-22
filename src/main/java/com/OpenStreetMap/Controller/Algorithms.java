@@ -74,6 +74,23 @@ public class Algorithms {
         }
     }
 
+    public Arc getArc(Node from, Node to) {
+        Arc arc = null;
+
+        for (Iterator<Arc> it = from.nd_arcs.iterator(); it.hasNext(); ) {
+            Arc arc1 = it.next();
+
+            for (Iterator<Arc> it1 = to.nd_arcs.iterator(); it.hasNext(); ) {
+                Arc arc2 = it1.next();
+
+                if (arc1 == arc2) {
+                    arc = arc1;
+                }
+            }
+        }
+        return arc;
+    }
+
     private ArrayList<Node> percorso(Node sorgente, Node destinazione) {
         ArrayList<Node> percorso = new ArrayList<>();
 
@@ -81,6 +98,7 @@ public class Algorithms {
         percorso.add(destinazione);
 
         Node nd = destinazione.getPredecessore();
+
         while (nd != sorgente) {
             nd = nd.getPredecessore();
             nd.setMark(1);
