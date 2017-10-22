@@ -83,6 +83,16 @@ public class Node {
         return node;
     }
 
+    public static Node NodebyLatLon(HashMap<Long, Node> nodes, float lat, float lon) {
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+            Node node = it.next();
+            if (node.getLat() == lat && node.getLon() == lon) {
+                return node;
+            }
+        }
+        return null;
+    }
+
     public Long getId() {
         return id;
     }
@@ -131,14 +141,6 @@ public class Node {
         this.y = y;
     }
 
-    public int getNum_studenti() {
-        return num_studenti;
-    }
-
-    public void setNum_studenti(int num_studenti) {
-        this.num_studenti = num_studenti;
-    }
-
     public ArrayList<Way> getNd_ways() {
         return nd_ways;
     }
@@ -149,18 +151,6 @@ public class Node {
 
     public ArrayList<Arc> getNd_arcs() {
         return nd_arcs;
-    }
-
-    public void setNd_arcs(ArrayList<Arc> nd_arcs) {
-        this.nd_arcs = nd_arcs;
-    }
-
-    public int getComp() {
-        return comp;
-    }
-
-    public void setComp(int comp) {
-        this.comp = comp;
     }
 
     public boolean isFlag1() {

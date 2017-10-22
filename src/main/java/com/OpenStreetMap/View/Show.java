@@ -43,8 +43,12 @@ public class Show extends JFrame {
 
     private void menuItem2ActionPerformed(ActionEvent e) {
         dbStreetMap = controllerDatabase.connectDB("localhost", 27017, "StreetMap");
-        if (dbStreetMap != null)
-            menuItem1.setEnabled(true);
+        if (dbStreetMap != null) {
+            JOptionPane.showMessageDialog(null, "Connesso al DB");
+            menuItem2.setEnabled(false);
+        }else{
+            JOptionPane.showMessageDialog(null, "Connessione al DB non riuscita");
+        }
     }
 
     private void menuItem1ActionPerformed(ActionEvent e) {
@@ -55,6 +59,8 @@ public class Show extends JFrame {
         controllerDatabase.insertNodesDB(collectionNode, controllerImport.getNodes());
         controllerDatabase.insertWaysDB(collectionWay, controllerImport.getWays());
         controllerDatabase.insertArcsDB(collectionArc, controllerImport.getArcs());
+
+        JOptionPane.showMessageDialog(null, "Elementi inseriti");
     }
 
     private void menuItem3ActionPerformed(ActionEvent e) {
@@ -72,15 +78,17 @@ public class Show extends JFrame {
             if (!nodes.isEmpty() || !arcs.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Mappa creata nodi: " + nodes.size() + " archi: " + arcs.size());
 
+                menuItem1.setEnabled(true);
+
                 file = selectPath();
-                if(esportaMap(file)){
+                if (esportaMap(file)) {
                     Object[] options = {"Si", "No"};
                     int option = JOptionPane.showOptionDialog(null, "Mappa esportata, disegnare mappa?", null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 
                     if (option == 0) {
                         disegnaMap(file);
                     }
-                } else{
+                } else {
                     JOptionPane.showMessageDialog(null, "Mappa non esportata");
                 }
 
@@ -102,25 +110,89 @@ public class Show extends JFrame {
         int y = e.getY();
 
         Node n = getNodoVicino(x, y);
-        JOptionPane.showMessageDialog(null, "index: " + n.getIndex() + "; id: " + n.getId() + "; " + n.getLat() + "," + n.getLon());
+        JOptionPane.showMessageDialog(null, "index: " + n.getIndex() + "; id: " + n.getId() + "; coordinate: " + n.getLat() + "," + n.getLon());
         System.out.println("index: " + n.getIndex() + "; id: " + n.getId() + "; " + n.getLat() + "," + n.getLon());
     }
 
     private void menuItem10ActionPerformed(ActionEvent e) {
-        Node startingNode = Node.randomNode(nodes);
+        JPanel panelVisit = new JPanel();
+        JLabel jLabel_lat = new JLabel("Latitudine");
+        JTextField jTextField_lat = new JTextField(7);
+        JLabel jLabel_lon = new JLabel("Longitudine");
+        JTextField jTextField_lon = new JTextField(7);
+
+        panelVisit.add(jLabel_lat);
+        panelVisit.add(jTextField_lat);
+        panelVisit.add(jLabel_lon);
+        panelVisit.add(jTextField_lon);
+
+        Object[] options = {"Visita", "Random", "Map"};
+        int option = JOptionPane.showOptionDialog(null, panelVisit, null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+        Node startingNode = null;
+
+        if (option == 0) {
+            float lat = Float.parseFloat(jTextField_lat.getText());
+            float lon = Float.parseFloat(jTextField_lon.getText());
+
+            startingNode = Node.NodebyLatLon(nodes, lat, lon);
+        }
+
+        if (option == 1) {
+            startingNode = Node.randomNode(nodes);
+        }
+
+        if (option == 2) {
+            //
+        }
+
         visits.visita(nodes, startingNode);
         panel1.repaint();
     }
 
     private void menuItem9ActionPerformed(ActionEvent e) {
-        JPanel panelVisit = new OptionPaneVisit();
-        JOptionPane.showMessageDialog(null, panelVisit, null, JOptionPane.INFORMATION_MESSAGE);
-        //Long s = 1567597028L;
-        //Long d = 2314745275L;
-        //Node sorgente = nodes_export.get(s);
-        //Node destinazione = nodes_export.get(d);
-        Node sorgente = Node.randomNode(nodes);
-        Node destinazione = Node.randomNode(nodes);
+        JPanel panelDijkstra = new JPanel();
+        JLabel jLabel_lat_s = new JLabel("Latitudine sorgente");
+        JTextField jTextField_lat_s = new JTextField(7);
+        JLabel jLabel_lon_s = new JLabel("Longitudine sorgente");
+        JTextField jTextField_lon_s = new JTextField(7);
+        JLabel jLabel_lat_d = new JLabel("Latitudine destinazione");
+        JTextField jTextField_lat_d = new JTextField(7);
+        JLabel jLabel_lon_d = new JLabel("Longitudine destinazione");
+        JTextField jTextField_lon_d = new JTextField(7);
+
+        panelDijkstra.add(jLabel_lat_s);
+        panelDijkstra.add(jTextField_lat_s);
+        panelDijkstra.add(jLabel_lon_s);
+        panelDijkstra.add(jTextField_lon_s);
+        panelDijkstra.add(jLabel_lat_d);
+        panelDijkstra.add(jTextField_lat_d);
+        panelDijkstra.add(jLabel_lon_d);
+        panelDijkstra.add(jTextField_lon_d);
+
+        Object[] options = {"Percorso", "Random", "Map"};
+        int option = JOptionPane.showOptionDialog(null, panelDijkstra, null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+        Node sorgente = null;
+        Node destinazione = null;
+
+        if (option == 0) {
+            float lat_s = Float.parseFloat(jTextField_lat_s.getText());
+            float lon_s = Float.parseFloat(jTextField_lon_s.getText());
+            float lat_d = Float.parseFloat(jTextField_lat_d.getText());
+            float lon_d = Float.parseFloat(jTextField_lon_d.getText());
+
+            sorgente = Node.NodebyLatLon(nodes, lat_s, lon_s);
+            destinazione = Node.NodebyLatLon(nodes, lat_d, lon_d);
+        }
+        if (option == 1) {
+            sorgente = Node.randomNode(nodes);
+            destinazione = Node.randomNode(nodes);
+        }
+        if (option == 2) {
+            //
+        }
+
         algorithms.dijkstra(sorgente, destinazione, nodes);
         panel1.repaint();
     }
@@ -167,7 +239,7 @@ public class Show extends JFrame {
         menu1 = new JMenu();
         menuItem2 = new JMenuItem();
         menuItem1 = new JMenuItem();
-        panel1 = new JPanel(){
+        panel1 = new JPanel() {
 
             @Override
             public void paint(Graphics g) {
@@ -270,41 +342,41 @@ public class Show extends JFrame {
                 }
             });
 
-            // JFormDesigner evaluation mark
+            /*// JFormDesigner evaluation mark
             panel1.setBorder(new javax.swing.border.CompoundBorder(
                 new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
                     "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
                     javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
                     java.awt.Color.red), panel1.getBorder())); panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
-
+*/
 
             GroupLayout panel1Layout = new GroupLayout(panel1);
             panel1.setLayout(panel1Layout);
             panel1Layout.setHorizontalGroup(
-                panel1Layout.createParallelGroup()
-                    .addGap(0, 986, Short.MAX_VALUE)
+                    panel1Layout.createParallelGroup()
+                            .addGap(0, 986, Short.MAX_VALUE)
             );
             panel1Layout.setVerticalGroup(
-                panel1Layout.createParallelGroup()
-                    .addGap(0, 592, Short.MAX_VALUE)
+                    panel1Layout.createParallelGroup()
+                            .addGap(0, 592, Short.MAX_VALUE)
             );
         }
 
         GroupLayout contentPaneLayout = new GroupLayout(contentPane);
         contentPane.setLayout(contentPaneLayout);
         contentPaneLayout.setHorizontalGroup(
-            contentPaneLayout.createParallelGroup()
-                .addGroup(contentPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap())
+                contentPaneLayout.createParallelGroup()
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         contentPaneLayout.setVerticalGroup(
-            contentPaneLayout.createParallelGroup()
-                .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap())
+                contentPaneLayout.createParallelGroup()
+                        .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         pack();
         setLocationRelativeTo(getOwner());
