@@ -1,5 +1,7 @@
 package com.OpenStreetMap.Model;
 
+import java.util.Iterator;
+
 public class Arc {
 
     private Node from;
@@ -7,8 +9,19 @@ public class Arc {
     private double length;
     private int index;
 
-    private boolean oneway=false;
-    private boolean tunnel=false;
+    private boolean oneway = false;
+    private boolean tunnel = false;
+
+    //Dijkstra
+    private int mark;
+
+    public int getMark() {
+        return mark;
+    }
+
+    public void setMark(int mark) {
+        this.mark = mark;
+    }
 
     public Arc(Node from, Node to) {
         this.from = from;
@@ -20,6 +33,21 @@ public class Arc {
         this.from = from;
         this.to = to;
         this.length = length;
+    }
+
+    public static Arc arcByFromTo(Node from, Node to) {
+        for (Iterator<Arc> it1 = from.nd_arcs.iterator(); it1.hasNext(); ) {
+            Arc a1 = it1.next();
+
+            for (Iterator<Arc> it2 = to.nd_arcs.iterator(); it2.hasNext(); ) {
+                Arc a2 = it2.next();
+
+                if (a1 == a2) {
+                    return a1;
+                }
+            }
+        }
+        return null;
     }
 
     public Node getTo() {

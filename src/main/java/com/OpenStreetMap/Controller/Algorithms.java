@@ -71,6 +71,11 @@ public class Algorithms {
             node.setDistanza(Double.MAX_VALUE);
             node.setPredecessore(null);
             node.setMark(-1);
+
+            for(Iterator<Arc> it1 = node.nd_arcs.iterator(); it1.hasNext();){
+                Arc arc = it1.next();
+                arc.setMark(0);
+            }
         }
     }
 
@@ -97,13 +102,19 @@ public class Algorithms {
         destinazione.setMark(1);
         percorso.add(destinazione);
 
-        Node nd = destinazione.getPredecessore();
+        Node nd = destinazione;
+        Arc a = null;
 
         while (nd != sorgente) {
+            a = Arc.arcByFromTo(nd.getPredecessore(), nd);
+            a.setMark(1);
+
             nd = nd.getPredecessore();
             nd.setMark(1);
+
             percorso.add(nd);
         }
+
         sorgente.setMark(1);
         percorso.add(sorgente);
 

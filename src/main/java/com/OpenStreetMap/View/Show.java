@@ -46,7 +46,7 @@ public class Show extends JFrame {
         if (dbStreetMap != null) {
             JOptionPane.showMessageDialog(null, "Connesso al DB");
             menuItem2.setEnabled(false);
-        }else{
+        } else {
             JOptionPane.showMessageDialog(null, "Connessione al DB non riuscita");
         }
     }
@@ -135,7 +135,7 @@ public class Show extends JFrame {
             float lat = Float.parseFloat(jTextField_lat.getText());
             float lon = Float.parseFloat(jTextField_lon.getText());
 
-            startingNode = Node.NodebyLatLon(nodes, lat, lon);
+            startingNode = Node.nodeByLatLon(nodes, lat, lon);
         }
 
         if (option == 1) {
@@ -182,8 +182,8 @@ public class Show extends JFrame {
             float lat_d = Float.parseFloat(jTextField_lat_d.getText());
             float lon_d = Float.parseFloat(jTextField_lon_d.getText());
 
-            sorgente = Node.NodebyLatLon(nodes, lat_s, lon_s);
-            destinazione = Node.NodebyLatLon(nodes, lat_d, lon_d);
+            sorgente = Node.nodeByLatLon(nodes, lat_s, lon_s);
+            destinazione = Node.nodeByLatLon(nodes, lat_d, lon_d);
         }
         if (option == 1) {
             sorgente = Node.randomNode(nodes);
@@ -201,6 +201,11 @@ public class Show extends JFrame {
         for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
             Node node = it.next();
             node.setMark(-1);
+
+            for (Iterator<Arc> it1 = node.nd_arcs.iterator(); it1.hasNext(); ) {
+                Arc arc = it1.next();
+                arc.setMark(0);
+            }
         }
         panel1.repaint();
     }
@@ -571,6 +576,16 @@ public class Show extends JFrame {
 
             //Stampa archi
             for (Arc arc : arcs_paint) {
+
+                if (arc.getMark() == 1) {
+                    g.setColor(Color.blue);
+                    g.setStroke(new BasicStroke(2));
+                }
+                if (arc.getMark() == 0) {
+                    g.setColor(Color.black);
+                    g.setStroke(new BasicStroke(1));
+
+                }
                 double x1 = (arc.getFrom().getX() - minX * 1.0) * rap;
                 double y1 = (arc.getFrom().getY() - minY * 1.0) * rap;
                 double x2 = (arc.getTo().getX() - minX * 1.0) * rap;
@@ -589,11 +604,13 @@ public class Show extends JFrame {
                 }
                 if (n.getMark() == 1) {
                     g.setColor(Color.blue);
+
                     g.setFont(g.getFont().deriveFont(10f));
                     g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                 }
                 if (n.getMark() == 0) {
                     g.setColor(Color.red);
+
                     g.setFont(g.getFont().deriveFont(10f));
                     g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                 }

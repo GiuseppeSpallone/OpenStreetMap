@@ -83,7 +83,7 @@ public class Node {
         return node;
     }
 
-    public static Node NodebyLatLon(HashMap<Long, Node> nodes, float lat, float lon) {
+    public static Node nodeByLatLon(HashMap<Long, Node> nodes, float lat, float lon) {
         for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
             Node node = it.next();
             if (node.getLat() == lat && node.getLon() == lon) {

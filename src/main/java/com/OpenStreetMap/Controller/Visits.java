@@ -22,6 +22,8 @@ public class Visits {
         for (Iterator<Arc> it = node.getNd_arcs().iterator(); it.hasNext(); ) {
             Arc arc = it.next();
 
+            arc.setMark(1);
+
             if (arc.getFrom() == node) {
                 if (arc.getTo().getMark() == 0) {
                     visitaFrom(arc.getTo());
@@ -35,6 +37,11 @@ public class Visits {
         for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
             Node node = it.next();
             node.setMark(0);
+
+            for(Iterator<Arc> it1 = node.nd_arcs.iterator(); it1.hasNext();){
+                Arc arc = it1.next();
+                arc.setMark(0);
+            }
         }
     }
 
