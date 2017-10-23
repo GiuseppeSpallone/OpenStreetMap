@@ -8,7 +8,7 @@ import java.util.*;
 public class Algorithms {
 
 
-    public void dijkstra(Node sorgente, Node destinazione, HashMap<Long, Node> nodes) {
+    public ArrayList<Node> dijkstra(Node sorgente, Node destinazione, HashMap<Long, Node> nodes) {
         System.out.println("DIJKSTRA --> ");
         System.out.println("             SORGENTE index: " + sorgente.getIndex() + "; id: " + sorgente.getId() + "; coordinate: " + sorgente.getLat() + "," + sorgente.getLon());
         System.out.println("             DESTINAZIONE index: " + destinazione.getIndex() + "; id: " + destinazione.getId() + "; coordinate: " + destinazione.getLat() + "," + destinazione.getLon());
@@ -54,14 +54,12 @@ public class Algorithms {
                         queue.add(to);
                     }
                 }
-
             }
         }
-
-
         ArrayList<Node> percorso = percorso(sorgente, destinazione);
         printPercorso(percorso);
 
+        return percorso;
     }
 
     private void reset(HashMap<Long, Node> nodes) {
@@ -72,28 +70,11 @@ public class Algorithms {
             node.setPredecessore(null);
             node.setMark(-1);
 
-            for(Iterator<Arc> it1 = node.nd_arcs.iterator(); it1.hasNext();){
+            for (Iterator<Arc> it1 = node.nd_arcs.iterator(); it1.hasNext(); ) {
                 Arc arc = it1.next();
                 arc.setMark(0);
             }
         }
-    }
-
-    public Arc getArc(Node from, Node to) {
-        Arc arc = null;
-
-        for (Iterator<Arc> it = from.nd_arcs.iterator(); it.hasNext(); ) {
-            Arc arc1 = it.next();
-
-            for (Iterator<Arc> it1 = to.nd_arcs.iterator(); it.hasNext(); ) {
-                Arc arc2 = it1.next();
-
-                if (arc1 == arc2) {
-                    arc = arc1;
-                }
-            }
-        }
-        return arc;
     }
 
     private ArrayList<Node> percorso(Node sorgente, Node destinazione) {
@@ -115,19 +96,18 @@ public class Algorithms {
             percorso.add(nd);
         }
 
-        sorgente.setMark(1);
-        percorso.add(sorgente);
+        Collections.reverse(percorso);
 
         return percorso;
     }
 
     private void printPercorso(ArrayList<Node> percorso) {
-        System.out.println("             DISTANZA --> " + percorso.get(0).getDistanza());
+        //System.out.println("             DISTANZA --> " + percorso.get(percorso.size()).getDistanza());
 
         System.out.println("             PERCORSO --> ");
         for (Iterator<Node> it = percorso.iterator(); it.hasNext(); ) {
             Node nd = it.next();
-            System.out.println("                            id: " + nd.getId() + "; index: " + nd.getIndex());
+            System.out.println("                            id: " + nd.getId() + "; index: " + nd.getIndex() + "; distanza: " +  nd.getDistanza());
         }
     }
 

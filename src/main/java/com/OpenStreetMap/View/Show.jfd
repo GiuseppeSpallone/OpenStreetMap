@@ -74,6 +74,16 @@ new FormModel {
 					} )
 				} )
 				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+					name: "menu5"
+					"text": "Tratta"
+					"enabled": false
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "menuItem5"
+						"text": "Crea"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "menuItem5ActionPerformed", true ) )
+					} )
+				} )
+				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
 					name: "menu1"
 					"text": "Database"
 					add( new FormComponent( "javax.swing.JMenuItem" ) {

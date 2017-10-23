@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ public class Show extends JFrame {
     ControllerExport controllerExport = new ControllerExport();
     ControllerDatabase controllerDatabase = new ControllerDatabase();
     ControllerFileMap controllerFileMap = new ControllerFileMap();
+    ControllerRoute controllerRoute = new ControllerRoute();
     Visits visits = new Visits();
     Algorithms algorithms = new Algorithms();
 
@@ -109,7 +111,7 @@ public class Show extends JFrame {
         int x = e.getX();
         int y = e.getY();
 
-        Node n = getNodoVicino(x, y);
+        Node n = getNodoVicinoByXY(x, y);
         JOptionPane.showMessageDialog(null, "index: " + n.getIndex() + "; id: " + n.getId() + "; coordinate: " + n.getLat() + "," + n.getLon());
         System.out.println("index: " + n.getIndex() + "; id: " + n.getId() + "; " + n.getLat() + "," + n.getLon());
     }
@@ -223,8 +225,58 @@ public class Show extends JFrame {
         menu4.setEnabled(false);
     }
 
-    private void menuItem6ActionPerformed(ActionEvent e) {
-        // TODO add your code here
+
+    private void menuItem5ActionPerformed(ActionEvent e) {
+        JPanel panelCheckpoint = new JPanel();
+        JLabel jLabel_checkpoint = new JLabel("Numero checkpoint");
+        SpinnerModel spinnerModel = new SpinnerNumberModel(2, 2, 15, 1);
+        JSpinner jSpinner = new JSpinner(spinnerModel);
+
+        panelCheckpoint.add(jLabel_checkpoint);
+        panelCheckpoint.add(jSpinner);
+
+        Object[] options = {"OK"};
+        int option = JOptionPane.showOptionDialog(null, panelCheckpoint, null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+        if (option == 0) {
+            int num_checkpoint = (int) jSpinner.getValue();
+
+            JPanel panelRoute = new JPanel();
+
+            ArrayList<JTextField> lat = new ArrayList<>();
+            ArrayList<JTextField> lon = new ArrayList<>();
+            ArrayList<Node> routeNodes = new ArrayList<>();
+
+            for (int i = 0; i < num_checkpoint; i++) {
+                JLabel jLabel_lat = new JLabel("Latitudine " + (i + 1));
+                JTextField jTextField_lat = new JTextField(7);
+                JLabel jLabel_lon = new JLabel("Longitudine " + (i + 1));
+                JTextField jTextField_lon = new JTextField(7);
+
+                lat.add(jTextField_lat);
+                lon.add(jTextField_lon);
+
+                panelRoute.add(jLabel_lat);
+                panelRoute.add(jTextField_lat);
+                panelRoute.add(jLabel_lon);
+                panelRoute.add(jTextField_lon);
+            }
+            option = JOptionPane.showOptionDialog(null, panelRoute, null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+            if (option == 0) {
+                for (int i = 0; i < lat.size(); i++) {
+                    float latitudine = Float.parseFloat(lat.get(i).getText());
+                    float longitudine = Float.parseFloat(lon.get(i).getText());
+
+                    Node node = Node.nodeByLatLon(nodes, latitudine, longitudine);
+                    routeNodes.add(node);
+                }
+                controllerRoute.route(nodes, routeNodes);
+                panel1.repaint();
+            }
+        }
+
+
     }
 
     private void initComponents() {
@@ -241,6 +293,8 @@ public class Show extends JFrame {
         menuItem10 = new JMenuItem();
         menu4 = new JMenu();
         menuItem9 = new JMenuItem();
+        menu5 = new JMenu();
+        menuItem5 = new JMenuItem();
         menu1 = new JMenu();
         menuItem2 = new JMenuItem();
         menuItem1 = new JMenuItem();
@@ -317,6 +371,18 @@ public class Show extends JFrame {
             }
             menuBar1.add(menu4);
 
+            //======== menu5 ========
+            {
+                menu5.setText("Tratta");
+                menu5.setEnabled(false);
+
+                //---- menuItem5 ----
+                menuItem5.setText("Crea");
+                menuItem5.addActionListener(e -> menuItem5ActionPerformed(e));
+                menu5.add(menuItem5);
+            }
+            menuBar1.add(menu5);
+
             //======== menu1 ========
             {
                 menu1.setText("Database");
@@ -347,13 +413,18 @@ public class Show extends JFrame {
                 }
             });
 
-            /*// JFormDesigner evaluation mark
+            // JFormDesigner evaluation mark
             panel1.setBorder(new javax.swing.border.CompoundBorder(
-                new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-                    "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
-                    javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-                    java.awt.Color.red), panel1.getBorder())); panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
-*/
+                    new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+                            "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+                            javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+                            java.awt.Color.red), panel1.getBorder()));
+            panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+                public void propertyChange(java.beans.PropertyChangeEvent e) {
+                    if ("border".equals(e.getPropertyName())) throw new RuntimeException();
+                }
+            });
+
 
             GroupLayout panel1Layout = new GroupLayout(panel1);
             panel1.setLayout(panel1Layout);
@@ -401,6 +472,8 @@ public class Show extends JFrame {
     private JMenuItem menuItem10;
     private JMenu menu4;
     private JMenuItem menuItem9;
+    private JMenu menu5;
+    private JMenuItem menuItem5;
     private JMenu menu1;
     private JMenuItem menuItem2;
     private JMenuItem menuItem1;
@@ -447,7 +520,7 @@ public class Show extends JFrame {
 
     }
 
-    private Node getNodoVicino(int x, int y) {
+    private Node getNodoVicinoByXY(int x, int y) {
 
         Node ndOut = null;
 
@@ -516,6 +589,7 @@ public class Show extends JFrame {
                 menu4.setEnabled(true);
                 menuItem11.setEnabled(true);
                 menuItem8.setEnabled(true);
+                menu5.setEnabled(true);
 
                 return true;
             }
