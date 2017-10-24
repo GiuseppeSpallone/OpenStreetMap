@@ -5,10 +5,9 @@ import com.OpenStreetMap.Model.Node;
 
 import java.util.*;
 
-public class Algorithms {
+public class Dijkstra {
 
-
-    public ArrayList<Node> dijkstra(Node sorgente, Node destinazione, HashMap<Long, Node> nodes) {
+    public ArrayList<Node> run(Node sorgente, Node destinazione, HashMap<Long, Node> nodes) {
         System.out.println("DIJKSTRA --> ");
         System.out.println("             SORGENTE index: " + sorgente.getIndex() + "; id: " + sorgente.getId() + "; coordinate: " + sorgente.getLat() + "," + sorgente.getLon());
         System.out.println("             DESTINAZIONE index: " + destinazione.getIndex() + "; id: " + destinazione.getId() + "; coordinate: " + destinazione.getLat() + "," + destinazione.getLon());
@@ -56,7 +55,8 @@ public class Algorithms {
                 }
             }
         }
-        ArrayList<Node> percorso = percorso(sorgente, destinazione);
+        ArrayList<Node> percorso = setPredecessorePercorso(sorgente, destinazione);
+        setMarkPercorso(percorso);
         printPercorso(percorso);
 
         return percorso;
@@ -77,39 +77,44 @@ public class Algorithms {
         }
     }
 
-    private ArrayList<Node> percorso(Node sorgente, Node destinazione) {
+    private ArrayList<Node> setPredecessorePercorso(Node sorgente, Node destinazione) {
         ArrayList<Node> percorso = new ArrayList<>();
 
-        destinazione.setMark(1);
         percorso.add(destinazione);
 
         Node nd = destinazione;
-        Arc a = null;
 
         while (nd != sorgente) {
-            a = Arc.arcByFromTo(nd.getPredecessore(), nd);
-            a.setMark(1);
-
             nd = nd.getPredecessore();
-            nd.setMark(1);
-
             percorso.add(nd);
         }
-
         Collections.reverse(percorso);
 
         return percorso;
     }
 
+    private void setMarkPercorso(ArrayList<Node> nodes) {
+        for (int i = 0; i < nodes.size(); i++) {
+            Node node = nodes.get(i);
+            node.setMark(1);
+
+            if (i != nodes.size() - 1) {
+                Arc arc = Arc.arcByFromTo(nodes.get(i), nodes.get(i + 1));
+                arc.setMark(1);
+            }
+        }
+    }
+
     private void printPercorso(ArrayList<Node> percorso) {
-        //System.out.println("             DISTANZA --> " + percorso.get(percorso.size()).getDistanza());
+        System.out.println("             DISTANZA --> " + percorso.get(percorso.size()-1).getDistanza());
 
         System.out.println("             PERCORSO --> ");
         for (Iterator<Node> it = percorso.iterator(); it.hasNext(); ) {
             Node nd = it.next();
-            System.out.println("                            id: " + nd.getId() + "; index: " + nd.getIndex() + "; distanza: " +  nd.getDistanza());
+            System.out.println("                            id: " + nd.getId() + "; index: " + nd.getIndex() + "; distanza: " + nd.getDistanza());
         }
     }
+
 
 }
 

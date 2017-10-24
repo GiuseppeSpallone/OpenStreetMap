@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Route {
     private String name;
     private ArrayList<Node> nodes;
-    private int distance;
+    private double distanza;
 
     public String getName() {
         return name;
@@ -23,11 +23,11 @@ public class Route {
         this.nodes = nodes;
     }
 
-    public int getDistance() {
-        return distance;
+    public double getDistanza() {
+        return distanza;
     }
 
-    public void setDistance(int distance) {
-        this.distance = distance;
+    public void setDistanza(double distanza) {
+        this.distanza = distanza;
     }
 }

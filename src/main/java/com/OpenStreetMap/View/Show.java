@@ -29,7 +29,7 @@ public class Show extends JFrame {
     ControllerFileMap controllerFileMap = new ControllerFileMap();
     ControllerRoute controllerRoute = new ControllerRoute();
     Visits visits = new Visits();
-    Algorithms algorithms = new Algorithms();
+    Dijkstra dijkstra = new Dijkstra();
 
     private DB dbStreetMap = null;
     private HashMap<Long, Node> nodes = null;
@@ -195,7 +195,7 @@ public class Show extends JFrame {
             //
         }
 
-        algorithms.dijkstra(sorgente, destinazione, nodes);
+        dijkstra.run(sorgente, destinazione, nodes);
         panel1.repaint();
     }
 
@@ -271,7 +271,7 @@ public class Show extends JFrame {
                     Node node = Node.nodeByLatLon(nodes, latitudine, longitudine);
                     routeNodes.add(node);
                 }
-                controllerRoute.route(nodes, routeNodes);
+                controllerRoute.createRoute(nodes, routeNodes);
                 panel1.repaint();
             }
         }
