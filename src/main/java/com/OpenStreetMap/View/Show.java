@@ -19,6 +19,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.OpenStreetMap.Controller.*;
 import com.OpenStreetMap.Model.Arc;
 import com.OpenStreetMap.Model.Node;
+import com.OpenStreetMap.Model.Route;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 
@@ -36,6 +37,7 @@ public class Show extends JFrame {
     private HashSet<Arc> arcs = null;
     private HashMap<Long, Node> nodes_paint = null;
     private HashSet<Arc> arcs_paint = null;
+    HashMap<Long, Route> routes = null;
 
     private File file = null;
 
@@ -227,63 +229,97 @@ public class Show extends JFrame {
 
 
     private void menuItem5ActionPerformed(ActionEvent e) {
-        JPanel panelCheckpoint = new JPanel();
-        JLabel jLabel_checkpoint = new JLabel("Numero checkpoint");
-        SpinnerModel spinnerModel = new SpinnerNumberModel(2, 2, 15, 1);
-        JSpinner jSpinner = new JSpinner(spinnerModel);
+        int option = 0;
+        final int OK = 0;
+        final int ANNULLA = 1;
 
-        panelCheckpoint.add(jLabel_checkpoint);
-        panelCheckpoint.add(jSpinner);
+        routes = new HashMap<>();
 
-        Object[] options = {"OK"};
-        int option = JOptionPane.showOptionDialog(null, panelCheckpoint, null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+        JPanel panelRoutes = new JPanel();
+        JLabel jLabel_routes = new JLabel("Numero tratte");
+        SpinnerModel spinnerModel_routes = new SpinnerNumberModel(1, 1, 5, 1);
+        JSpinner jSpinner_routes = new JSpinner(spinnerModel_routes);
 
-        if (option == 0) {
-            int num_checkpoint = (int) jSpinner.getValue();
+        panelRoutes.add(jLabel_routes);
+        panelRoutes.add(jSpinner_routes);
 
-            JPanel panelRoute = new JPanel(new GridLayout(num_checkpoint+1, 3));
+        Object[] options = {"OK", "ANNULLA"};
+        option = JOptionPane.showOptionDialog(null, panelRoutes, null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 
-            ArrayList<JTextField> lat = new ArrayList<>();
-            ArrayList<JTextField> lon = new ArrayList<>();
-            ArrayList<Node> routeNodes = new ArrayList<>();
+        if (option == OK) {
+            int num_routes = (int) jSpinner_routes.getValue();
 
-            JLabel jLabel_empty = new JLabel("");
-            JLabel jLabel_lat = new JLabel("Lat");
-            JLabel jLabel_lon = new JLabel("Lon");
+            for (int i = 0; i < num_routes; i++) {
+                JPanel panelCheckpoint = new JPanel();
+                JLabel jLabel_checkpoint = new JLabel("Numero checkpoint");
+                SpinnerModel spinnerModel_checkpoint = new SpinnerNumberModel(2, 2, 15, 1);
+                JSpinner jSpinner_checkpoint = new JSpinner(spinnerModel_checkpoint);
 
-            panelRoute.add(jLabel_empty);
-            panelRoute.add(jLabel_lat);
-            panelRoute.add(jLabel_lon);
+                panelCheckpoint.add(jLabel_checkpoint);
+                panelCheckpoint.add(jSpinner_checkpoint);
 
-            for (int i = 0; i < num_checkpoint; i++) {
-                JLabel jLabel_check = new JLabel("Checkpoint " + (i + 1));
-                JTextField jTextField_lat = new JTextField(7);
-                JTextField jTextField_lon = new JTextField(7);
+                option = JOptionPane.showOptionDialog(null, panelCheckpoint, null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 
-                lat.add(jTextField_lat);
-                lon.add(jTextField_lon);
+                if (option == OK) {
+                    int num_checkpoint = (int) jSpinner_checkpoint.getValue();
 
-                panelRoute.add(jLabel_check);
-                panelRoute.add(jTextField_lat);
-                panelRoute.add(jTextField_lon);
-            }
-            option = JOptionPane.showOptionDialog(null, panelRoute, null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+                    JPanel panelRoute = new JPanel(new GridLayout(num_checkpoint + 1, 3));
 
-            if (option == 0) {
-                for (int i = 0; i < lat.size(); i++) {
-                    float latitudine = 0;
-                    float longitudine = 0;
+                    ArrayList<JTextField> lat = new ArrayList<>();
+                    ArrayList<JTextField> lon = new ArrayList<>();
+                    ArrayList<Node> routeNodes = new ArrayList<>();
 
-                    latitudine = Float.parseFloat(lat.get(i).getText());
-                    longitudine = Float.parseFloat(lon.get(i).getText());
+                    JLabel jLabel_empty = new JLabel("");
+                    JLabel jLabel_lat = new JLabel("Lat");
+                    JLabel jLabel_lon = new JLabel("Lon");
 
-                    Node node = Node.nodeByLatLon(nodes, latitudine, longitudine);
-                    routeNodes.add(node);
+                    panelRoute.add(jLabel_empty);
+                    panelRoute.add(jLabel_lat);
+                    panelRoute.add(jLabel_lon);
+
+                    for (int j = 0; j < num_checkpoint; j++) {
+                        JLabel jLabel_check = new JLabel("Checkpoint " + (j + 1));
+                        JTextField jTextField_lat = new JTextField(7);
+                        JTextField jTextField_lon = new JTextField(7);
+
+                        lat.add(jTextField_lat);
+                        lon.add(jTextField_lon);
+
+                        panelRoute.add(jLabel_check);
+                        panelRoute.add(jTextField_lat);
+                        panelRoute.add(jTextField_lon);
+                    }
+                    option = JOptionPane.showOptionDialog(null, panelRoute, null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+                    if (option == OK) {
+                        for (int k = 0; k < lat.size(); k++) {
+                            float latitudine = 0;
+                            float longitudine = 0;
+
+                            latitudine = Float.parseFloat(lat.get(k).getText());
+                            longitudine = Float.parseFloat(lon.get(k).getText());
+
+                            Node node = Node.nodeByLatLon(nodes, latitudine, longitudine);
+                            routeNodes.add(node);
+                        }
+
+                        Route route = controllerRoute.createRoute(nodes, routeNodes);
+
+                        routes.put((long) i, route);
+
+                        panel1.repaint();
+                    } else if (option == ANNULLA) {
+                        System.out.println("Annullato scelta latitudine e longitudine");
+                    }
+                } else if (option == ANNULLA) {
+                    System.out.println("Annullato scelta numero checkpoint");
                 }
-                controllerRoute.createRoute(nodes, routeNodes);
-                panel1.repaint();
             }
+
+        } else if (option == ANNULLA) {
+            System.out.println("Annullato scelta numero rotte");
         }
+        controllerRoute.printRoutes(routes);
 
 
     }
@@ -307,7 +343,7 @@ public class Show extends JFrame {
         menu1 = new JMenu();
         menuItem2 = new JMenuItem();
         menuItem1 = new JMenuItem();
-        panel1 = new JPanel() {
+        panel1 = new JPanel(){
 
             @Override
             public void paint(Graphics g) {
@@ -382,7 +418,7 @@ public class Show extends JFrame {
 
             //======== menu5 ========
             {
-                menu5.setText("Tratta");
+                menu5.setText("Tratte");
                 menu5.setEnabled(false);
 
                 //---- menuItem5 ----
@@ -424,44 +460,39 @@ public class Show extends JFrame {
 
             // JFormDesigner evaluation mark
             panel1.setBorder(new javax.swing.border.CompoundBorder(
-                    new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-                            "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
-                            javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-                            java.awt.Color.red), panel1.getBorder()));
-            panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-                public void propertyChange(java.beans.PropertyChangeEvent e) {
-                    if ("border".equals(e.getPropertyName())) throw new RuntimeException();
-                }
-            });
+                new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+                    "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+                    javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+                    java.awt.Color.red), panel1.getBorder())); panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
 
 
             GroupLayout panel1Layout = new GroupLayout(panel1);
             panel1.setLayout(panel1Layout);
             panel1Layout.setHorizontalGroup(
-                    panel1Layout.createParallelGroup()
-                            .addGap(0, 986, Short.MAX_VALUE)
+                panel1Layout.createParallelGroup()
+                    .addGap(0, 986, Short.MAX_VALUE)
             );
             panel1Layout.setVerticalGroup(
-                    panel1Layout.createParallelGroup()
-                            .addGap(0, 592, Short.MAX_VALUE)
+                panel1Layout.createParallelGroup()
+                    .addGap(0, 592, Short.MAX_VALUE)
             );
         }
 
         GroupLayout contentPaneLayout = new GroupLayout(contentPane);
         contentPane.setLayout(contentPaneLayout);
         contentPaneLayout.setHorizontalGroup(
-                contentPaneLayout.createParallelGroup()
-                        .addGroup(contentPaneLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addContainerGap())
+            contentPaneLayout.createParallelGroup()
+                .addGroup(contentPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap())
         );
         contentPaneLayout.setVerticalGroup(
-                contentPaneLayout.createParallelGroup()
-                        .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addContainerGap())
+            contentPaneLayout.createParallelGroup()
+                .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap())
         );
         pack();
         setLocationRelativeTo(getOwner());

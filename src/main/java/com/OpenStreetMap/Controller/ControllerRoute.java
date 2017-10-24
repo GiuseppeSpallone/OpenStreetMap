@@ -3,7 +3,6 @@ package com.OpenStreetMap.Controller;
 import com.OpenStreetMap.Model.Arc;
 import com.OpenStreetMap.Model.Node;
 import com.OpenStreetMap.Model.Route;
-import javafx.scene.transform.Rotate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +11,7 @@ import java.util.Iterator;
 public class ControllerRoute {
     Dijkstra dijkstra = new Dijkstra();
 
-    /*public HashMap<Long, Route> createRoutes(int numRoutes, HashMap<Long, Node> nodes, ArrayList<Node> routeNodes) {
+   /* public HashMap<Long, Route> createRoutes(int numRoutes, HashMap<Long, Node> nodes, ArrayList<Node> routeNodes) {
         HashMap<Long, Route> routes = new HashMap<>();
 
         for (int i = 0; i < numRoutes; i++) {
@@ -56,7 +55,7 @@ public class ControllerRoute {
         route.setNodes(percorso_finale);
         //route.setDistanza(distanza);
 
-        printRoute(route);
+        //printRoute(route);
 
         return route;
     }
@@ -73,18 +72,18 @@ public class ControllerRoute {
         }
     }
 
-    private void printRoute(Route route) {
-        System.out.println("TRATTA");
+    public void printRoute(Route route) {
+        System.out.println("             TRATTA");
 
-        System.out.println("       PERCORSO --> ");
-        System.out.println("                    DISTANZA " + route.getDistanza());
+        System.out.println("                    PERCORSO --> ");
+        System.out.println("                                 DISTANZA " + route.getDistanza());
         for (Iterator<Node> it = route.getNodes().iterator(); it.hasNext(); ) {
             Node nd = it.next();
-            System.out.println("                            id: " + nd.getId() + "; index: " + nd.getIndex());
+            System.out.println("                              id: " + nd.getId() + "; index: " + nd.getIndex());
         }
     }
 
-    private void printRoutes(HashMap<Long, Route> routes) {
+    public void printRoutes(HashMap<Long, Route> routes) {
         for (Iterator<Route> it = routes.values().iterator(); it.hasNext(); ) {
             Route route = it.next();
 
