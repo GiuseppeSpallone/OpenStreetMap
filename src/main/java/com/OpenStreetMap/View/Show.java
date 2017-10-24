@@ -153,14 +153,14 @@ public class Show extends JFrame {
     }
 
     private void menuItem9ActionPerformed(ActionEvent e) {
-        JPanel panelDijkstra = new JPanel();
-        JLabel jLabel_lat_s = new JLabel("Latitudine sorgente");
+        JPanel panelDijkstra = new JPanel(new GridLayout(2, 4));
+        JLabel jLabel_lat_s = new JLabel("Lat sorgente");
         JTextField jTextField_lat_s = new JTextField(7);
-        JLabel jLabel_lon_s = new JLabel("Longitudine sorgente");
+        JLabel jLabel_lon_s = new JLabel("Lon sorgente");
         JTextField jTextField_lon_s = new JTextField(7);
-        JLabel jLabel_lat_d = new JLabel("Latitudine destinazione");
+        JLabel jLabel_lat_d = new JLabel("Lat destinazione");
         JTextField jTextField_lat_d = new JTextField(7);
-        JLabel jLabel_lon_d = new JLabel("Longitudine destinazione");
+        JLabel jLabel_lon_d = new JLabel("Lon destinazione");
         JTextField jTextField_lon_d = new JTextField(7);
 
         panelDijkstra.add(jLabel_lat_s);
@@ -241,32 +241,41 @@ public class Show extends JFrame {
         if (option == 0) {
             int num_checkpoint = (int) jSpinner.getValue();
 
-            JPanel panelRoute = new JPanel();
+            JPanel panelRoute = new JPanel(new GridLayout(num_checkpoint+1, 3));
 
             ArrayList<JTextField> lat = new ArrayList<>();
             ArrayList<JTextField> lon = new ArrayList<>();
             ArrayList<Node> routeNodes = new ArrayList<>();
 
+            JLabel jLabel_empty = new JLabel("");
+            JLabel jLabel_lat = new JLabel("Lat");
+            JLabel jLabel_lon = new JLabel("Lon");
+
+            panelRoute.add(jLabel_empty);
+            panelRoute.add(jLabel_lat);
+            panelRoute.add(jLabel_lon);
+
             for (int i = 0; i < num_checkpoint; i++) {
-                JLabel jLabel_lat = new JLabel("Latitudine " + (i + 1));
+                JLabel jLabel_check = new JLabel("Checkpoint " + (i + 1));
                 JTextField jTextField_lat = new JTextField(7);
-                JLabel jLabel_lon = new JLabel("Longitudine " + (i + 1));
                 JTextField jTextField_lon = new JTextField(7);
 
                 lat.add(jTextField_lat);
                 lon.add(jTextField_lon);
 
-                panelRoute.add(jLabel_lat);
+                panelRoute.add(jLabel_check);
                 panelRoute.add(jTextField_lat);
-                panelRoute.add(jLabel_lon);
                 panelRoute.add(jTextField_lon);
             }
             option = JOptionPane.showOptionDialog(null, panelRoute, null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 
             if (option == 0) {
                 for (int i = 0; i < lat.size(); i++) {
-                    float latitudine = Float.parseFloat(lat.get(i).getText());
-                    float longitudine = Float.parseFloat(lon.get(i).getText());
+                    float latitudine = 0;
+                    float longitudine = 0;
+
+                    latitudine = Float.parseFloat(lat.get(i).getText());
+                    longitudine = Float.parseFloat(lon.get(i).getText());
 
                     Node node = Node.nodeByLatLon(nodes, latitudine, longitudine);
                     routeNodes.add(node);

@@ -84,12 +84,15 @@ public class Node {
     }
 
     public static Node nodeByLatLon(HashMap<Long, Node> nodes, float lat, float lon) {
-        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
-            Node node = it.next();
-            if (node.getLat() == lat && node.getLon() == lon) {
-                return node;
+        if (lat != 0 && lon != 0) {
+            for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+                Node node = it.next();
+                if (node.getLat() == lat && node.getLon() == lon) {
+                    return node;
+                }
             }
         }
+        System.out.println("Latitudine o longitudine non inseriti");
         return null;
     }
 
