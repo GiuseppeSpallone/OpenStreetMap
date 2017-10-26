@@ -4,13 +4,13 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {seq l {space :::p, comp panel1:::::x, space :::p}}"
-			"$verticalGroup": "par l {seq t {space :::p, comp panel1:::::x, space :::p}}"
+			"$horizontalGroup": "par l {seq l {space :::p, comp panel1:::p::p, space :::p, par l {comp label1::::213:x, comp panel3::l:::x, comp button1::t::213:x}, space :::p, comp panel2:::p::p}}"
+			"$verticalGroup": "par l {comp panel2:::::x, comp panel1::l:::x, seq l {space :::p, comp label1:::p::p, space :::x, comp panel3:::p::p, space :::p, comp button1:::p::p, space :p:34:p}}"
 		} ) {
 			name: "this"
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-				"$horizontalGroup": "par l {space :0:986:x}"
-				"$verticalGroup": "par l {space :0:592:x}"
+				"$horizontalGroup": "par l {space :0:767:x}"
+				"$verticalGroup": "par l {space :0:0:x}"
 			} ) {
 				name: "panel1"
 				"background": new java.awt.Color( 255, 255, 255, 255 )
@@ -19,6 +19,34 @@ new FormModel {
 					"JavaCodeGenerator.customCreateCode": "new JPanel(){\n\n    @Override\n    public void paint(Graphics g) {\n        super.paint(g);\n        disegna(g);\n    }\n\n};"
 				}
 				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "panel1MouseClicked", true ) )
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+				"$horizontalGroup": "par l {space :0:0:x}"
+				"$verticalGroup": "par l {space :0:0:x}"
+			} ) {
+				name: "panel2"
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+				"$horizontalGroup": "par l {comp scrollPane3::l::213:x}"
+				"$verticalGroup": "par l {seq l {space :::p, comp scrollPane3:::p:502:p, space ::15:x}}"
+			} ) {
+				name: "panel3"
+				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+					name: "scrollPane3"
+					add( new FormComponent( "javax.swing.JTextArea" ) {
+						name: "textArea2"
+					} )
+				} )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "Tratte"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "button1"
+				"text": "Crea"
+				"enabled": false
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button1ActionPerformed", true ) )
 			} )
 			menuBar: new FormContainer( "javax.swing.JMenuBar", new FormLayoutManager( class javax.swing.JMenuBar ) ) {
 				name: "menuBar1"
@@ -105,3 +133,4 @@ new FormModel {
 		} )
 	}
 }
+

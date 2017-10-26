@@ -114,7 +114,8 @@ public class Show extends JFrame {
         int y = e.getY();
 
         Node n = getNodoVicinoByXY(x, y);
-        JOptionPane.showMessageDialog(null, "index: " + n.getIndex() + "; id: " + n.getId() + "; coordinate: " + n.getLat() + "," + n.getLon());
+        textArea2.append("# " + n.getLat() + " " + n.getLon() + "\n");
+        //JOptionPane.showMessageDialog(null, "index: " + n.getIndex() + "; id: " + n.getId() + "; coordinate: " + n.getLat() + "," + n.getLon());
         System.out.println("index: " + n.getIndex() + "; id: " + n.getId() + "; " + n.getLat() + "," + n.getLon());
     }
 
@@ -202,6 +203,8 @@ public class Show extends JFrame {
     }
 
     private void menuItem11ActionPerformed(ActionEvent e) {
+        textArea2.removeAll();
+
         for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
             Node node = it.next();
             node.setMark(-1);
@@ -324,6 +327,34 @@ public class Show extends JFrame {
 
     }
 
+    private void button1ActionPerformed(ActionEvent e) {
+        ArrayList<Node> routeNodes = new ArrayList<>();
+
+
+        String area = textArea2.getText().toString();
+
+        ArrayList<float[]> checkpoint = controllerRoute.readArea(area);
+
+        for (int i = 0; i < checkpoint.size(); i++) {
+            float latitudine = checkpoint.get(i)[0];
+            float longitudine = checkpoint.get(i)[1];
+
+            Node node = Node.nodeByLatLon(nodes, latitudine, longitudine);
+            routeNodes.add(node);
+        }
+
+        Route route = controllerRoute.createRoute(nodes, routeNodes);
+
+        //routes.put((long)i,route);
+
+        panel1.repaint();
+
+    }
+
+
+
+
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner Evaluation license - Giuseppe Spallone
@@ -352,6 +383,12 @@ public class Show extends JFrame {
             }
 
         };
+        panel2 = new JPanel();
+        panel3 = new JPanel();
+        scrollPane3 = new JScrollPane();
+        textArea2 = new JTextArea();
+        label1 = new JLabel();
+        button1 = new JButton();
 
         //======== this ========
         Container contentPane = getContentPane();
@@ -470,13 +507,59 @@ public class Show extends JFrame {
             panel1.setLayout(panel1Layout);
             panel1Layout.setHorizontalGroup(
                 panel1Layout.createParallelGroup()
-                    .addGap(0, 986, Short.MAX_VALUE)
+                    .addGap(0, 767, Short.MAX_VALUE)
             );
             panel1Layout.setVerticalGroup(
                 panel1Layout.createParallelGroup()
-                    .addGap(0, 592, Short.MAX_VALUE)
+                    .addGap(0, 0, Short.MAX_VALUE)
             );
         }
+
+        //======== panel2 ========
+        {
+
+            GroupLayout panel2Layout = new GroupLayout(panel2);
+            panel2.setLayout(panel2Layout);
+            panel2Layout.setHorizontalGroup(
+                panel2Layout.createParallelGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+            );
+            panel2Layout.setVerticalGroup(
+                panel2Layout.createParallelGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+            );
+        }
+
+        //======== panel3 ========
+        {
+
+            //======== scrollPane3 ========
+            {
+                scrollPane3.setViewportView(textArea2);
+            }
+
+            GroupLayout panel3Layout = new GroupLayout(panel3);
+            panel3.setLayout(panel3Layout);
+            panel3Layout.setHorizontalGroup(
+                panel3Layout.createParallelGroup()
+                    .addComponent(scrollPane3, GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
+            );
+            panel3Layout.setVerticalGroup(
+                panel3Layout.createParallelGroup()
+                    .addGroup(panel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(scrollPane3, GroupLayout.PREFERRED_SIZE, 502, GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(15, Short.MAX_VALUE))
+            );
+        }
+
+        //---- label1 ----
+        label1.setText("Tratte");
+
+        //---- button1 ----
+        button1.setText("Crea");
+        button1.setEnabled(false);
+        button1.addActionListener(e -> button1ActionPerformed(e));
 
         GroupLayout contentPaneLayout = new GroupLayout(contentPane);
         contentPane.setLayout(contentPaneLayout);
@@ -484,15 +567,27 @@ public class Show extends JFrame {
             contentPaneLayout.createParallelGroup()
                 .addGroup(contentPaneLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap())
+                    .addComponent(panel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(contentPaneLayout.createParallelGroup()
+                        .addComponent(label1, GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
+                        .addComponent(panel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(button1, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(panel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
         contentPaneLayout.setVerticalGroup(
             contentPaneLayout.createParallelGroup()
-                .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
+                .addComponent(panel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(contentPaneLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap())
+                    .addComponent(label1)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(button1)
+                    .addGap(34, 34, 34))
         );
         pack();
         setLocationRelativeTo(getOwner());
@@ -518,6 +613,12 @@ public class Show extends JFrame {
     private JMenuItem menuItem2;
     private JMenuItem menuItem1;
     private JPanel panel1;
+    private JPanel panel2;
+    private JPanel panel3;
+    private JScrollPane scrollPane3;
+    private JTextArea textArea2;
+    private JLabel label1;
+    private JButton button1;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     private File openFile() {
@@ -630,6 +731,7 @@ public class Show extends JFrame {
                 menuItem11.setEnabled(true);
                 menuItem8.setEnabled(true);
                 menu5.setEnabled(true);
+                button1.setEnabled(true);
 
                 return true;
             }

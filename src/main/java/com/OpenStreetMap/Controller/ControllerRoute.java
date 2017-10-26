@@ -4,8 +4,12 @@ import com.OpenStreetMap.Model.Arc;
 import com.OpenStreetMap.Model.Node;
 import com.OpenStreetMap.Model.Route;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 public class ControllerRoute {
@@ -90,5 +94,39 @@ public class ControllerRoute {
             System.out.println("TRATTE -->");
             printRoute(route);
         }
+    }
+
+    public ArrayList<float[]> readArea(String stringAreaText) {
+        String arraySting[] = null;
+        arraySting = splitta(stringAreaText);
+        ArrayList<float[]> lat_lon = new ArrayList<>();
+
+        for (int i = 0; i < arraySting.length; i++) {
+
+            if (arraySting[i].equals("#")) {
+
+                float latitudine = Float.parseFloat(arraySting[i + 1]);
+                float longitudine = Float.parseFloat(arraySting[i + 2]);
+
+                lat_lon.add(new float[]{latitudine, longitudine});
+
+            }
+        }
+
+        for (int i = 0; i < lat_lon.size(); i++) {
+            System.out.println("Checkpoint " + (i+1));
+            System.out.println(lat_lon.get(i)[0] + "," +  lat_lon.get(i)[1]);
+        }
+
+        return lat_lon;
+    }
+
+    private static String[] splitta(String s) {
+        s = s.trim().replaceAll("\t", " ");
+        s = s.trim().replaceAll("\n", " ");
+        while (s.contains("  ")) {
+            s = s.replace("  ", " ");
+        }
+        return s.split(" ");
     }
 }
