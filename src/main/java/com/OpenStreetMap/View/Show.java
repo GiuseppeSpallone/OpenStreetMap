@@ -29,7 +29,7 @@ public class Show extends JFrame {
     ImportPlotMap importPlotMap = new ImportPlotMap();
     ControllerRoutes controllerRoutes = new ControllerRoutes();
     ControllerStudenti controllerStudenti = new ControllerStudenti();
-    Visits visits = new Visits();
+    Visit visit = new Visit();
     Dijkstra dijkstra = new Dijkstra();
 
     private DB dbStreetMap = null;
@@ -94,12 +94,10 @@ public class Show extends JFrame {
 
                     if (option == 0) {
                         if (disegnaMap(file)) {
-                            menu3.setEnabled(true);
-                            menu4.setEnabled(true);
                             reset_item.setEnabled(true);
                             cancella_item.setEnabled(true);
-                            tratte_button.setEnabled(true);
-                            utenti_button.setEnabled(true);
+                            tabbedPane.setEnabled(true);
+
                             mappa_panel.repaint();
                         }
                     }
@@ -118,12 +116,10 @@ public class Show extends JFrame {
     private void menuItem7ActionPerformed(ActionEvent e) {
         file = openFile();
         if (disegnaMap(file)) {
-            menu3.setEnabled(true);
-            menu4.setEnabled(true);
             reset_item.setEnabled(true);
             cancella_item.setEnabled(true);
-            tratte_button.setEnabled(true);
-            utenti_button.setEnabled(true);
+            tabbedPane.setEnabled(true);
+
             mappa_panel.repaint();
         }
     }
@@ -133,99 +129,73 @@ public class Show extends JFrame {
         int y = e.getY();
 
         Node n = getNodoVicinoByXY(x, y);
-        JOptionPane.showMessageDialog(null, "index: " + n.getIndex() + "; id: " + n.getId() + "; coordinate: " + n.getLat() + "," + n.getLon());
-        tratte_area.append("# " + n.getLat() + " " + n.getLon() + "\n");
         System.out.println("index: " + n.getIndex() + "; id: " + n.getId() + "; " + n.getLat() + "," + n.getLon());
-    }
 
-    private void menuItem10ActionPerformed(ActionEvent e) {
-        JPanel panelVisit = new JPanel();
-        JLabel jLabel_lat = new JLabel("Latitudine");
-        JTextField jTextField_lat = new JTextField(7);
-        JLabel jLabel_lon = new JLabel("Longitudine");
-        JTextField jTextField_lon = new JTextField(7);
+        JPanel panelMouseListener = new JPanel();
+        JLabel node_label = new JLabel("index: " + n.getIndex() + "; id: " + n.getId() + " lat: " + n.getLat() + " lon: " + n.getLon());
+        panelMouseListener.add(node_label);
 
-        panelVisit.add(jLabel_lat);
-        panelVisit.add(jTextField_lat);
-        panelVisit.add(jLabel_lon);
-        panelVisit.add(jTextField_lon);
+        final int TRATTE = 0;
+        final int UTENTI = 1;
+        final int DIJKSTRA = 2;
+        final int VISITA = 3;
+        final int ANNULLA = 4;
 
-        Object[] options = {"Visita", "Random", "Map"};
-        int option = JOptionPane.showOptionDialog(null, panelVisit, null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+        Object[] options = {"Tratte", "Utenti", "Dijkstra", "Visita", "Annulla"};
+        int option = JOptionPane.showOptionDialog(null, panelMouseListener, "Nodo selezionato", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 
-        Node startingNode = null;
+        switch (option) {
+            case TRATTE:
+                tratte_area.append("# " + n.getLat() + " " + n.getLon() + "\n");
+                break;
+            case UTENTI:
+                utenti_area.append("# " + n.getLat() + " " + n.getLon() + "\n");
+                break;
+            case DIJKSTRA:
+                JPanel panelMouseListener2 = new JPanel();
 
-        if (option == 0) {
-            float lat = Float.parseFloat(jTextField_lat.getText());
-            float lon = Float.parseFloat(jTextField_lon.getText());
+                Object[] options2 = {"Sorgente", "Destinazione", "Annulla"};
+                int option2 = JOptionPane.showOptionDialog(null, panelMouseListener2, "Dijkstra", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
 
-            startingNode = Node.nodeByLatLon(nodes, lat, lon);
+                if (option2 == 0) {
+                    sorgenteLat_text.setText(String.valueOf(n.getLat()));
+                    sorgenteLon_text.setText(String.valueOf(n.getLon()));
+                }
+                if (option2 == 1) {
+                    destinazioneLat_text.setText(String.valueOf(n.getLat()));
+                    destinazioneLon_text.setText(String.valueOf(n.getLon()));
+                }
+                if (option2 == 2) {
+                    break;
+                }
+                break;
+            case VISITA:
+                partenzaLat_text.setText(String.valueOf(n.getLat()));
+                partenzaLon_text.setText(String.valueOf(n.getLon()));
+                break;
+            case ANNULLA:
+                break;
         }
-
-        if (option == 1) {
-            startingNode = Node.randomNode(nodes);
-        }
-
-        if (option == 2) {
-            //
-        }
-
-        visits.visita(nodes, startingNode);
-        mappa_panel.repaint();
-    }
-
-    private void menuItem9ActionPerformed(ActionEvent e) {
-        JPanel panelDijkstra = new JPanel(new GridLayout(2, 4));
-        JLabel jLabel_lat_s = new JLabel("Lat sorgente");
-        JTextField jTextField_lat_s = new JTextField(7);
-        JLabel jLabel_lon_s = new JLabel("Lon sorgente");
-        JTextField jTextField_lon_s = new JTextField(7);
-        JLabel jLabel_lat_d = new JLabel("Lat destinazione");
-        JTextField jTextField_lat_d = new JTextField(7);
-        JLabel jLabel_lon_d = new JLabel("Lon destinazione");
-        JTextField jTextField_lon_d = new JTextField(7);
-
-        panelDijkstra.add(jLabel_lat_s);
-        panelDijkstra.add(jTextField_lat_s);
-        panelDijkstra.add(jLabel_lon_s);
-        panelDijkstra.add(jTextField_lon_s);
-        panelDijkstra.add(jLabel_lat_d);
-        panelDijkstra.add(jTextField_lat_d);
-        panelDijkstra.add(jLabel_lon_d);
-        panelDijkstra.add(jTextField_lon_d);
-
-        Object[] options = {"Percorso", "Random", "Map"};
-        int option = JOptionPane.showOptionDialog(null, panelDijkstra, null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-
-        Node sorgente = null;
-        Node destinazione = null;
-
-        if (option == 0) {
-            float lat_s = Float.parseFloat(jTextField_lat_s.getText());
-            float lon_s = Float.parseFloat(jTextField_lon_s.getText());
-            float lat_d = Float.parseFloat(jTextField_lat_d.getText());
-            float lon_d = Float.parseFloat(jTextField_lon_d.getText());
-
-            sorgente = Node.nodeByLatLon(nodes, lat_s, lon_s);
-            destinazione = Node.nodeByLatLon(nodes, lat_d, lon_d);
-        }
-        if (option == 1) {
-            sorgente = Node.randomNode(nodes);
-            destinazione = Node.randomNode(nodes);
-        }
-        if (option == 2) {
-            //
-        }
-
-        dijkstra.run(sorgente, destinazione, nodes, true);
-        mappa_panel.repaint();
     }
 
     private void menuItem11ActionPerformed(ActionEvent e) {
-        tratte_area.removeAll();
+        tratte_area.setText("");
+        tratteOutput_area.setText("");
+        utenti_area.setText("");
+        utentiOutput_area.setText("");
+        sorgenteLat_text.setText("");
+        sorgenteLon_text.setText("");
+        destinazioneLat_text.setText("");
+        destinazioneLon_text.setText("");
+        dijkstra_area.setText("");
+        partenzaLat_text.setText("");
+        partenzaLon_text.setText("");
+        visita_area.setText("");
+
         routes = null;
 
 
+        //reset mark
         for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
             Node node = it.next();
             node.setMark(-1);
@@ -244,111 +214,26 @@ public class Show extends JFrame {
         nodes_paint = null;
         arcs_paint = null;
         routes = null;
-        tratte_area.removeAll();
-        mappa_panel.repaint();
 
         reset_item.setEnabled(false);
         cancella_item.setEnabled(false);
-        menu3.setEnabled(false);
-        menu4.setEnabled(false);
+        tabbedPane.setEnabled(false);
+
+        tratteOutput_area.setText("");
+        utenti_area.setText("");
+        utentiOutput_area.setText("");
+        sorgenteLat_text.setText("");
+        sorgenteLon_text.setText("");
+        destinazioneLat_text.setText("");
+        destinazioneLon_text.setText("");
+        dijkstra_area.setText("");
+        partenzaLat_text.setText("");
+        partenzaLon_text.setText("");
+        visita_area.setText("");
+
+        mappa_panel.repaint();
+
     }
-
-
-    /*private void menuItem5ActionPerformed(ActionEvent e) {
-        int option = 0;
-        final int OK = 0;
-        final int ANNULLA = 1;
-
-        routes = new HashSet<>();
-
-        JPanel panelRoutes = new JPanel();
-        JLabel jLabel_routes = new JLabel("Numero tratte");
-        SpinnerModel spinnerModel_routes = new SpinnerNumberModel(1, 1, 5, 1);
-        JSpinner jSpinner_routes = new JSpinner(spinnerModel_routes);
-
-        panelRoutes.add(jLabel_routes);
-        panelRoutes.add(jSpinner_routes);
-
-        Object[] options = {"OK", "ANNULLA"};
-        option = JOptionPane.showOptionDialog(null, panelRoutes, null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-
-        if (option == OK) {
-            int num_routes = (int) jSpinner_routes.getValue();
-
-            for (int i = 0; i < num_routes; i++) {
-                JPanel panelCheckpoint = new JPanel();
-                JLabel jLabel_checkpoint = new JLabel("Numero checkpoint");
-                SpinnerModel spinnerModel_checkpoint = new SpinnerNumberModel(2, 2, 15, 1);
-                JSpinner jSpinner_checkpoint = new JSpinner(spinnerModel_checkpoint);
-
-                panelCheckpoint.add(jLabel_checkpoint);
-                panelCheckpoint.add(jSpinner_checkpoint);
-
-                option = JOptionPane.showOptionDialog(null, panelCheckpoint, null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-
-                if (option == OK) {
-                    int num_checkpoint = (int) jSpinner_checkpoint.getValue();
-
-                    JPanel panelRoute = new JPanel(new GridLayout(num_checkpoint + 1, 3));
-
-                    ArrayList<JTextField> lat = new ArrayList<>();
-                    ArrayList<JTextField> lon = new ArrayList<>();
-                    ArrayList<Node> routeNodes = new ArrayList<>();
-
-                    JLabel jLabel_empty = new JLabel("");
-                    JLabel jLabel_lat = new JLabel("Lat");
-                    JLabel jLabel_lon = new JLabel("Lon");
-
-                    panelRoute.add(jLabel_empty);
-                    panelRoute.add(jLabel_lat);
-                    panelRoute.add(jLabel_lon);
-
-                    for (int j = 0; j < num_checkpoint; j++) {
-                        JLabel jLabel_check = new JLabel("Checkpoint " + (j + 1));
-                        JTextField jTextField_lat = new JTextField(7);
-                        JTextField jTextField_lon = new JTextField(7);
-
-                        lat.add(jTextField_lat);
-                        lon.add(jTextField_lon);
-
-                        panelRoute.add(jLabel_check);
-                        panelRoute.add(jTextField_lat);
-                        panelRoute.add(jTextField_lon);
-                    }
-                    option = JOptionPane.showOptionDialog(null, panelRoute, null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-
-                    if (option == OK) {
-                        for (int k = 0; k < lat.size(); k++) {
-                            float latitudine = 0;
-                            float longitudine = 0;
-
-                            latitudine = Float.parseFloat(lat.get(k).getText());
-                            longitudine = Float.parseFloat(lon.get(k).getText());
-
-                            Node node = Node.nodeByLatLon(nodes, latitudine, longitudine);
-                            routeNodes.add(node);
-                        }
-
-                        Route route = controllerRoutes.createRoute(nodes, routeNodes);
-
-                        routes.add(route);
-
-                        mappa_panel.repaint();
-                    } else if (option == ANNULLA) {
-                        System.out.println("Annullato scelta latitudine e longitudine");
-                    }
-                } else if (option == ANNULLA) {
-                    System.out.println("Annullato scelta numero checkpoint");
-                }
-            }
-
-        } else if (option == ANNULLA) {
-            System.out.println("Annullato scelta numero rotte");
-        }
-        //controllerRoutes.printRoutes(routes);
-
-
-    }*/
 
     private void button1ActionPerformed(ActionEvent e) {
 
@@ -356,31 +241,94 @@ public class Show extends JFrame {
 
         routes = controllerRoutes.read(area, nodes);
 
+        tratteOutput_area.setEnabled(true);
+        String output_routes = "";
+
+        for (Iterator<Route> it = routes.iterator(); it.hasNext(); ) {
+            Route route = it.next();
+
+            output_routes += "TRATTA: " + route.getName() + "\n";
+            output_routes += "      DISTANZA: " + route.getDistanza() + "\n";
+
+            for (Iterator<Node> it1 = route.getNodes().iterator(); it1.hasNext(); ) {
+                Node node = it1.next();
+
+                output_routes += "      id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
+            }
+        }
+
+        tratteOutput_area.setText(output_routes);
         mappa_panel.repaint();
 
     }
 
     private void button2ActionPerformed(ActionEvent e) {
         String area = utenti_area.getText().toString();
-        ArrayList<float[]> lat_lon_stu = controllerStudenti.readArea(area);
-
-        for (int i = 0; i < lat_lon_stu.size(); i++) {
-            float latitudine = lat_lon_stu.get(i)[0];
-            float longitudine = lat_lon_stu.get(i)[1];
-            float num_studenti = lat_lon_stu.get(i)[2];
-
-            Node node = Node.nodeByLatLon(nodes, latitudine, longitudine);
-            node.setNum_studenti((int) num_studenti);
-
-        }
 
         mappa_panel.repaint();
     }
 
-    private void menuItem5ActionPerformed(ActionEvent e) {
-        // TODO add your code here
+    private void rDijkstra_buttonActionPerformed(ActionEvent e) {
+        Node sorgente = Node.randomNode(nodes);
+        Node destinazione = Node.randomNode(nodes);
+
+        sorgenteLat_text.setText(String.valueOf(sorgente.getLat()));
+        sorgenteLon_text.setText(String.valueOf(sorgente.getLon()));
+        destinazioneLat_text.setText(String.valueOf(destinazione.getLat()));
+        destinazioneLon_text.setText(String.valueOf(destinazione.getLon()));
     }
 
+    private void rVisita_buttonActionPerformed(ActionEvent e) {
+        Node startingNode = Node.randomNode(nodes);
+
+        partenzaLat_text.setText(String.valueOf(startingNode.getLat()));
+        partenzaLon_text.setText(String.valueOf(startingNode.getLon()));
+    }
+
+    private void dijkstra_buttonActionPerformed(ActionEvent e) {
+        float lat_s = Float.parseFloat(sorgenteLat_text.getText());
+        float lon_s = Float.parseFloat(sorgenteLon_text.getText());
+        float lat_d = Float.parseFloat(destinazioneLat_text.getText());
+        float lon_d = Float.parseFloat(destinazioneLon_text.getText());
+
+        Node sorgente = Node.nodeByLatLon(nodes, lat_s, lon_s);
+        Node destinazione = Node.nodeByLatLon(nodes, lat_d, lon_d);
+
+        ArrayList<Node> percorso = dijkstra.run(sorgente, destinazione, nodes, true);
+        String output_dijkstra = "";
+
+
+        output_dijkstra += "DISTANZA: " + percorso.get(percorso.size() - 1).getDistanza() + "\n";
+        for (Iterator<Node> it = percorso.iterator(); it.hasNext(); ) {
+            Node nd = it.next();
+            output_dijkstra += "id: " + nd.getId() + "; index: " + nd.getIndex() + "; distanza: " + nd.getDistanza() + "\n";
+        }
+
+        dijkstra_area.setText(output_dijkstra);
+
+        mappa_panel.repaint();
+    }
+
+    private void visita_buttonActionPerformed(ActionEvent e) {
+        float lat = Float.parseFloat(partenzaLat_text.getText());
+        float lon = Float.parseFloat(partenzaLon_text.getText());
+
+        Node startingNode = Node.nodeByLatLon(nodes, lat, lon);
+
+        ArrayList<Node> visit_nodes = visit.visita(nodes, startingNode);
+        String output_visit = "";
+
+        output_visit += "VISITA \n";
+
+        for (Iterator<Node> it = visit_nodes.iterator(); it.hasNext(); ) {
+            Node node = it.next();
+
+            output_visit += "id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
+        }
+        visita_area.setText(output_visit);
+
+        mappa_panel.repaint();
+    }
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -392,15 +340,11 @@ public class Show extends JFrame {
         reset_item = new JMenuItem();
         cancella_item = new JMenuItem();
         esci_item = new JMenuItem();
-        menu3 = new JMenu();
-        menuItem10 = new JMenuItem();
-        menu4 = new JMenu();
-        menuItem9 = new JMenuItem();
         menu1 = new JMenu();
         menuItem2 = new JMenuItem();
         menuItem1 = new JMenuItem();
         tabbedPane = new JTabbedPane();
-        mappa_panel = new JPanel() {
+        mappa_panel = new JPanel(){
 
             @Override
             public void paint(Graphics g) {
@@ -412,12 +356,33 @@ public class Show extends JFrame {
         tratte_panel = new JPanel();
         scrollPane2 = new JScrollPane();
         tratte_area = new JTextArea();
+        tratte_button = new JButton();
+        scrollPane3 = new JScrollPane();
+        tratteOutput_area = new JTextArea();
+        utenti_panel = new JPanel();
         scrollPane1 = new JScrollPane();
         utenti_area = new JTextArea();
-        tratte_label = new JLabel();
-        utenti_label = new JLabel();
-        tratte_button = new JButton();
         utenti_button = new JButton();
+        scrollPane4 = new JScrollPane();
+        utentiOutput_area = new JTextArea();
+        altro_panel = new JPanel();
+        scrollPane6 = new JScrollPane();
+        dijkstra_area = new JTextArea();
+        sorgenteLat_text = new JTextField();
+        destinazioneLat_text = new JTextField();
+        partenzaLat_text = new JTextField();
+        partenza_label = new JLabel();
+        rDijkstra_button = new JButton();
+        rVisita_button = new JButton();
+        dijkstra_button = new JButton();
+        visita_button = new JButton();
+        sorgenteLon_text = new JTextField();
+        destinazioneLon_text = new JTextField();
+        partenzaLon_text = new JTextField();
+        sorgente_label = new JLabel();
+        destinazione_label = new JLabel();
+        scrollPane7 = new JScrollPane();
+        visita_area = new JTextArea();
 
         //======== this ========
         Container contentPane = getContentPane();
@@ -458,30 +423,6 @@ public class Show extends JFrame {
             }
             menuBar1.add(mappa_menu);
 
-            //======== menu3 ========
-            {
-                menu3.setText("Visite");
-                menu3.setEnabled(false);
-
-                //---- menuItem10 ----
-                menuItem10.setText("Profondit\u00e0");
-                menuItem10.addActionListener(e -> menuItem10ActionPerformed(e));
-                menu3.add(menuItem10);
-            }
-            menuBar1.add(menu3);
-
-            //======== menu4 ========
-            {
-                menu4.setText("Percorso");
-                menu4.setEnabled(false);
-
-                //---- menuItem9 ----
-                menuItem9.setText("Dijkstra");
-                menuItem9.addActionListener(e -> menuItem9ActionPerformed(e));
-                menu4.add(menuItem9);
-            }
-            menuBar1.add(menu4);
-
             //======== menu1 ========
             {
                 menu1.setText("Database");
@@ -503,6 +444,7 @@ public class Show extends JFrame {
 
         //======== tabbedPane ========
         {
+            tabbedPane.setEnabled(false);
 
             //======== mappa_panel ========
             {
@@ -517,26 +459,21 @@ public class Show extends JFrame {
 
                 // JFormDesigner evaluation mark
                 mappa_panel.setBorder(new javax.swing.border.CompoundBorder(
-                        new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-                                "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
-                                javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-                                java.awt.Color.red), mappa_panel.getBorder()));
-                mappa_panel.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-                    public void propertyChange(java.beans.PropertyChangeEvent e) {
-                        if ("border".equals(e.getPropertyName())) throw new RuntimeException();
-                    }
-                });
+                    new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+                        "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+                        javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+                        java.awt.Color.red), mappa_panel.getBorder())); mappa_panel.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
 
 
                 GroupLayout mappa_panelLayout = new GroupLayout(mappa_panel);
                 mappa_panel.setLayout(mappa_panelLayout);
                 mappa_panelLayout.setHorizontalGroup(
-                        mappa_panelLayout.createParallelGroup()
-                                .addGap(0, 984, Short.MAX_VALUE)
+                    mappa_panelLayout.createParallelGroup()
+                        .addGap(0, 984, Short.MAX_VALUE)
                 );
                 mappa_panelLayout.setVerticalGroup(
-                        mappa_panelLayout.createParallelGroup()
-                                .addGap(0, 568, Short.MAX_VALUE)
+                    mappa_panelLayout.createParallelGroup()
+                        .addGap(0, 568, Short.MAX_VALUE)
                 );
             }
             tabbedPane.addTab("Mappa", mappa_panel);
@@ -549,89 +486,251 @@ public class Show extends JFrame {
                     scrollPane2.setViewportView(tratte_area);
                 }
 
+                //---- tratte_button ----
+                tratte_button.setText("Crea");
+                tratte_button.addActionListener(e -> button1ActionPerformed(e));
+
+                //======== scrollPane3 ========
+                {
+
+                    //---- tratteOutput_area ----
+                    tratteOutput_area.setEditable(false);
+                    scrollPane3.setViewportView(tratteOutput_area);
+                }
+
+                GroupLayout tratte_panelLayout = new GroupLayout(tratte_panel);
+                tratte_panel.setLayout(tratte_panelLayout);
+                tratte_panelLayout.setHorizontalGroup(
+                    tratte_panelLayout.createParallelGroup()
+                        .addGroup(tratte_panelLayout.createSequentialGroup()
+                            .addGroup(tratte_panelLayout.createParallelGroup()
+                                .addGroup(tratte_panelLayout.createSequentialGroup()
+                                    .addContainerGap()
+                                    .addComponent(scrollPane2, GroupLayout.PREFERRED_SIZE, 465, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                                    .addComponent(scrollPane3, GroupLayout.PREFERRED_SIZE, 465, GroupLayout.PREFERRED_SIZE))
+                                .addGroup(tratte_panelLayout.createSequentialGroup()
+                                    .addGap(137, 137, 137)
+                                    .addComponent(tratte_button, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
+                                    .addGap(0, 0, Short.MAX_VALUE)))
+                            .addContainerGap())
+                );
+                tratte_panelLayout.setVerticalGroup(
+                    tratte_panelLayout.createParallelGroup()
+                        .addGroup(tratte_panelLayout.createSequentialGroup()
+                            .addContainerGap()
+                            .addGroup(tratte_panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                .addComponent(scrollPane2, GroupLayout.PREFERRED_SIZE, 495, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(scrollPane3, GroupLayout.PREFERRED_SIZE, 495, GroupLayout.PREFERRED_SIZE))
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(tratte_button)
+                            .addContainerGap(15, Short.MAX_VALUE))
+                );
+            }
+            tabbedPane.addTab("Tratte", tratte_panel);
+
+            //======== utenti_panel ========
+            {
+
                 //======== scrollPane1 ========
                 {
                     scrollPane1.setViewportView(utenti_area);
                 }
 
-                //---- tratte_label ----
-                tratte_label.setText("Tratte");
-
-                //---- utenti_label ----
-                utenti_label.setText("Utenti");
-
-                //---- tratte_button ----
-                tratte_button.setText("Crea");
-                tratte_button.setEnabled(false);
-                tratte_button.addActionListener(e -> button1ActionPerformed(e));
-
                 //---- utenti_button ----
                 utenti_button.setText("Crea");
-                utenti_button.setEnabled(false);
                 utenti_button.addActionListener(e -> button2ActionPerformed(e));
 
-                GroupLayout tratte_panelLayout = new GroupLayout(tratte_panel);
-                tratte_panel.setLayout(tratte_panelLayout);
-                tratte_panelLayout.setHorizontalGroup(
-                        tratte_panelLayout.createParallelGroup()
-                                .addGroup(tratte_panelLayout.createSequentialGroup()
-                                        .addGroup(tratte_panelLayout.createParallelGroup()
-                                                .addGroup(tratte_panelLayout.createSequentialGroup()
-                                                        .addGap(16, 16, 16)
-                                                        .addComponent(tratte_label))
-                                                .addGroup(tratte_panelLayout.createSequentialGroup()
-                                                        .addContainerGap()
-                                                        .addComponent(scrollPane2, GroupLayout.PREFERRED_SIZE, 475, GroupLayout.PREFERRED_SIZE)))
-                                        .addGroup(tratte_panelLayout.createParallelGroup()
-                                                .addGroup(tratte_panelLayout.createSequentialGroup()
-                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
-                                                        .addComponent(utenti_label)
-                                                        .addGap(430, 430, 430))
-                                                .addGroup(tratte_panelLayout.createSequentialGroup()
-                                                        .addGap(16, 16, 16)
-                                                        .addComponent(scrollPane1, GroupLayout.DEFAULT_SIZE, 489, Short.MAX_VALUE))))
-                                .addGroup(tratte_panelLayout.createSequentialGroup()
-                                        .addGap(160, 160, 160)
-                                        .addComponent(tratte_button, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 320, Short.MAX_VALUE)
-                                        .addComponent(utenti_button, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
-                                        .addGap(186, 186, 186))
+                //======== scrollPane4 ========
+                {
+
+                    //---- utentiOutput_area ----
+                    utentiOutput_area.setEditable(false);
+                    scrollPane4.setViewportView(utentiOutput_area);
+                }
+
+                GroupLayout utenti_panelLayout = new GroupLayout(utenti_panel);
+                utenti_panel.setLayout(utenti_panelLayout);
+                utenti_panelLayout.setHorizontalGroup(
+                    utenti_panelLayout.createParallelGroup()
+                        .addGroup(utenti_panelLayout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(scrollPane1, GroupLayout.PREFERRED_SIZE, 465, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                            .addComponent(scrollPane4, GroupLayout.PREFERRED_SIZE, 465, GroupLayout.PREFERRED_SIZE)
+                            .addContainerGap())
+                        .addGroup(utenti_panelLayout.createSequentialGroup()
+                            .addGap(122, 122, 122)
+                            .addComponent(utenti_button, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
+                            .addContainerGap(704, Short.MAX_VALUE))
                 );
-                tratte_panelLayout.setVerticalGroup(
-                        tratte_panelLayout.createParallelGroup()
-                                .addGroup(GroupLayout.Alignment.TRAILING, tratte_panelLayout.createSequentialGroup()
-                                        .addContainerGap(21, Short.MAX_VALUE)
-                                        .addGroup(tratte_panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                .addComponent(tratte_label)
-                                                .addComponent(utenti_label))
-                                        .addGap(18, 18, 18)
-                                        .addGroup(tratte_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(scrollPane2, GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE)
-                                                .addComponent(scrollPane1, GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE))
-                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGroup(tratte_panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                .addComponent(tratte_button)
-                                                .addComponent(utenti_button))
-                                        .addContainerGap())
+                utenti_panelLayout.setVerticalGroup(
+                    utenti_panelLayout.createParallelGroup()
+                        .addGroup(GroupLayout.Alignment.TRAILING, utenti_panelLayout.createSequentialGroup()
+                            .addContainerGap()
+                            .addGroup(utenti_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                .addComponent(scrollPane4, GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE)
+                                .addComponent(scrollPane1, GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE))
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(utenti_button)
+                            .addContainerGap(15, Short.MAX_VALUE))
                 );
             }
-            tabbedPane.addTab("Tratte", tratte_panel);
+            tabbedPane.addTab("Utenti", utenti_panel);
+
+            //======== altro_panel ========
+            {
+
+                //======== scrollPane6 ========
+                {
+
+                    //---- dijkstra_area ----
+                    dijkstra_area.setEditable(false);
+                    scrollPane6.setViewportView(dijkstra_area);
+                }
+
+                //---- partenza_label ----
+                partenza_label.setText("partenza");
+
+                //---- rDijkstra_button ----
+                rDijkstra_button.setText("R");
+                rDijkstra_button.addActionListener(e -> rDijkstra_buttonActionPerformed(e));
+
+                //---- rVisita_button ----
+                rVisita_button.setText("R");
+                rVisita_button.addActionListener(e -> rVisita_buttonActionPerformed(e));
+
+                //---- dijkstra_button ----
+                dijkstra_button.setText("OK");
+                dijkstra_button.addActionListener(e -> dijkstra_buttonActionPerformed(e));
+
+                //---- visita_button ----
+                visita_button.setText("OK");
+                visita_button.addActionListener(e -> visita_buttonActionPerformed(e));
+
+                //---- sorgente_label ----
+                sorgente_label.setText("sorgente");
+
+                //---- destinazione_label ----
+                destinazione_label.setText("destinazione");
+
+                //======== scrollPane7 ========
+                {
+                    scrollPane7.setViewportView(visita_area);
+                }
+
+                GroupLayout altro_panelLayout = new GroupLayout(altro_panel);
+                altro_panel.setLayout(altro_panelLayout);
+                altro_panelLayout.setHorizontalGroup(
+                    altro_panelLayout.createParallelGroup()
+                        .addGroup(altro_panelLayout.createSequentialGroup()
+                            .addGap(35, 35, 35)
+                            .addGroup(altro_panelLayout.createParallelGroup()
+                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                    .addComponent(partenza_label)
+                                    .addGap(54, 54, 54)
+                                    .addGroup(altro_panelLayout.createParallelGroup()
+                                        .addComponent(partenzaLon_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(partenzaLat_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE))
+                                    .addGap(18, 18, 18)
+                                    .addComponent(rVisita_button))
+                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                    .addGroup(altro_panelLayout.createParallelGroup()
+                                        .addComponent(sorgente_label)
+                                        .addComponent(destinazione_label))
+                                    .addGap(27, 27, 27)
+                                    .addGroup(altro_panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                        .addComponent(sorgenteLat_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(sorgenteLon_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(destinazioneLon_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(destinazioneLat_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE))
+                                    .addGap(18, 18, 18)
+                                    .addComponent(rDijkstra_button)))
+                            .addGap(18, 18, 18)
+                            .addGroup(altro_panelLayout.createParallelGroup()
+                                .addComponent(scrollPane6, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(scrollPane7, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE))
+                            .addGap(57, 57, 57)
+                            .addGroup(altro_panelLayout.createParallelGroup()
+                                .addComponent(dijkstra_button)
+                                .addComponent(visita_button))
+                            .addContainerGap(107, Short.MAX_VALUE))
+                );
+                altro_panelLayout.setVerticalGroup(
+                    altro_panelLayout.createParallelGroup()
+                        .addGroup(altro_panelLayout.createSequentialGroup()
+                            .addGroup(altro_panelLayout.createParallelGroup()
+                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                    .addGap(138, 138, 138)
+                                    .addComponent(dijkstra_button))
+                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                    .addGap(45, 45, 45)
+                                    .addGroup(altro_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(altro_panelLayout.createSequentialGroup()
+                                            .addGroup(altro_panelLayout.createParallelGroup()
+                                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                                    .addComponent(sorgenteLat_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                                    .addComponent(sorgenteLon_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                                    .addGap(26, 26, 26)
+                                                    .addComponent(sorgente_label)))
+                                            .addGroup(altro_panelLayout.createParallelGroup()
+                                                .addGroup(GroupLayout.Alignment.TRAILING, altro_panelLayout.createSequentialGroup()
+                                                    .addGap(1, 1, 1)
+                                                    .addComponent(destinazioneLat_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                                    .addComponent(destinazioneLon_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                                    .addGroup(altro_panelLayout.createParallelGroup()
+                                                        .addGroup(altro_panelLayout.createSequentialGroup()
+                                                            .addGap(21, 21, 21)
+                                                            .addComponent(rDijkstra_button))
+                                                        .addGroup(altro_panelLayout.createSequentialGroup()
+                                                            .addGap(59, 59, 59)
+                                                            .addComponent(destinazione_label)))
+                                                    .addGap(27, 27, 27))))
+                                        .addComponent(scrollPane6, GroupLayout.PREFERRED_SIZE, 216, GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(altro_panelLayout.createParallelGroup()
+                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 135, Short.MAX_VALUE)
+                                    .addGroup(altro_panelLayout.createParallelGroup()
+                                        .addGroup(GroupLayout.Alignment.TRAILING, altro_panelLayout.createSequentialGroup()
+                                            .addGroup(altro_panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(partenza_label)
+                                                .addComponent(rVisita_button))
+                                            .addGap(122, 122, 122))
+                                        .addGroup(GroupLayout.Alignment.TRAILING, altro_panelLayout.createSequentialGroup()
+                                            .addComponent(visita_button)
+                                            .addGap(116, 116, 116))
+                                        .addGroup(GroupLayout.Alignment.TRAILING, altro_panelLayout.createSequentialGroup()
+                                            .addComponent(partenzaLat_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(partenzaLon_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                            .addGap(104, 104, 104))))
+                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                    .addGap(50, 50, 50)
+                                    .addComponent(scrollPane7, GroupLayout.PREFERRED_SIZE, 215, GroupLayout.PREFERRED_SIZE)
+                                    .addGap(0, 44, Short.MAX_VALUE))))
+                );
+            }
+            tabbedPane.addTab("Altro", altro_panel);
         }
 
         GroupLayout contentPaneLayout = new GroupLayout(contentPane);
         contentPane.setLayout(contentPaneLayout);
         contentPaneLayout.setHorizontalGroup(
-                contentPaneLayout.createParallelGroup()
-                        .addGroup(contentPaneLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(tabbedPane)
-                                .addGap(6, 6, 6))
+            contentPaneLayout.createParallelGroup()
+                .addGroup(contentPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(tabbedPane)
+                    .addGap(6, 6, 6))
         );
         contentPaneLayout.setVerticalGroup(
-                contentPaneLayout.createParallelGroup()
-                        .addGroup(contentPaneLayout.createSequentialGroup()
-                                .addComponent(tabbedPane, GroupLayout.PREFERRED_SIZE, 604, GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(2, Short.MAX_VALUE))
+            contentPaneLayout.createParallelGroup()
+                .addGroup(contentPaneLayout.createSequentialGroup()
+                    .addComponent(tabbedPane, GroupLayout.PREFERRED_SIZE, 604, GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(2, Short.MAX_VALUE))
         );
         pack();
         setLocationRelativeTo(getOwner());
@@ -647,10 +746,6 @@ public class Show extends JFrame {
     private JMenuItem reset_item;
     private JMenuItem cancella_item;
     private JMenuItem esci_item;
-    private JMenu menu3;
-    private JMenuItem menuItem10;
-    private JMenu menu4;
-    private JMenuItem menuItem9;
     private JMenu menu1;
     private JMenuItem menuItem2;
     private JMenuItem menuItem1;
@@ -659,12 +754,33 @@ public class Show extends JFrame {
     private JPanel tratte_panel;
     private JScrollPane scrollPane2;
     private JTextArea tratte_area;
+    private JButton tratte_button;
+    private JScrollPane scrollPane3;
+    private JTextArea tratteOutput_area;
+    private JPanel utenti_panel;
     private JScrollPane scrollPane1;
     private JTextArea utenti_area;
-    private JLabel tratte_label;
-    private JLabel utenti_label;
-    private JButton tratte_button;
     private JButton utenti_button;
+    private JScrollPane scrollPane4;
+    private JTextArea utentiOutput_area;
+    private JPanel altro_panel;
+    private JScrollPane scrollPane6;
+    private JTextArea dijkstra_area;
+    private JTextField sorgenteLat_text;
+    private JTextField destinazioneLat_text;
+    private JTextField partenzaLat_text;
+    private JLabel partenza_label;
+    private JButton rDijkstra_button;
+    private JButton rVisita_button;
+    private JButton dijkstra_button;
+    private JButton visita_button;
+    private JTextField sorgenteLon_text;
+    private JTextField destinazioneLon_text;
+    private JTextField partenzaLon_text;
+    private JLabel sorgente_label;
+    private JLabel destinazione_label;
+    private JScrollPane scrollPane7;
+    private JTextArea visita_area;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     private File openFile() {
@@ -882,7 +998,11 @@ public class Show extends JFrame {
                 for (Iterator<Route> it = routes.iterator(); it.hasNext(); ) {
                     Route r = it.next();
 
-                    Color randomColor = new Color((int) (Math.random() * 0x1000000));
+                    int red = 5 * (int) (Math.random() * 52);
+                    int green = 5 * (int) (Math.random() * 52);
+                    int blue = 5 * (int) (Math.random() * 52);
+                    Color randomColor = new Color(red, green, blue);
+                    //Color randomColor = new Color((int) (Math.random() * 0x1000000));
                     g.setColor(randomColor);
 
                     for (int i = 0; i < r.getNodes().size(); i++) {

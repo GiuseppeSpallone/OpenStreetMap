@@ -10,6 +10,7 @@ new FormModel {
 			name: "this"
 			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
 				name: "tabbedPane"
+				"enabled": false
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
 					"$horizontalGroup": "par l {space :0:984:x}"
 					"$verticalGroup": "par l {space :0:568:x}"
@@ -25,8 +26,8 @@ new FormModel {
 					"title": "Mappa"
 				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {seq l {par l {seq {space :p:16:p, comp tratte_label:::p::p}, seq l {space :::p, comp scrollPane2:::p:475:p}}, par l {seq {space ::33:x, comp utenti_label:::p::p, space :p:430:p}, seq {space :p:16:p, comp scrollPane1::::489:x}}}, seq l {space :p:160:p, comp tratte_button:::p:160:p, space ::320:x, comp utenti_button:::p:160:p, space :p:186:p}}"
-					"$verticalGroup": "par l {seq t {space ::21:x, par b {comp tratte_label::b:p::p, comp utenti_label::b:p::p}, space s:::p, par l:::p {comp scrollPane2::::455:x, comp scrollPane1::::455:x}, space :::x, par b {comp tratte_button::b:p::p, comp utenti_button::b:p::p}, space :::p}}"
+					"$horizontalGroup": "par l {seq {par l {seq {space :::p, comp scrollPane2:::p:465:p, space ::44:x, comp scrollPane3:::p:465:p}, seq l {space :p:137:p, comp tratte_button:::p:160:p, space :0:0:x}}, space :::p}}"
+					"$verticalGroup": "par l {seq l {space :::p, par t {comp scrollPane2:::p:495:p, comp scrollPane3:::p:495:p}, space u:::p, comp tratte_button:::p::p, space ::15:x}}"
 				} ) {
 					name: "tratte_panel"
 					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
@@ -35,34 +36,117 @@ new FormModel {
 							name: "tratte_area"
 						} )
 					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "tratte_button"
+						"text": "Crea"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button1ActionPerformed", true ) )
+					} )
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "scrollPane3"
+						add( new FormComponent( "javax.swing.JTextArea" ) {
+							name: "tratteOutput_area"
+							"editable": false
+						} )
+					} )
+				}, new FormLayoutConstraints( null ) {
+					"title": "Tratte"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+					"$horizontalGroup": "par l {seq {space :::p, comp scrollPane1:::p:465:p, space ::44:x, comp scrollPane4:::p:465:p, space :::p}, seq l {space :p:122:p, comp utenti_button:::p:160:p, space ::704:x}}"
+					"$verticalGroup": "par l {seq t {space :::p, par l:::p {comp scrollPane4::::495:x, comp scrollPane1::::495:x}, space u:::p, comp utenti_button:::p::p, space ::15:x}}"
+				} ) {
+					name: "utenti_panel"
 					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 						name: "scrollPane1"
 						add( new FormComponent( "javax.swing.JTextArea" ) {
 							name: "utenti_area"
 						} )
 					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "tratte_label"
-						"text": "Tratte"
-					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "utenti_label"
-						"text": "Utenti"
-					} )
-					add( new FormComponent( "javax.swing.JButton" ) {
-						name: "tratte_button"
-						"text": "Crea"
-						"enabled": false
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button1ActionPerformed", true ) )
-					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "utenti_button"
 						"text": "Crea"
-						"enabled": false
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button2ActionPerformed", true ) )
 					} )
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "scrollPane4"
+						add( new FormComponent( "javax.swing.JTextArea" ) {
+							name: "utentiOutput_area"
+							"editable": false
+						} )
+					} )
 				}, new FormLayoutConstraints( null ) {
-					"title": "Tratte"
+					"title": "Utenti"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+					"$horizontalGroup": "par l {seq l {space :p:35:p, par l {seq l {comp partenza_label:::p::p, space :p:54:p, par l {comp partenzaLon_text:::p:130:p, comp partenzaLat_text::l:p:130:p}, space s:::p, comp rVisita_button:::p::p}, seq l {par l {comp sorgente_label:::p::p, comp destinazione_label:::p::p}, space :p:27:p, par t {comp sorgenteLat_text:::p:130:p, comp sorgenteLon_text:::p:130:p, comp destinazioneLon_text::t:p:130:p, comp destinazioneLat_text::t:p:130:p}, space s:::p, comp rDijkstra_button:::p::p}}, space :p:18:p, par l {comp scrollPane6:::p:400:p, comp scrollPane7:::p:400:p}, space :p:57:p, par l {comp dijkstra_button:::p::p, comp visita_button:::p::p}, space ::107:x}}"
+					"$verticalGroup": "par l {seq l {par l {seq l {space :p:138:p, comp dijkstra_button:::p::p}, seq l {space :p:45:p, par l:::p {seq {par l {seq {comp sorgenteLat_text:::p::p, space u:::p, comp sorgenteLon_text:::p::p}, seq l {space :p:26:p, comp sorgente_label:::p::p}}, par l {seq t {space :p:1:p, comp destinazioneLat_text:::p::p, space u:::p, comp destinazioneLon_text:::p::p}, seq {par l {seq {space :p:21:p, comp rDijkstra_button:::p::p}, seq l {space :p:59:p, comp destinazione_label:::p::p}}, space :p:27:p}}}, comp scrollPane6:::p:216:p}}}, par l {seq {space ::135:x, par l {seq t {par b {comp partenza_label::b:p::p, comp rVisita_button::b:p::p}, space :p:122:p}, seq t {comp visita_button:::p::p, space :p:116:p}, seq t {comp partenzaLat_text:::p::p, space :::p, comp partenzaLon_text:::p::p, space :p:104:p}}}, seq l {space :p:50:p, comp scrollPane7:::p:215:p, space :0:44:x}}}}"
+				} ) {
+					name: "altro_panel"
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "scrollPane6"
+						add( new FormComponent( "javax.swing.JTextArea" ) {
+							name: "dijkstra_area"
+							"editable": false
+						} )
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "sorgenteLat_text"
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "destinazioneLat_text"
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "partenzaLat_text"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "partenza_label"
+						"text": "partenza"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "rDijkstra_button"
+						"text": "R"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "rDijkstra_buttonActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "rVisita_button"
+						"text": "R"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "rVisita_buttonActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "dijkstra_button"
+						"text": "OK"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "dijkstra_buttonActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "visita_button"
+						"text": "OK"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "visita_buttonActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "sorgenteLon_text"
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "destinazioneLon_text"
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "partenzaLon_text"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "sorgente_label"
+						"text": "sorgente"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "destinazione_label"
+						"text": "destinazione"
+					} )
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "scrollPane7"
+						add( new FormComponent( "javax.swing.JTextArea" ) {
+							name: "visita_area"
+						} )
+					} )
+				}, new FormLayoutConstraints( null ) {
+					"title": "Altro"
 				} )
 			} )
 			menuBar: new FormContainer( "javax.swing.JMenuBar", new FormLayoutManager( class javax.swing.JMenuBar ) ) {
@@ -96,26 +180,6 @@ new FormModel {
 						name: "esci_item"
 						"text": "Esci"
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "menuItem3ActionPerformed", true ) )
-					} )
-				} )
-				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
-					name: "menu3"
-					"text": "Visite"
-					"enabled": false
-					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem10"
-						"text": "Profondità"
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "menuItem10ActionPerformed", true ) )
-					} )
-				} )
-				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
-					name: "menu4"
-					"text": "Percorso"
-					"enabled": false
-					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem9"
-						"text": "Dijkstra"
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "menuItem9ActionPerformed", true ) )
 					} )
 				} )
 				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {

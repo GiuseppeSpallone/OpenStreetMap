@@ -6,18 +6,23 @@ import sun.misc.Queue;
 
 import java.util.*;
 
-public class Visits {
+public class Visit {
+    ArrayList<Node> nodes = new ArrayList<>();
 
-    public void visita(HashMap<Long, Node> nodes, Node startingNode) {
+    public ArrayList<Node> visita(HashMap<Long, Node> nodes, Node startingNode) {
 
         reset(nodes);
 
         //visita in profondità
-        visitaFrom(startingNode);
+        ArrayList<Node> visit_nodes = visitaFrom(startingNode);
+        printVisit(visit_nodes);
+
+        return visit_nodes;
     }
 
-    private void visitaFrom(Node node) {
+    private ArrayList<Node> visitaFrom(Node node) {
         node.setMark(1);
+        nodes.add(node);
 
         for (Iterator<Arc> it = node.getNd_arcs().iterator(); it.hasNext(); ) {
             Arc arc = it.next();
@@ -30,6 +35,8 @@ public class Visits {
                 }
             }
         }
+
+        return nodes;
     }
 
     private void reset(HashMap<Long, Node> nodes) {
@@ -38,10 +45,20 @@ public class Visits {
             Node node = it.next();
             node.setMark(0);
 
-            for(Iterator<Arc> it1 = node.nd_arcs.iterator(); it1.hasNext();){
+            for (Iterator<Arc> it1 = node.nd_arcs.iterator(); it1.hasNext(); ) {
                 Arc arc = it1.next();
                 arc.setMark(0);
             }
+        }
+    }
+
+    private void printVisit(ArrayList<Node> nodes) {
+        System.out.println("VISITA -->");
+
+        for (Iterator<Node> it = nodes.iterator(); it.hasNext(); ) {
+            Node node = it.next();
+
+            System.out.println("        id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon());
         }
     }
 
