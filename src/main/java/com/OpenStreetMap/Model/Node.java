@@ -1,6 +1,6 @@
 package com.OpenStreetMap.Model;
 
-import com.OpenStreetMap.Controller.ControllerImport;
+import com.OpenStreetMap.Controller.ImportMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public class Node {
     public ArrayList<Arc> nd_arcs = new ArrayList<>();
 
     public double distanzaLatLog(Node n) {
-        return ControllerImport.distance(lat, n.getLat(), lon, n.getLon(), 0, 0);
+        return ImportMap.distance(lat, n.getLat(), lon, n.getLon(), 0, 0);
     }
 
     public float distanza(Node n) {
@@ -196,4 +196,11 @@ public class Node {
         this.predecessore = predecessore;
     }
 
+    public int getNum_studenti() {
+        return num_studenti;
+    }
+
+    public void setNum_studenti(int num_studenti) {
+        this.num_studenti = num_studenti;
+    }
 }

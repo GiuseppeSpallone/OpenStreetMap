@@ -4,79 +4,96 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {seq l {space :::p, comp panel1:::p::p, space :::p, par l {comp label1::::213:x, comp panel3::l:::x, comp button1::t::213:x}, space :::p, comp panel2:::p::p}}"
-			"$verticalGroup": "par l {comp panel2:::::x, comp panel1::l:::x, seq l {space :::p, comp label1:::p::p, space :::x, comp panel3:::p::p, space :::p, comp button1:::p::p, space :p:34:p}}"
+			"$horizontalGroup": "par l {seq l {space :::p, comp tabbedPane:::::x, space :p:6:p}}"
+			"$verticalGroup": "par l {seq {comp tabbedPane:::p:604:p, space ::2:x}}"
 		} ) {
 			name: "this"
-			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-				"$horizontalGroup": "par l {space :0:767:x}"
-				"$verticalGroup": "par l {space :0:0:x}"
-			} ) {
-				name: "panel1"
-				"background": new java.awt.Color( 255, 255, 255, 255 )
-				"border": new javax.swing.border.LineBorder( sfield java.awt.Color black, 1, false )
-				auxiliary() {
-					"JavaCodeGenerator.customCreateCode": "new JPanel(){\n\n    @Override\n    public void paint(Graphics g) {\n        super.paint(g);\n        disegna(g);\n    }\n\n};"
-				}
-				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "panel1MouseClicked", true ) )
-			} )
-			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-				"$horizontalGroup": "par l {space :0:0:x}"
-				"$verticalGroup": "par l {space :0:0:x}"
-			} ) {
-				name: "panel2"
-			} )
-			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-				"$horizontalGroup": "par l {comp scrollPane3::l::213:x}"
-				"$verticalGroup": "par l {seq l {space :::p, comp scrollPane3:::p:502:p, space ::15:x}}"
-			} ) {
-				name: "panel3"
-				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
-					name: "scrollPane3"
-					add( new FormComponent( "javax.swing.JTextArea" ) {
-						name: "textArea2"
-					} )
+			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
+				name: "tabbedPane"
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+					"$horizontalGroup": "par l {space :0:984:x}"
+					"$verticalGroup": "par l {space :0:568:x}"
+				} ) {
+					name: "mappa_panel"
+					"background": new java.awt.Color( 255, 255, 255, 255 )
+					"border": new javax.swing.border.LineBorder( sfield java.awt.Color black, 1, false )
+					auxiliary() {
+						"JavaCodeGenerator.customCreateCode": "new JPanel(){\n\n    @Override\n    public void paint(Graphics g) {\n        super.paint(g);\n        disegna(g);\n    }\n\n};"
+					}
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "panel1MouseClicked", true ) )
+				}, new FormLayoutConstraints( null ) {
+					"title": "Mappa"
 				} )
-			} )
-			add( new FormComponent( "javax.swing.JLabel" ) {
-				name: "label1"
-				"text": "Tratte"
-			} )
-			add( new FormComponent( "javax.swing.JButton" ) {
-				name: "button1"
-				"text": "Crea"
-				"enabled": false
-				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button1ActionPerformed", true ) )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+					"$horizontalGroup": "par l {seq l {par l {seq {space :p:16:p, comp tratte_label:::p::p}, seq l {space :::p, comp scrollPane2:::p:475:p}}, par l {seq {space ::33:x, comp utenti_label:::p::p, space :p:430:p}, seq {space :p:16:p, comp scrollPane1::::489:x}}}, seq l {space :p:160:p, comp tratte_button:::p:160:p, space ::320:x, comp utenti_button:::p:160:p, space :p:186:p}}"
+					"$verticalGroup": "par l {seq t {space ::21:x, par b {comp tratte_label::b:p::p, comp utenti_label::b:p::p}, space s:::p, par l:::p {comp scrollPane2::::455:x, comp scrollPane1::::455:x}, space :::x, par b {comp tratte_button::b:p::p, comp utenti_button::b:p::p}, space :::p}}"
+				} ) {
+					name: "tratte_panel"
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "scrollPane2"
+						add( new FormComponent( "javax.swing.JTextArea" ) {
+							name: "tratte_area"
+						} )
+					} )
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "scrollPane1"
+						add( new FormComponent( "javax.swing.JTextArea" ) {
+							name: "utenti_area"
+						} )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "tratte_label"
+						"text": "Tratte"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "utenti_label"
+						"text": "Utenti"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "tratte_button"
+						"text": "Crea"
+						"enabled": false
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button1ActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "utenti_button"
+						"text": "Crea"
+						"enabled": false
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button2ActionPerformed", true ) )
+					} )
+				}, new FormLayoutConstraints( null ) {
+					"title": "Tratte"
+				} )
 			} )
 			menuBar: new FormContainer( "javax.swing.JMenuBar", new FormLayoutManager( class javax.swing.JMenuBar ) ) {
 				name: "menuBar1"
 				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
-					name: "menu2"
+					name: "mappa_menu"
 					"text": "Mappa"
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem4"
+						name: "caricaEsporta_item"
 						"text": "Carica / Esporta"
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "menuItem4ActionPerformed", true ) )
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem7"
+						name: "disegna_item"
 						"text": "Disegna "
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "menuItem7ActionPerformed", true ) )
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem11"
+						name: "reset_item"
 						"text": "Reset "
 						"enabled": false
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "menuItem11ActionPerformed", true ) )
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem8"
+						name: "cancella_item"
 						"text": "Cancella"
 						"enabled": false
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "menuItem8ActionPerformed", true ) )
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem3"
+						name: "esci_item"
 						"text": "Esci"
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "menuItem3ActionPerformed", true ) )
 					} )
@@ -102,16 +119,6 @@ new FormModel {
 					} )
 				} )
 				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
-					name: "menu5"
-					"text": "Tratte"
-					"enabled": false
-					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem5"
-						"text": "Crea"
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "menuItem5ActionPerformed", true ) )
-					} )
-				} )
-				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
 					name: "menu1"
 					"text": "Database"
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
@@ -128,9 +135,8 @@ new FormModel {
 				} )
 			}
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 58, 0 )
+			"location": new java.awt.Point( 48, 5 )
 			"size": new java.awt.Dimension( 802, 542 )
 		} )
 	}
 }
-

@@ -1,19 +1,5 @@
 package com.OpenStreetMap;
 
-import com.OpenStreetMap.Controller.ControllerDatabase;
-import com.OpenStreetMap.Controller.ControllerImport;
-import com.OpenStreetMap.Model.Arc;
-import com.OpenStreetMap.Model.Node;
-import com.OpenStreetMap.Model.Way;
-import com.OpenStreetMap.View.Show;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
 public class App {
 
     public static void main(String[] args) {

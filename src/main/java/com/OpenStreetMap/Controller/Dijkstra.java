@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Dijkstra {
 
-    public ArrayList<Node> run(Node sorgente, Node destinazione, HashMap<Long, Node> nodes) {
+    public ArrayList<Node> run(Node sorgente, Node destinazione, HashMap<Long, Node> nodes, boolean mark) {
         System.out.println("DIJKSTRA --> ");
         System.out.println("             SORGENTE index: " + sorgente.getIndex() + "; id: " + sorgente.getId() + "; coordinate: " + sorgente.getLat() + "," + sorgente.getLon());
         System.out.println("             DESTINAZIONE index: " + destinazione.getIndex() + "; id: " + destinazione.getId() + "; coordinate: " + destinazione.getLat() + "," + destinazione.getLon());
@@ -56,7 +56,10 @@ public class Dijkstra {
             }
         }
         ArrayList<Node> percorso = setPredecessorePercorso(sorgente, destinazione);
-        setMarkPercorso(percorso);
+
+        if (mark)
+            setMarkPercorso(percorso);
+
         printPercorso(percorso);
 
         return percorso;
@@ -106,7 +109,7 @@ public class Dijkstra {
     }
 
     private void printPercorso(ArrayList<Node> percorso) {
-        System.out.println("             DISTANZA --> " + percorso.get(percorso.size()-1).getDistanza());
+        System.out.println("             DISTANZA --> " + percorso.get(percorso.size() - 1).getDistanza());
 
         System.out.println("             PERCORSO --> ");
         for (Iterator<Node> it = percorso.iterator(); it.hasNext(); ) {

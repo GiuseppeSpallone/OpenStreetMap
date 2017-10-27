@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-public class ControllerFileMap {
+public class ImportPlotMap {
     private HashMap<Long, Node> nodes = null;
     private HashSet<Arc> arcs = null;
 

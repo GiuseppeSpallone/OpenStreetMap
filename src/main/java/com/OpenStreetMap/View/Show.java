@@ -6,7 +6,6 @@ package com.OpenStreetMap.View;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,11 +23,12 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 
 public class Show extends JFrame {
-    ControllerImport controllerImport = new ControllerImport();
-    ControllerExport controllerExport = new ControllerExport();
-    ControllerDatabase controllerDatabase = new ControllerDatabase();
-    ControllerFileMap controllerFileMap = new ControllerFileMap();
-    ControllerRoute controllerRoute = new ControllerRoute();
+    ImportMap importMap = new ImportMap();
+    ExportMap exportMap = new ExportMap();
+    Database database = new Database();
+    ImportPlotMap importPlotMap = new ImportPlotMap();
+    ControllerRoutes controllerRoutes = new ControllerRoutes();
+    ControllerStudenti controllerStudenti = new ControllerStudenti();
     Visits visits = new Visits();
     Dijkstra dijkstra = new Dijkstra();
 
@@ -37,7 +37,10 @@ public class Show extends JFrame {
     private HashSet<Arc> arcs = null;
     private HashMap<Long, Node> nodes_paint = null;
     private HashSet<Arc> arcs_paint = null;
-    HashMap<Long, Route> routes = null;
+    private HashSet<Route> routes = null;
+    private HashSet<Node> nodes_students = null;
+
+    boolean plotMap = true;
 
     private File file = null;
 
@@ -46,7 +49,7 @@ public class Show extends JFrame {
     }
 
     private void menuItem2ActionPerformed(ActionEvent e) {
-        dbStreetMap = controllerDatabase.connectDB("localhost", 27017, "StreetMap");
+        dbStreetMap = database.connectDB("localhost", 27017, "StreetMap");
         if (dbStreetMap != null) {
             JOptionPane.showMessageDialog(null, "Connesso al DB");
             menuItem2.setEnabled(false);
@@ -56,13 +59,13 @@ public class Show extends JFrame {
     }
 
     private void menuItem1ActionPerformed(ActionEvent e) {
-        DBCollection collectionNode = controllerDatabase.getCollection(dbStreetMap, "Node");
-        DBCollection collectionWay = controllerDatabase.getCollection(dbStreetMap, "Way");
-        DBCollection collectionArc = controllerDatabase.getCollection(dbStreetMap, "Arc");
+        DBCollection collectionNode = database.getCollection(dbStreetMap, "Node");
+        DBCollection collectionWay = database.getCollection(dbStreetMap, "Way");
+        DBCollection collectionArc = database.getCollection(dbStreetMap, "Arc");
 
-        controllerDatabase.insertNodesDB(collectionNode, controllerImport.getNodes());
-        controllerDatabase.insertWaysDB(collectionWay, controllerImport.getWays());
-        controllerDatabase.insertArcsDB(collectionArc, controllerImport.getArcs());
+        database.insertNodesDB(collectionNode, importMap.getNodes());
+        database.insertWaysDB(collectionWay, importMap.getWays());
+        database.insertArcsDB(collectionArc, importMap.getArcs());
 
         JOptionPane.showMessageDialog(null, "Elementi inseriti");
     }
@@ -75,9 +78,9 @@ public class Show extends JFrame {
         file = openFile();
 
         if (file != null) {
-            controllerImport.create(file, 5, 2, 100, true, false);
-            nodes = controllerImport.getNodes();
-            arcs = controllerImport.getArcs();
+            importMap.create(file, 5, 2, 100, true, false);
+            nodes = importMap.getNodes();
+            arcs = importMap.getArcs();
 
             if (!nodes.isEmpty() || !arcs.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Mappa creata nodi: " + nodes.size() + " archi: " + arcs.size());
@@ -90,7 +93,15 @@ public class Show extends JFrame {
                     int option = JOptionPane.showOptionDialog(null, "Mappa esportata, disegnare mappa?", null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 
                     if (option == 0) {
-                        disegnaMap(file);
+                        if (disegnaMap(file)) {
+                            menu3.setEnabled(true);
+                            menu4.setEnabled(true);
+                            reset_item.setEnabled(true);
+                            cancella_item.setEnabled(true);
+                            tratte_button.setEnabled(true);
+                            utenti_button.setEnabled(true);
+                            mappa_panel.repaint();
+                        }
                     }
                 } else {
                     JOptionPane.showMessageDialog(null, "Mappa non esportata");
@@ -106,7 +117,15 @@ public class Show extends JFrame {
 
     private void menuItem7ActionPerformed(ActionEvent e) {
         file = openFile();
-        disegnaMap(file);
+        if (disegnaMap(file)) {
+            menu3.setEnabled(true);
+            menu4.setEnabled(true);
+            reset_item.setEnabled(true);
+            cancella_item.setEnabled(true);
+            tratte_button.setEnabled(true);
+            utenti_button.setEnabled(true);
+            mappa_panel.repaint();
+        }
     }
 
     private void panel1MouseClicked(MouseEvent e) {
@@ -114,8 +133,8 @@ public class Show extends JFrame {
         int y = e.getY();
 
         Node n = getNodoVicinoByXY(x, y);
-        textArea2.append("# " + n.getLat() + " " + n.getLon() + "\n");
-        //JOptionPane.showMessageDialog(null, "index: " + n.getIndex() + "; id: " + n.getId() + "; coordinate: " + n.getLat() + "," + n.getLon());
+        JOptionPane.showMessageDialog(null, "index: " + n.getIndex() + "; id: " + n.getId() + "; coordinate: " + n.getLat() + "," + n.getLon());
+        tratte_area.append("# " + n.getLat() + " " + n.getLon() + "\n");
         System.out.println("index: " + n.getIndex() + "; id: " + n.getId() + "; " + n.getLat() + "," + n.getLon());
     }
 
@@ -152,7 +171,7 @@ public class Show extends JFrame {
         }
 
         visits.visita(nodes, startingNode);
-        panel1.repaint();
+        mappa_panel.repaint();
     }
 
     private void menuItem9ActionPerformed(ActionEvent e) {
@@ -198,12 +217,14 @@ public class Show extends JFrame {
             //
         }
 
-        dijkstra.run(sorgente, destinazione, nodes);
-        panel1.repaint();
+        dijkstra.run(sorgente, destinazione, nodes, true);
+        mappa_panel.repaint();
     }
 
     private void menuItem11ActionPerformed(ActionEvent e) {
-        textArea2.removeAll();
+        tratte_area.removeAll();
+        routes = null;
+
 
         for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
             Node node = it.next();
@@ -214,7 +235,7 @@ public class Show extends JFrame {
                 arc.setMark(0);
             }
         }
-        panel1.repaint();
+        mappa_panel.repaint();
     }
 
     private void menuItem8ActionPerformed(ActionEvent e) {
@@ -222,21 +243,23 @@ public class Show extends JFrame {
         arcs = null;
         nodes_paint = null;
         arcs_paint = null;
-        panel1.repaint();
+        routes = null;
+        tratte_area.removeAll();
+        mappa_panel.repaint();
 
-        menuItem11.setEnabled(false);
-        menuItem8.setEnabled(false);
+        reset_item.setEnabled(false);
+        cancella_item.setEnabled(false);
         menu3.setEnabled(false);
         menu4.setEnabled(false);
     }
 
 
-    private void menuItem5ActionPerformed(ActionEvent e) {
+    /*private void menuItem5ActionPerformed(ActionEvent e) {
         int option = 0;
         final int OK = 0;
         final int ANNULLA = 1;
 
-        routes = new HashMap<>();
+        routes = new HashSet<>();
 
         JPanel panelRoutes = new JPanel();
         JLabel jLabel_routes = new JLabel("Numero tratte");
@@ -306,11 +329,11 @@ public class Show extends JFrame {
                             routeNodes.add(node);
                         }
 
-                        Route route = controllerRoute.createRoute(nodes, routeNodes);
+                        Route route = controllerRoutes.createRoute(nodes, routeNodes);
 
-                        routes.put((long) i, route);
+                        routes.add(route);
 
-                        panel1.repaint();
+                        mappa_panel.repaint();
                     } else if (option == ANNULLA) {
                         System.out.println("Annullato scelta latitudine e longitudine");
                     }
@@ -322,59 +345,62 @@ public class Show extends JFrame {
         } else if (option == ANNULLA) {
             System.out.println("Annullato scelta numero rotte");
         }
-        controllerRoute.printRoutes(routes);
+        //controllerRoutes.printRoutes(routes);
 
 
-    }
+    }*/
 
     private void button1ActionPerformed(ActionEvent e) {
-        ArrayList<Node> routeNodes = new ArrayList<>();
 
+        String area = tratte_area.getText().toString();
 
-        String area = textArea2.getText().toString();
+        routes = controllerRoutes.read(area, nodes);
 
-        ArrayList<float[]> checkpoint = controllerRoute.readArea(area);
-
-        for (int i = 0; i < checkpoint.size(); i++) {
-            float latitudine = checkpoint.get(i)[0];
-            float longitudine = checkpoint.get(i)[1];
-
-            Node node = Node.nodeByLatLon(nodes, latitudine, longitudine);
-            routeNodes.add(node);
-        }
-
-        Route route = controllerRoute.createRoute(nodes, routeNodes);
-
-        //routes.put((long)i,route);
-
-        panel1.repaint();
+        mappa_panel.repaint();
 
     }
 
+    private void button2ActionPerformed(ActionEvent e) {
+        String area = utenti_area.getText().toString();
+        ArrayList<float[]> lat_lon_stu = controllerStudenti.readArea(area);
 
+        for (int i = 0; i < lat_lon_stu.size(); i++) {
+            float latitudine = lat_lon_stu.get(i)[0];
+            float longitudine = lat_lon_stu.get(i)[1];
+            float num_studenti = lat_lon_stu.get(i)[2];
 
+            Node node = Node.nodeByLatLon(nodes, latitudine, longitudine);
+            node.setNum_studenti((int) num_studenti);
+
+        }
+
+        mappa_panel.repaint();
+    }
+
+    private void menuItem5ActionPerformed(ActionEvent e) {
+        // TODO add your code here
+    }
 
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner Evaluation license - Giuseppe Spallone
         menuBar1 = new JMenuBar();
-        menu2 = new JMenu();
-        menuItem4 = new JMenuItem();
-        menuItem7 = new JMenuItem();
-        menuItem11 = new JMenuItem();
-        menuItem8 = new JMenuItem();
-        menuItem3 = new JMenuItem();
+        mappa_menu = new JMenu();
+        caricaEsporta_item = new JMenuItem();
+        disegna_item = new JMenuItem();
+        reset_item = new JMenuItem();
+        cancella_item = new JMenuItem();
+        esci_item = new JMenuItem();
         menu3 = new JMenu();
         menuItem10 = new JMenuItem();
         menu4 = new JMenu();
         menuItem9 = new JMenuItem();
-        menu5 = new JMenu();
-        menuItem5 = new JMenuItem();
         menu1 = new JMenu();
         menuItem2 = new JMenuItem();
         menuItem1 = new JMenuItem();
-        panel1 = new JPanel(){
+        tabbedPane = new JTabbedPane();
+        mappa_panel = new JPanel() {
 
             @Override
             public void paint(Graphics g) {
@@ -383,12 +409,15 @@ public class Show extends JFrame {
             }
 
         };
-        panel2 = new JPanel();
-        panel3 = new JPanel();
-        scrollPane3 = new JScrollPane();
-        textArea2 = new JTextArea();
-        label1 = new JLabel();
-        button1 = new JButton();
+        tratte_panel = new JPanel();
+        scrollPane2 = new JScrollPane();
+        tratte_area = new JTextArea();
+        scrollPane1 = new JScrollPane();
+        utenti_area = new JTextArea();
+        tratte_label = new JLabel();
+        utenti_label = new JLabel();
+        tratte_button = new JButton();
+        utenti_button = new JButton();
 
         //======== this ========
         Container contentPane = getContentPane();
@@ -396,38 +425,38 @@ public class Show extends JFrame {
         //======== menuBar1 ========
         {
 
-            //======== menu2 ========
+            //======== mappa_menu ========
             {
-                menu2.setText("Mappa");
+                mappa_menu.setText("Mappa");
 
-                //---- menuItem4 ----
-                menuItem4.setText("Carica / Esporta");
-                menuItem4.addActionListener(e -> menuItem4ActionPerformed(e));
-                menu2.add(menuItem4);
+                //---- caricaEsporta_item ----
+                caricaEsporta_item.setText("Carica / Esporta");
+                caricaEsporta_item.addActionListener(e -> menuItem4ActionPerformed(e));
+                mappa_menu.add(caricaEsporta_item);
 
-                //---- menuItem7 ----
-                menuItem7.setText("Disegna ");
-                menuItem7.addActionListener(e -> menuItem7ActionPerformed(e));
-                menu2.add(menuItem7);
+                //---- disegna_item ----
+                disegna_item.setText("Disegna ");
+                disegna_item.addActionListener(e -> menuItem7ActionPerformed(e));
+                mappa_menu.add(disegna_item);
 
-                //---- menuItem11 ----
-                menuItem11.setText("Reset ");
-                menuItem11.setEnabled(false);
-                menuItem11.addActionListener(e -> menuItem11ActionPerformed(e));
-                menu2.add(menuItem11);
+                //---- reset_item ----
+                reset_item.setText("Reset ");
+                reset_item.setEnabled(false);
+                reset_item.addActionListener(e -> menuItem11ActionPerformed(e));
+                mappa_menu.add(reset_item);
 
-                //---- menuItem8 ----
-                menuItem8.setText("Cancella");
-                menuItem8.setEnabled(false);
-                menuItem8.addActionListener(e -> menuItem8ActionPerformed(e));
-                menu2.add(menuItem8);
+                //---- cancella_item ----
+                cancella_item.setText("Cancella");
+                cancella_item.setEnabled(false);
+                cancella_item.addActionListener(e -> menuItem8ActionPerformed(e));
+                mappa_menu.add(cancella_item);
 
-                //---- menuItem3 ----
-                menuItem3.setText("Esci");
-                menuItem3.addActionListener(e -> menuItem3ActionPerformed(e));
-                menu2.add(menuItem3);
+                //---- esci_item ----
+                esci_item.setText("Esci");
+                esci_item.addActionListener(e -> menuItem3ActionPerformed(e));
+                mappa_menu.add(esci_item);
             }
-            menuBar1.add(menu2);
+            menuBar1.add(mappa_menu);
 
             //======== menu3 ========
             {
@@ -453,18 +482,6 @@ public class Show extends JFrame {
             }
             menuBar1.add(menu4);
 
-            //======== menu5 ========
-            {
-                menu5.setText("Tratte");
-                menu5.setEnabled(false);
-
-                //---- menuItem5 ----
-                menuItem5.setText("Crea");
-                menuItem5.addActionListener(e -> menuItem5ActionPerformed(e));
-                menu5.add(menuItem5);
-            }
-            menuBar1.add(menu5);
-
             //======== menu1 ========
             {
                 menu1.setText("Database");
@@ -484,110 +501,137 @@ public class Show extends JFrame {
         }
         setJMenuBar(menuBar1);
 
-        //======== panel1 ========
-        {
-            panel1.setBackground(Color.white);
-            panel1.setBorder(LineBorder.createBlackLineBorder());
-            panel1.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    panel1MouseClicked(e);
-                }
-            });
-
-            // JFormDesigner evaluation mark
-            panel1.setBorder(new javax.swing.border.CompoundBorder(
-                new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-                    "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
-                    javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-                    java.awt.Color.red), panel1.getBorder())); panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
-
-
-            GroupLayout panel1Layout = new GroupLayout(panel1);
-            panel1.setLayout(panel1Layout);
-            panel1Layout.setHorizontalGroup(
-                panel1Layout.createParallelGroup()
-                    .addGap(0, 767, Short.MAX_VALUE)
-            );
-            panel1Layout.setVerticalGroup(
-                panel1Layout.createParallelGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-            );
-        }
-
-        //======== panel2 ========
+        //======== tabbedPane ========
         {
 
-            GroupLayout panel2Layout = new GroupLayout(panel2);
-            panel2.setLayout(panel2Layout);
-            panel2Layout.setHorizontalGroup(
-                panel2Layout.createParallelGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-            );
-            panel2Layout.setVerticalGroup(
-                panel2Layout.createParallelGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-            );
-        }
-
-        //======== panel3 ========
-        {
-
-            //======== scrollPane3 ========
+            //======== mappa_panel ========
             {
-                scrollPane3.setViewportView(textArea2);
+                mappa_panel.setBackground(Color.white);
+                mappa_panel.setBorder(LineBorder.createBlackLineBorder());
+                mappa_panel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        panel1MouseClicked(e);
+                    }
+                });
+
+                // JFormDesigner evaluation mark
+                mappa_panel.setBorder(new javax.swing.border.CompoundBorder(
+                        new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+                                "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+                                javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+                                java.awt.Color.red), mappa_panel.getBorder()));
+                mappa_panel.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+                    public void propertyChange(java.beans.PropertyChangeEvent e) {
+                        if ("border".equals(e.getPropertyName())) throw new RuntimeException();
+                    }
+                });
+
+
+                GroupLayout mappa_panelLayout = new GroupLayout(mappa_panel);
+                mappa_panel.setLayout(mappa_panelLayout);
+                mappa_panelLayout.setHorizontalGroup(
+                        mappa_panelLayout.createParallelGroup()
+                                .addGap(0, 984, Short.MAX_VALUE)
+                );
+                mappa_panelLayout.setVerticalGroup(
+                        mappa_panelLayout.createParallelGroup()
+                                .addGap(0, 568, Short.MAX_VALUE)
+                );
             }
+            tabbedPane.addTab("Mappa", mappa_panel);
 
-            GroupLayout panel3Layout = new GroupLayout(panel3);
-            panel3.setLayout(panel3Layout);
-            panel3Layout.setHorizontalGroup(
-                panel3Layout.createParallelGroup()
-                    .addComponent(scrollPane3, GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
-            );
-            panel3Layout.setVerticalGroup(
-                panel3Layout.createParallelGroup()
-                    .addGroup(panel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(scrollPane3, GroupLayout.PREFERRED_SIZE, 502, GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(15, Short.MAX_VALUE))
-            );
+            //======== tratte_panel ========
+            {
+
+                //======== scrollPane2 ========
+                {
+                    scrollPane2.setViewportView(tratte_area);
+                }
+
+                //======== scrollPane1 ========
+                {
+                    scrollPane1.setViewportView(utenti_area);
+                }
+
+                //---- tratte_label ----
+                tratte_label.setText("Tratte");
+
+                //---- utenti_label ----
+                utenti_label.setText("Utenti");
+
+                //---- tratte_button ----
+                tratte_button.setText("Crea");
+                tratte_button.setEnabled(false);
+                tratte_button.addActionListener(e -> button1ActionPerformed(e));
+
+                //---- utenti_button ----
+                utenti_button.setText("Crea");
+                utenti_button.setEnabled(false);
+                utenti_button.addActionListener(e -> button2ActionPerformed(e));
+
+                GroupLayout tratte_panelLayout = new GroupLayout(tratte_panel);
+                tratte_panel.setLayout(tratte_panelLayout);
+                tratte_panelLayout.setHorizontalGroup(
+                        tratte_panelLayout.createParallelGroup()
+                                .addGroup(tratte_panelLayout.createSequentialGroup()
+                                        .addGroup(tratte_panelLayout.createParallelGroup()
+                                                .addGroup(tratte_panelLayout.createSequentialGroup()
+                                                        .addGap(16, 16, 16)
+                                                        .addComponent(tratte_label))
+                                                .addGroup(tratte_panelLayout.createSequentialGroup()
+                                                        .addContainerGap()
+                                                        .addComponent(scrollPane2, GroupLayout.PREFERRED_SIZE, 475, GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(tratte_panelLayout.createParallelGroup()
+                                                .addGroup(tratte_panelLayout.createSequentialGroup()
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                                                        .addComponent(utenti_label)
+                                                        .addGap(430, 430, 430))
+                                                .addGroup(tratte_panelLayout.createSequentialGroup()
+                                                        .addGap(16, 16, 16)
+                                                        .addComponent(scrollPane1, GroupLayout.DEFAULT_SIZE, 489, Short.MAX_VALUE))))
+                                .addGroup(tratte_panelLayout.createSequentialGroup()
+                                        .addGap(160, 160, 160)
+                                        .addComponent(tratte_button, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 320, Short.MAX_VALUE)
+                                        .addComponent(utenti_button, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
+                                        .addGap(186, 186, 186))
+                );
+                tratte_panelLayout.setVerticalGroup(
+                        tratte_panelLayout.createParallelGroup()
+                                .addGroup(GroupLayout.Alignment.TRAILING, tratte_panelLayout.createSequentialGroup()
+                                        .addContainerGap(21, Short.MAX_VALUE)
+                                        .addGroup(tratte_panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(tratte_label)
+                                                .addComponent(utenti_label))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(tratte_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                                .addComponent(scrollPane2, GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE)
+                                                .addComponent(scrollPane1, GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(tratte_panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(tratte_button)
+                                                .addComponent(utenti_button))
+                                        .addContainerGap())
+                );
+            }
+            tabbedPane.addTab("Tratte", tratte_panel);
         }
-
-        //---- label1 ----
-        label1.setText("Tratte");
-
-        //---- button1 ----
-        button1.setText("Crea");
-        button1.setEnabled(false);
-        button1.addActionListener(e -> button1ActionPerformed(e));
 
         GroupLayout contentPaneLayout = new GroupLayout(contentPane);
         contentPane.setLayout(contentPaneLayout);
         contentPaneLayout.setHorizontalGroup(
-            contentPaneLayout.createParallelGroup()
-                .addGroup(contentPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(panel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(contentPaneLayout.createParallelGroup()
-                        .addComponent(label1, GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
-                        .addComponent(panel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(button1, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE))
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(panel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                contentPaneLayout.createParallelGroup()
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(tabbedPane)
+                                .addGap(6, 6, 6))
         );
         contentPaneLayout.setVerticalGroup(
-            contentPaneLayout.createParallelGroup()
-                .addComponent(panel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(contentPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(label1)
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(button1)
-                    .addGap(34, 34, 34))
+                contentPaneLayout.createParallelGroup()
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                                .addComponent(tabbedPane, GroupLayout.PREFERRED_SIZE, 604, GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(2, Short.MAX_VALUE))
         );
         pack();
         setLocationRelativeTo(getOwner());
@@ -597,28 +641,30 @@ public class Show extends JFrame {
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner Evaluation license - Giuseppe Spallone
     private JMenuBar menuBar1;
-    private JMenu menu2;
-    private JMenuItem menuItem4;
-    private JMenuItem menuItem7;
-    private JMenuItem menuItem11;
-    private JMenuItem menuItem8;
-    private JMenuItem menuItem3;
+    private JMenu mappa_menu;
+    private JMenuItem caricaEsporta_item;
+    private JMenuItem disegna_item;
+    private JMenuItem reset_item;
+    private JMenuItem cancella_item;
+    private JMenuItem esci_item;
     private JMenu menu3;
     private JMenuItem menuItem10;
     private JMenu menu4;
     private JMenuItem menuItem9;
-    private JMenu menu5;
-    private JMenuItem menuItem5;
     private JMenu menu1;
     private JMenuItem menuItem2;
     private JMenuItem menuItem1;
-    private JPanel panel1;
-    private JPanel panel2;
-    private JPanel panel3;
-    private JScrollPane scrollPane3;
-    private JTextArea textArea2;
-    private JLabel label1;
-    private JButton button1;
+    private JTabbedPane tabbedPane;
+    private JPanel mappa_panel;
+    private JPanel tratte_panel;
+    private JScrollPane scrollPane2;
+    private JTextArea tratte_area;
+    private JScrollPane scrollPane1;
+    private JTextArea utenti_area;
+    private JLabel tratte_label;
+    private JLabel utenti_label;
+    private JButton tratte_button;
+    private JButton utenti_button;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     private File openFile() {
@@ -691,11 +737,11 @@ public class Show extends JFrame {
 
             double rap = 1;
             double rh = h / w;
-            double rhC = (panel1.getSize().height * 1.0) / (panel1.getSize().width * 1.0);
+            double rhC = (mappa_panel.getSize().height * 1.0) / (mappa_panel.getSize().width * 1.0);
             if (rh > rhC) {
-                rap = (panel1.getSize().height * 1.0) / h;
+                rap = (mappa_panel.getSize().height * 1.0) / h;
             } else {
-                rap = (panel1.getSize().width * 1.0) / w;
+                rap = (mappa_panel.getSize().width * 1.0) / w;
             }
 
             double dist = Double.MAX_VALUE;
@@ -717,21 +763,13 @@ public class Show extends JFrame {
 
     private boolean disegnaMap(File file) {
         if (file != null) {
-            if (controllerFileMap.readFile(file)) {
-                nodes = controllerFileMap.getNodes();
-                arcs = controllerFileMap.getArcs();
+            if (importPlotMap.readFile(file)) {
+                nodes = importPlotMap.getNodes();
+                arcs = importPlotMap.getArcs();
 
                 //per risolvere bug --> disegna parte del grafo quando si crea la mappa importata
                 nodes_paint = nodes;
                 arcs_paint = arcs;
-
-                panel1.repaint();
-                menu3.setEnabled(true);
-                menu4.setEnabled(true);
-                menuItem11.setEnabled(true);
-                menuItem8.setEnabled(true);
-                menu5.setEnabled(true);
-                button1.setEnabled(true);
 
                 return true;
             }
@@ -741,9 +779,9 @@ public class Show extends JFrame {
 
     private boolean esportaMap(File file) {
         if (file != null) {
-            controllerExport.export(file, nodes, arcs);
-            nodes = controllerExport.getNodes();
-            arcs = controllerExport.getArcs();
+            exportMap.export(file, nodes, arcs);
+            nodes = exportMap.getNodes();
+            arcs = exportMap.getArcs();
 
             //manca controllo nodes, arcs is empty
             return true;
@@ -783,14 +821,14 @@ public class Show extends JFrame {
 
             double rap = 1;
             double rh = h / w;
-            double rhC = (panel1.getSize().height * 1.0) / (panel1.getSize().width * 1.0);
+            double rhC = (mappa_panel.getSize().height * 1.0) / (mappa_panel.getSize().width * 1.0);
             if (rh > rhC) {
-                rap = (panel1.getSize().height * 1.0) / h;
+                rap = (mappa_panel.getSize().height * 1.0) / h;
             } else {
-                rap = (panel1.getSize().width * 1.0) / w;
+                rap = (mappa_panel.getSize().width * 1.0) / w;
             }
 
-            //Stampa archi
+            //Disegna archi
             for (Arc arc : arcs_paint) {
 
                 if (arc.getMark() == 1) {
@@ -810,25 +848,65 @@ public class Show extends JFrame {
                 g.drawLine((int) x1, (int) y1, (int) x2, (int) y2);
             }
 
-            //Stampa nodi
+            //Disegna nodi
             for (Node n : nodes_paint.values()) {
                 double x1 = (n.getX() - minX * 1.0) * rap;
                 double y1 = (n.getY() - minY * 1.0) * rap;
+                int mark = n.getMark();
+                int num_studenti = n.getNum_studenti();
 
-                if (n.getMark() == -1) {
+                if (num_studenti > 0) {
+                    g.setColor(Color.yellow);
+                    g.drawOval((int) x1, (int) y1, num_studenti, num_studenti);
+                }
+
+                if (mark == -1) {
                     g.setColor(Color.black);
                 }
-                if (n.getMark() == 1) {
+                if (mark == 1) {
                     g.setColor(Color.blue);
 
                     g.setFont(g.getFont().deriveFont(10f));
                     g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                 }
-                if (n.getMark() == 0) {
+                if (mark == 0) {
                     g.setColor(Color.red);
 
                     g.setFont(g.getFont().deriveFont(10f));
                     g.drawString("" + n.getIndex(), (int) x1, (int) y1);
+                }
+            }
+
+            //Disegna tratte
+            if (routes != null) {
+                for (Iterator<Route> it = routes.iterator(); it.hasNext(); ) {
+                    Route r = it.next();
+
+                    Color randomColor = new Color((int) (Math.random() * 0x1000000));
+                    g.setColor(randomColor);
+
+                    for (int i = 0; i < r.getNodes().size(); i++) {
+                        Node r_n = r.getNodes().get(i);
+
+                        double x = (r_n.getX() - minX * 1.0) * rap;
+                        double y = (r_n.getY() - minY * 1.0) * rap;
+
+                        g.setFont(g.getFont().deriveFont(10f));
+                        g.drawString("" + r_n.getIndex(), (int) x, (int) y);
+
+                        if (i != r.getNodes().size() - 1) {
+                            Arc arc = Arc.arcByFromTo(r_n, r.getNodes().get(i + 1));
+
+                            double x1 = (arc.getFrom().getX() - minX * 1.0) * rap;
+                            double y1 = (arc.getFrom().getY() - minY * 1.0) * rap;
+                            double x2 = (arc.getTo().getX() - minX * 1.0) * rap;
+                            double y2 = (arc.getTo().getY() - minY * 1.0) * rap;
+
+                            g.setStroke(new BasicStroke(2));
+                            g.drawLine((int) x1, (int) y1, (int) x2, (int) y2);
+
+                        }
+                    }
                 }
             }
         }

@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ControllerDatabase {
+public class Database {
     DB dbStreetMap = null;
 
     /**

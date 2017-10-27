@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class ControllerImport {
+public class ImportMap {
 
     private HashMap<Long, Node> nodes = null;
     private HashMap<Long, Way> ways = null;

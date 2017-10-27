@@ -1,6 +1,6 @@
 package com.OpenStreetMap.View;
 
-import com.OpenStreetMap.Controller.ControllerDatabase;
+import com.OpenStreetMap.Controller.Database;
 import com.mongodb.DB;
 
 import javax.swing.*;
@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 public class Home extends JFrame {
     private String username = null;
     private String password = null;
-    ControllerDatabase controllerDatabase = new ControllerDatabase();
+    Database database = new Database();
 
     private JTextField textField1;
     private JButton ENTRAButton;
@@ -29,13 +29,13 @@ public class Home extends JFrame {
                 username = textField1.getText();
                 password = passwordField1.getText();
 
-                DB db = controllerDatabase.connectDB("localhost", 27017, "StreetMap");
+                DB db = database.connectDB("localhost", 27017, "StreetMap");
 
                 if (db != null) {
                     System.out.println("Connesso al database");
                     if (username != null || password != null) {
 
-                        connectUser = controllerDatabase.connectUser(db, username, password);
+                        connectUser = database.connectUser(db, username, password);
 
                         if (connectUser) {
                             System.out.println("Accesso al database");
