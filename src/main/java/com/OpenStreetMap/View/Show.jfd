@@ -4,16 +4,15 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {seq l {space :::p, comp tabbedPane:::::x, space :p:6:p}}"
-			"$verticalGroup": "par l {seq {comp tabbedPane:::p:604:p, space ::2:x}}"
+			"$horizontalGroup": "par l {seq l {space :::p, comp tabbedPane::::950:x, space :p:6:p}}"
+			"$verticalGroup": "par l {seq {comp tabbedPane:::p:604:p, space :::x}}"
 		} ) {
 			name: "this"
 			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
 				name: "tabbedPane"
-				"enabled": false
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {space :0:984:x}"
-					"$verticalGroup": "par l {space :0:568:x}"
+					"$horizontalGroup": "par l {space :0:946:x}"
+					"$verticalGroup": "par l {space :0:576:x}"
 				} ) {
 					name: "mappa_panel"
 					"background": new java.awt.Color( 255, 255, 255, 255 )
@@ -26,8 +25,8 @@ new FormModel {
 					"title": "Mappa"
 				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {seq {par l {seq {space :::p, comp scrollPane2:::p:465:p, space ::44:x, comp scrollPane3:::p:465:p}, seq l {space :p:137:p, comp tratte_button:::p:160:p, space :0:0:x}}, space :::p}}"
-					"$verticalGroup": "par l {seq l {space :::p, par t {comp scrollPane2:::p:495:p, comp scrollPane3:::p:495:p}, space u:::p, comp tratte_button:::p::p, space ::15:x}}"
+					"$horizontalGroup": "par l {seq {par l {seq {space :::p, comp scrollPane2:::p:465:p, space :::x, comp scrollPane3:::p:465:p}, seq l {space :p:137:p, comp tratte_button:::p:160:p, space :0:0:x}}, space :::p}}"
+					"$verticalGroup": "par l {seq l {space :::p, par t {comp scrollPane2:::p:495:p, comp scrollPane3:::p:495:p}, space u:::p, comp tratte_button:::p::p, space ::33:x}}"
 				} ) {
 					name: "tratte_panel"
 					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
@@ -52,8 +51,8 @@ new FormModel {
 					"title": "Tratte"
 				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {seq {space :::p, comp scrollPane1:::p:465:p, space ::44:x, comp scrollPane4:::p:465:p, space :::p}, seq l {space :p:122:p, comp utenti_button:::p:160:p, space ::704:x}}"
-					"$verticalGroup": "par l {seq t {space :::p, par l:::p {comp scrollPane4::::495:x, comp scrollPane1::::495:x}, space u:::p, comp utenti_button:::p::p, space ::15:x}}"
+					"$horizontalGroup": "par l {seq {space :::p, comp scrollPane1:::p:465:p, space :::x, comp scrollPane4:::p:465:p, space :::p}, seq l {space :p:122:p, comp utenti_button:::p:160:p, space :::x}}"
+					"$verticalGroup": "par l {seq t {space :::p, par l:::p {comp scrollPane4::::495:x, comp scrollPane1::::495:x}, space u:::p, comp utenti_button:::p::p, space ::33:x}}"
 				} ) {
 					name: "utenti_panel"
 					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
@@ -78,8 +77,8 @@ new FormModel {
 					"title": "Utenti"
 				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {seq l {space :p:35:p, par l {seq l {comp partenza_label:::p::p, space :p:54:p, par l {comp partenzaLon_text:::p:130:p, comp partenzaLat_text::l:p:130:p}, space s:::p, comp rVisita_button:::p::p}, seq l {par l {comp sorgente_label:::p::p, comp destinazione_label:::p::p}, space :p:27:p, par t {comp sorgenteLat_text:::p:130:p, comp sorgenteLon_text:::p:130:p, comp destinazioneLon_text::t:p:130:p, comp destinazioneLat_text::t:p:130:p}, space s:::p, comp rDijkstra_button:::p::p}}, space :p:18:p, par l {comp scrollPane6:::p:400:p, comp scrollPane7:::p:400:p}, space :p:57:p, par l {comp dijkstra_button:::p::p, comp visita_button:::p::p}, space ::107:x}}"
-					"$verticalGroup": "par l {seq l {par l {seq l {space :p:138:p, comp dijkstra_button:::p::p}, seq l {space :p:45:p, par l:::p {seq {par l {seq {comp sorgenteLat_text:::p::p, space u:::p, comp sorgenteLon_text:::p::p}, seq l {space :p:26:p, comp sorgente_label:::p::p}}, par l {seq t {space :p:1:p, comp destinazioneLat_text:::p::p, space u:::p, comp destinazioneLon_text:::p::p}, seq {par l {seq {space :p:21:p, comp rDijkstra_button:::p::p}, seq l {space :p:59:p, comp destinazione_label:::p::p}}, space :p:27:p}}}, comp scrollPane6:::p:216:p}}}, par l {seq {space ::135:x, par l {seq t {par b {comp partenza_label::b:p::p, comp rVisita_button::b:p::p}, space :p:122:p}, seq t {comp visita_button:::p::p, space :p:116:p}, seq t {comp partenzaLat_text:::p::p, space :::p, comp partenzaLon_text:::p::p, space :p:104:p}}}, seq l {space :p:50:p, comp scrollPane7:::p:215:p, space :0:44:x}}}}"
+					"$horizontalGroup": "par l {seq l {space :p:35:p, par l {seq l {comp partenza_label:::p::p, space :p:54:p, par l {comp partenzaLon_text:::p:130:p, comp partenzaLat_text::l:p:130:p}, space s:::p, comp rVisita_button:::p::p}, seq l {par l {comp sorgente_label:::p::p, comp destinazione_label:::p::p}, space :p:27:p, par t {comp sorgenteLat_text:::p:130:p, comp sorgenteLon_text:::p:130:p, comp destinazioneLon_text::t:p:130:p, comp destinazioneLat_text::t:p:130:p}, space s:::p, comp rDijkstra_button:::p::p}}, space :p:18:p, par l {comp scrollPane6:::p:400:p, comp scrollPane7:::p:400:p}, space :p:57:p, par l {comp dijkstra_button:::p::p, comp visita_button:::p::p}, space ::108:x}}"
+					"$verticalGroup": "par l {seq l {par l {seq l {space :p:138:p, comp dijkstra_button:::p::p}, seq l {space :p:45:p, par l:::p {seq {par l {seq {comp sorgenteLat_text:::p::p, space u:::p, comp sorgenteLon_text:::p::p}, seq l {space :p:26:p, comp sorgente_label:::p::p}}, par l {seq t {space :p:1:p, comp destinazioneLat_text:::p::p, space u:::p, comp destinazioneLon_text:::p::p}, seq {par l {seq {space :p:21:p, comp rDijkstra_button:::p::p}, seq l {space :p:59:p, comp destinazione_label:::p::p}}, space :p:27:p}}}, comp scrollPane6:::p:216:p}}}, par l {seq {space ::159:x, par l {seq t {par b {comp partenza_label::b:p::p, comp rVisita_button::b:p::p}, space :p:122:p}, seq t {comp visita_button:::p::p, space :p:116:p}, seq t {comp partenzaLat_text:::p::p, space :::p, comp partenzaLon_text:::p::p, space :p:104:p}}}, seq l {space :p:50:p, comp scrollPane7:::p:215:p, space :0:52:x}}}}"
 				} ) {
 					name: "altro_panel"
 					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {

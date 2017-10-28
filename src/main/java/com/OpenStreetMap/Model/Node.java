@@ -17,8 +17,6 @@ public class Node {
     private int y;
     private int mark = -1;
 
-    private int num_studenti;
-    private int comp;
     private boolean flag1;
     private boolean tunnel = false;
 
@@ -26,6 +24,10 @@ public class Node {
     private double distanza;
     private Node predecessore;
     //private int mark;
+
+    //Tratta
+    private int num_studenti;
+    private Route route;
 
     public ArrayList<Way> nd_ways = new ArrayList<>();
     public ArrayList<Arc> nd_arcs = new ArrayList<>();
@@ -202,5 +204,13 @@ public class Node {
 
     public void setNum_studenti(int num_studenti) {
         this.num_studenti = num_studenti;
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
     }
 }

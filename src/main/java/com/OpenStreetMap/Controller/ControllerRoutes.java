@@ -3,6 +3,7 @@ package com.OpenStreetMap.Controller;
 import com.OpenStreetMap.Model.Node;
 import com.OpenStreetMap.Model.Route;
 
+import java.awt.*;
 import java.util.*;
 
 public class ControllerRoutes {
@@ -72,6 +73,13 @@ public class ControllerRoutes {
 
             Route route = new Route();
             route.setName(name);
+
+            //set color
+            int red = 5 * (int) (Math.random() * 52);
+            int green = 5 * (int) (Math.random() * 52);
+            int blue = 5 * (int) (Math.random() * 52);
+            Color randomColor = new Color(red, green, blue);
+            route.setColor(randomColor);
 
             for (int i = 0; i < checkpoints.size(); i++) {
                 if (i != checkpoints.size() - 1) {

@@ -132,8 +132,14 @@ public class Show extends JFrame {
         System.out.println("index: " + n.getIndex() + "; id: " + n.getId() + "; " + n.getLat() + "," + n.getLon());
 
         JPanel panelMouseListener = new JPanel();
-        JLabel node_label = new JLabel("index: " + n.getIndex() + "; id: " + n.getId() + " lat: " + n.getLat() + " lon: " + n.getLon());
-        panelMouseListener.add(node_label);
+        if (n.getNum_studenti() <= 0) {
+            JLabel node_label = new JLabel("index: " + n.getIndex() + "; id: " + n.getId() + " lat: " + n.getLat() + " lon: " + n.getLon());
+            panelMouseListener.add(node_label);
+        } else {
+            JLabel node_label = new JLabel("index: " + n.getIndex() + "; id: " + n.getId() + " lat: " + n.getLat() + " lon: " + n.getLon() + " num: " + n.getNum_studenti());
+            panelMouseListener.add(node_label);
+        }
+
 
         final int TRATTE = 0;
         final int UTENTI = 1;
@@ -152,10 +158,8 @@ public class Show extends JFrame {
                 utenti_area.append("# " + n.getLat() + " " + n.getLon() + "\n");
                 break;
             case DIJKSTRA:
-                JPanel panelMouseListener2 = new JPanel();
-
                 Object[] options2 = {"Sorgente", "Destinazione", "Annulla"};
-                int option2 = JOptionPane.showOptionDialog(null, panelMouseListener2, "Dijkstra", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+                int option2 = JOptionPane.showOptionDialog(null, null, "Dijkstra", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
 
                 if (option2 == 0) {
                     sorgenteLat_text.setText(String.valueOf(n.getLat()));
@@ -243,27 +247,36 @@ public class Show extends JFrame {
 
         tratteOutput_area.setEnabled(true);
         String output_routes = "";
-
         for (Iterator<Route> it = routes.iterator(); it.hasNext(); ) {
             Route route = it.next();
-
             output_routes += "TRATTA: " + route.getName() + "\n";
             output_routes += "      DISTANZA: " + route.getDistanza() + "\n";
-
             for (Iterator<Node> it1 = route.getNodes().iterator(); it1.hasNext(); ) {
                 Node node = it1.next();
 
                 output_routes += "      id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
             }
         }
-
         tratteOutput_area.setText(output_routes);
+
         mappa_panel.repaint();
 
     }
 
     private void button2ActionPerformed(ActionEvent e) {
         String area = utenti_area.getText().toString();
+
+        nodes_students = controllerStudenti.read(area, nodes, routes);
+
+        utentiOutput_area.setEnabled(true);
+        String output_nodes_students = "";
+        for (Iterator<Node> it = nodes_students.iterator(); it.hasNext(); ) {
+            Node node = it.next();
+
+            output_nodes_students += "id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + " tratta: " + node.getRoute().getName() + " num: " + node.getNum_studenti() + "\n";
+
+        }
+        utentiOutput_area.setText(output_nodes_students);
 
         mappa_panel.repaint();
     }
@@ -344,7 +357,7 @@ public class Show extends JFrame {
         menuItem2 = new JMenuItem();
         menuItem1 = new JMenuItem();
         tabbedPane = new JTabbedPane();
-        mappa_panel = new JPanel(){
+        mappa_panel = new JPanel() {
 
             @Override
             public void paint(Graphics g) {
@@ -444,7 +457,6 @@ public class Show extends JFrame {
 
         //======== tabbedPane ========
         {
-            tabbedPane.setEnabled(false);
 
             //======== mappa_panel ========
             {
@@ -459,21 +471,26 @@ public class Show extends JFrame {
 
                 // JFormDesigner evaluation mark
                 mappa_panel.setBorder(new javax.swing.border.CompoundBorder(
-                    new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-                        "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
-                        javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-                        java.awt.Color.red), mappa_panel.getBorder())); mappa_panel.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
+                        new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+                                "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+                                javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+                                java.awt.Color.red), mappa_panel.getBorder()));
+                mappa_panel.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+                    public void propertyChange(java.beans.PropertyChangeEvent e) {
+                        if ("border".equals(e.getPropertyName())) throw new RuntimeException();
+                    }
+                });
 
 
                 GroupLayout mappa_panelLayout = new GroupLayout(mappa_panel);
                 mappa_panel.setLayout(mappa_panelLayout);
                 mappa_panelLayout.setHorizontalGroup(
-                    mappa_panelLayout.createParallelGroup()
-                        .addGap(0, 984, Short.MAX_VALUE)
+                        mappa_panelLayout.createParallelGroup()
+                                .addGap(0, 946, Short.MAX_VALUE)
                 );
                 mappa_panelLayout.setVerticalGroup(
-                    mappa_panelLayout.createParallelGroup()
-                        .addGap(0, 568, Short.MAX_VALUE)
+                        mappa_panelLayout.createParallelGroup()
+                                .addGap(0, 576, Short.MAX_VALUE)
                 );
             }
             tabbedPane.addTab("Mappa", mappa_panel);
@@ -501,30 +518,30 @@ public class Show extends JFrame {
                 GroupLayout tratte_panelLayout = new GroupLayout(tratte_panel);
                 tratte_panel.setLayout(tratte_panelLayout);
                 tratte_panelLayout.setHorizontalGroup(
-                    tratte_panelLayout.createParallelGroup()
-                        .addGroup(tratte_panelLayout.createSequentialGroup()
-                            .addGroup(tratte_panelLayout.createParallelGroup()
+                        tratte_panelLayout.createParallelGroup()
                                 .addGroup(tratte_panelLayout.createSequentialGroup()
-                                    .addContainerGap()
-                                    .addComponent(scrollPane2, GroupLayout.PREFERRED_SIZE, 465, GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                                    .addComponent(scrollPane3, GroupLayout.PREFERRED_SIZE, 465, GroupLayout.PREFERRED_SIZE))
-                                .addGroup(tratte_panelLayout.createSequentialGroup()
-                                    .addGap(137, 137, 137)
-                                    .addComponent(tratte_button, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
-                                    .addGap(0, 0, Short.MAX_VALUE)))
-                            .addContainerGap())
+                                        .addGroup(tratte_panelLayout.createParallelGroup()
+                                                .addGroup(tratte_panelLayout.createSequentialGroup()
+                                                        .addContainerGap()
+                                                        .addComponent(scrollPane2, GroupLayout.PREFERRED_SIZE, 465, GroupLayout.PREFERRED_SIZE)
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(scrollPane3, GroupLayout.PREFERRED_SIZE, 465, GroupLayout.PREFERRED_SIZE))
+                                                .addGroup(tratte_panelLayout.createSequentialGroup()
+                                                        .addGap(137, 137, 137)
+                                                        .addComponent(tratte_button, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
+                                                        .addGap(0, 0, Short.MAX_VALUE)))
+                                        .addContainerGap())
                 );
                 tratte_panelLayout.setVerticalGroup(
-                    tratte_panelLayout.createParallelGroup()
-                        .addGroup(tratte_panelLayout.createSequentialGroup()
-                            .addContainerGap()
-                            .addGroup(tratte_panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                .addComponent(scrollPane2, GroupLayout.PREFERRED_SIZE, 495, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(scrollPane3, GroupLayout.PREFERRED_SIZE, 495, GroupLayout.PREFERRED_SIZE))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(tratte_button)
-                            .addContainerGap(15, Short.MAX_VALUE))
+                        tratte_panelLayout.createParallelGroup()
+                                .addGroup(tratte_panelLayout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addGroup(tratte_panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                                .addComponent(scrollPane2, GroupLayout.PREFERRED_SIZE, 495, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(scrollPane3, GroupLayout.PREFERRED_SIZE, 495, GroupLayout.PREFERRED_SIZE))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(tratte_button)
+                                        .addContainerGap(33, Short.MAX_VALUE))
                 );
             }
             tabbedPane.addTab("Tratte", tratte_panel);
@@ -552,28 +569,28 @@ public class Show extends JFrame {
                 GroupLayout utenti_panelLayout = new GroupLayout(utenti_panel);
                 utenti_panel.setLayout(utenti_panelLayout);
                 utenti_panelLayout.setHorizontalGroup(
-                    utenti_panelLayout.createParallelGroup()
-                        .addGroup(utenti_panelLayout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(scrollPane1, GroupLayout.PREFERRED_SIZE, 465, GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                            .addComponent(scrollPane4, GroupLayout.PREFERRED_SIZE, 465, GroupLayout.PREFERRED_SIZE)
-                            .addContainerGap())
-                        .addGroup(utenti_panelLayout.createSequentialGroup()
-                            .addGap(122, 122, 122)
-                            .addComponent(utenti_button, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
-                            .addContainerGap(704, Short.MAX_VALUE))
+                        utenti_panelLayout.createParallelGroup()
+                                .addGroup(utenti_panelLayout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addComponent(scrollPane1, GroupLayout.PREFERRED_SIZE, 465, GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(scrollPane4, GroupLayout.PREFERRED_SIZE, 465, GroupLayout.PREFERRED_SIZE)
+                                        .addContainerGap())
+                                .addGroup(utenti_panelLayout.createSequentialGroup()
+                                        .addGap(122, 122, 122)
+                                        .addComponent(utenti_button, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
+                                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 );
                 utenti_panelLayout.setVerticalGroup(
-                    utenti_panelLayout.createParallelGroup()
-                        .addGroup(GroupLayout.Alignment.TRAILING, utenti_panelLayout.createSequentialGroup()
-                            .addContainerGap()
-                            .addGroup(utenti_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                .addComponent(scrollPane4, GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE)
-                                .addComponent(scrollPane1, GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(utenti_button)
-                            .addContainerGap(15, Short.MAX_VALUE))
+                        utenti_panelLayout.createParallelGroup()
+                                .addGroup(GroupLayout.Alignment.TRAILING, utenti_panelLayout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addGroup(utenti_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                                .addComponent(scrollPane4, GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE)
+                                                .addComponent(scrollPane1, GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(utenti_button)
+                                        .addContainerGap(33, Short.MAX_VALUE))
                 );
             }
             tabbedPane.addTab("Utenti", utenti_panel);
@@ -622,96 +639,96 @@ public class Show extends JFrame {
                 GroupLayout altro_panelLayout = new GroupLayout(altro_panel);
                 altro_panel.setLayout(altro_panelLayout);
                 altro_panelLayout.setHorizontalGroup(
-                    altro_panelLayout.createParallelGroup()
-                        .addGroup(altro_panelLayout.createSequentialGroup()
-                            .addGap(35, 35, 35)
-                            .addGroup(altro_panelLayout.createParallelGroup()
+                        altro_panelLayout.createParallelGroup()
                                 .addGroup(altro_panelLayout.createSequentialGroup()
-                                    .addComponent(partenza_label)
-                                    .addGap(54, 54, 54)
-                                    .addGroup(altro_panelLayout.createParallelGroup()
-                                        .addComponent(partenzaLon_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(partenzaLat_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE))
-                                    .addGap(18, 18, 18)
-                                    .addComponent(rVisita_button))
-                                .addGroup(altro_panelLayout.createSequentialGroup()
-                                    .addGroup(altro_panelLayout.createParallelGroup()
-                                        .addComponent(sorgente_label)
-                                        .addComponent(destinazione_label))
-                                    .addGap(27, 27, 27)
-                                    .addGroup(altro_panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                        .addComponent(sorgenteLat_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(sorgenteLon_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(destinazioneLon_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(destinazioneLat_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE))
-                                    .addGap(18, 18, 18)
-                                    .addComponent(rDijkstra_button)))
-                            .addGap(18, 18, 18)
-                            .addGroup(altro_panelLayout.createParallelGroup()
-                                .addComponent(scrollPane6, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(scrollPane7, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE))
-                            .addGap(57, 57, 57)
-                            .addGroup(altro_panelLayout.createParallelGroup()
-                                .addComponent(dijkstra_button)
-                                .addComponent(visita_button))
-                            .addContainerGap(107, Short.MAX_VALUE))
+                                        .addGap(35, 35, 35)
+                                        .addGroup(altro_panelLayout.createParallelGroup()
+                                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                                        .addComponent(partenza_label)
+                                                        .addGap(54, 54, 54)
+                                                        .addGroup(altro_panelLayout.createParallelGroup()
+                                                                .addComponent(partenzaLon_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(partenzaLat_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE))
+                                                        .addGap(18, 18, 18)
+                                                        .addComponent(rVisita_button))
+                                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                                        .addGroup(altro_panelLayout.createParallelGroup()
+                                                                .addComponent(sorgente_label)
+                                                                .addComponent(destinazione_label))
+                                                        .addGap(27, 27, 27)
+                                                        .addGroup(altro_panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                                                .addComponent(sorgenteLat_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(sorgenteLon_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(destinazioneLon_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(destinazioneLat_text, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE))
+                                                        .addGap(18, 18, 18)
+                                                        .addComponent(rDijkstra_button)))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(altro_panelLayout.createParallelGroup()
+                                                .addComponent(scrollPane6, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(scrollPane7, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE))
+                                        .addGap(57, 57, 57)
+                                        .addGroup(altro_panelLayout.createParallelGroup()
+                                                .addComponent(dijkstra_button)
+                                                .addComponent(visita_button))
+                                        .addContainerGap(108, Short.MAX_VALUE))
                 );
                 altro_panelLayout.setVerticalGroup(
-                    altro_panelLayout.createParallelGroup()
-                        .addGroup(altro_panelLayout.createSequentialGroup()
-                            .addGroup(altro_panelLayout.createParallelGroup()
+                        altro_panelLayout.createParallelGroup()
                                 .addGroup(altro_panelLayout.createSequentialGroup()
-                                    .addGap(138, 138, 138)
-                                    .addComponent(dijkstra_button))
-                                .addGroup(altro_panelLayout.createSequentialGroup()
-                                    .addGap(45, 45, 45)
-                                    .addGroup(altro_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                        .addGroup(altro_panelLayout.createSequentialGroup()
-                                            .addGroup(altro_panelLayout.createParallelGroup()
+                                        .addGroup(altro_panelLayout.createParallelGroup()
                                                 .addGroup(altro_panelLayout.createSequentialGroup()
-                                                    .addComponent(sorgenteLat_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                                    .addComponent(sorgenteLon_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                        .addGap(138, 138, 138)
+                                                        .addComponent(dijkstra_button))
                                                 .addGroup(altro_panelLayout.createSequentialGroup()
-                                                    .addGap(26, 26, 26)
-                                                    .addComponent(sorgente_label)))
-                                            .addGroup(altro_panelLayout.createParallelGroup()
-                                                .addGroup(GroupLayout.Alignment.TRAILING, altro_panelLayout.createSequentialGroup()
-                                                    .addGap(1, 1, 1)
-                                                    .addComponent(destinazioneLat_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                                    .addComponent(destinazioneLon_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                        .addGap(45, 45, 45)
+                                                        .addGroup(altro_panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                                                        .addGroup(altro_panelLayout.createParallelGroup()
+                                                                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                                                                        .addComponent(sorgenteLat_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                        .addComponent(sorgenteLon_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                                                                        .addGap(26, 26, 26)
+                                                                                        .addComponent(sorgente_label)))
+                                                                        .addGroup(altro_panelLayout.createParallelGroup()
+                                                                                .addGroup(GroupLayout.Alignment.TRAILING, altro_panelLayout.createSequentialGroup()
+                                                                                        .addGap(1, 1, 1)
+                                                                                        .addComponent(destinazioneLat_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                        .addComponent(destinazioneLon_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                                                                        .addGroup(altro_panelLayout.createParallelGroup()
+                                                                                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                                                                                        .addGap(21, 21, 21)
+                                                                                                        .addComponent(rDijkstra_button))
+                                                                                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                                                                                        .addGap(59, 59, 59)
+                                                                                                        .addComponent(destinazione_label)))
+                                                                                        .addGap(27, 27, 27))))
+                                                                .addComponent(scrollPane6, GroupLayout.PREFERRED_SIZE, 216, GroupLayout.PREFERRED_SIZE))))
+                                        .addGroup(altro_panelLayout.createParallelGroup()
                                                 .addGroup(altro_panelLayout.createSequentialGroup()
-                                                    .addGroup(altro_panelLayout.createParallelGroup()
-                                                        .addGroup(altro_panelLayout.createSequentialGroup()
-                                                            .addGap(21, 21, 21)
-                                                            .addComponent(rDijkstra_button))
-                                                        .addGroup(altro_panelLayout.createSequentialGroup()
-                                                            .addGap(59, 59, 59)
-                                                            .addComponent(destinazione_label)))
-                                                    .addGap(27, 27, 27))))
-                                        .addComponent(scrollPane6, GroupLayout.PREFERRED_SIZE, 216, GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(altro_panelLayout.createParallelGroup()
-                                .addGroup(altro_panelLayout.createSequentialGroup()
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 135, Short.MAX_VALUE)
-                                    .addGroup(altro_panelLayout.createParallelGroup()
-                                        .addGroup(GroupLayout.Alignment.TRAILING, altro_panelLayout.createSequentialGroup()
-                                            .addGroup(altro_panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                .addComponent(partenza_label)
-                                                .addComponent(rVisita_button))
-                                            .addGap(122, 122, 122))
-                                        .addGroup(GroupLayout.Alignment.TRAILING, altro_panelLayout.createSequentialGroup()
-                                            .addComponent(visita_button)
-                                            .addGap(116, 116, 116))
-                                        .addGroup(GroupLayout.Alignment.TRAILING, altro_panelLayout.createSequentialGroup()
-                                            .addComponent(partenzaLat_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(partenzaLon_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                            .addGap(104, 104, 104))))
-                                .addGroup(altro_panelLayout.createSequentialGroup()
-                                    .addGap(50, 50, 50)
-                                    .addComponent(scrollPane7, GroupLayout.PREFERRED_SIZE, 215, GroupLayout.PREFERRED_SIZE)
-                                    .addGap(0, 44, Short.MAX_VALUE))))
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 159, Short.MAX_VALUE)
+                                                        .addGroup(altro_panelLayout.createParallelGroup()
+                                                                .addGroup(GroupLayout.Alignment.TRAILING, altro_panelLayout.createSequentialGroup()
+                                                                        .addGroup(altro_panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                                                .addComponent(partenza_label)
+                                                                                .addComponent(rVisita_button))
+                                                                        .addGap(122, 122, 122))
+                                                                .addGroup(GroupLayout.Alignment.TRAILING, altro_panelLayout.createSequentialGroup()
+                                                                        .addComponent(visita_button)
+                                                                        .addGap(116, 116, 116))
+                                                                .addGroup(GroupLayout.Alignment.TRAILING, altro_panelLayout.createSequentialGroup()
+                                                                        .addComponent(partenzaLat_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(partenzaLon_text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                                        .addGap(104, 104, 104))))
+                                                .addGroup(altro_panelLayout.createSequentialGroup()
+                                                        .addGap(50, 50, 50)
+                                                        .addComponent(scrollPane7, GroupLayout.PREFERRED_SIZE, 215, GroupLayout.PREFERRED_SIZE)
+                                                        .addGap(0, 52, Short.MAX_VALUE))))
                 );
             }
             tabbedPane.addTab("Altro", altro_panel);
@@ -720,17 +737,17 @@ public class Show extends JFrame {
         GroupLayout contentPaneLayout = new GroupLayout(contentPane);
         contentPane.setLayout(contentPaneLayout);
         contentPaneLayout.setHorizontalGroup(
-            contentPaneLayout.createParallelGroup()
-                .addGroup(contentPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(tabbedPane)
-                    .addGap(6, 6, 6))
+                contentPaneLayout.createParallelGroup()
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 950, Short.MAX_VALUE)
+                                .addGap(6, 6, 6))
         );
         contentPaneLayout.setVerticalGroup(
-            contentPaneLayout.createParallelGroup()
-                .addGroup(contentPaneLayout.createSequentialGroup()
-                    .addComponent(tabbedPane, GroupLayout.PREFERRED_SIZE, 604, GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(2, Short.MAX_VALUE))
+                contentPaneLayout.createParallelGroup()
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                                .addComponent(tabbedPane, GroupLayout.PREFERRED_SIZE, 604, GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pack();
         setLocationRelativeTo(getOwner());
@@ -969,27 +986,32 @@ public class Show extends JFrame {
                 double x1 = (n.getX() - minX * 1.0) * rap;
                 double y1 = (n.getY() - minY * 1.0) * rap;
                 int mark = n.getMark();
+
+                //studenti
+                Route route = n.getRoute();
                 int num_studenti = n.getNum_studenti();
 
                 if (num_studenti > 0) {
-                    g.setColor(Color.yellow);
-                    g.drawOval((int) x1, (int) y1, num_studenti, num_studenti);
-                }
-
-                if (mark == -1) {
-                    g.setColor(Color.black);
-                }
-                if (mark == 1) {
-                    g.setColor(Color.blue);
-
+                    g.setColor(route.getColor());
+                    g.fillOval((int) x1, (int) y1, num_studenti, num_studenti);
                     g.setFont(g.getFont().deriveFont(10f));
                     g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                 }
-                if (mark == 0) {
-                    g.setColor(Color.red);
 
-                    g.setFont(g.getFont().deriveFont(10f));
-                    g.drawString("" + n.getIndex(), (int) x1, (int) y1);
+                switch (mark) {
+                    case -1:
+                        g.setColor(Color.black);
+                        break;
+                    case 0:
+                        g.setColor(Color.red);
+                        g.setFont(g.getFont().deriveFont(10f));
+                        g.drawString("" + n.getIndex(), (int) x1, (int) y1);
+                        break;
+                    case 1:
+                        g.setColor(Color.blue);
+                        g.setFont(g.getFont().deriveFont(10f));
+                        g.drawString("" + n.getIndex(), (int) x1, (int) y1);
+                        break;
                 }
             }
 
@@ -998,12 +1020,7 @@ public class Show extends JFrame {
                 for (Iterator<Route> it = routes.iterator(); it.hasNext(); ) {
                     Route r = it.next();
 
-                    int red = 5 * (int) (Math.random() * 52);
-                    int green = 5 * (int) (Math.random() * 52);
-                    int blue = 5 * (int) (Math.random() * 52);
-                    Color randomColor = new Color(red, green, blue);
-                    //Color randomColor = new Color((int) (Math.random() * 0x1000000));
-                    g.setColor(randomColor);
+                    g.setColor(r.getColor());
 
                     for (int i = 0; i < r.getNodes().size(); i++) {
                         Node r_n = r.getNodes().get(i);
