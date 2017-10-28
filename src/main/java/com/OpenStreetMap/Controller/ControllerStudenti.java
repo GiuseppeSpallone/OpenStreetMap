@@ -92,36 +92,61 @@ public class ControllerStudenti {
             students_percorsi.put(node_student, percorsi);
         }
 
-        printPercorsi(students_percorsi);
+        System.out.println("FERMATE -->");
+        System.out.print(printPercorsi(students_percorsi));
         return students_percorsi;
     }
 
-    public void idealStop(HashMap<Node, HashSet<ArrayList<Node>>> students_percorsi) {
+    public HashMap<Node, HashMap<ArrayList<Node>, Double>> idealStop(HashMap<Node, HashMap<ArrayList<Node>, Double>> students_percorsi) {
+        HashMap<Node, HashMap<ArrayList<Node>, Double>> idealStop = new HashMap<>();
 
+        for (Map.Entry<Node, HashMap<ArrayList<Node>, Double>> entry : students_percorsi.entrySet()) {
+            Node node = entry.getKey();
+            HashMap<ArrayList<Node>, Double> percorsi = entry.getValue();
+            HashMap<ArrayList<Node>, Double> minPercorsi = new HashMap<>();
+
+            Map.Entry<ArrayList<Node>, Double> min = null;
+            for (Map.Entry<ArrayList<Node>, Double> entry1 : percorsi.entrySet()) {
+                ArrayList<Node> percorso = entry1.getKey();
+                Double distanza = entry1.getValue();
+
+                if (min == null || min.getValue() > distanza) {
+                    min = entry1;
+                }
+            }
+            minPercorsi.put(min.getKey(), min.getValue());
+
+            idealStop.put(node, minPercorsi);
+        }
+
+        System.out.println("FERMATE IDEALI -->");
+        System.out.print(printPercorsi(idealStop));
+        return idealStop;
     }
 
-    private void printPercorsi(HashMap<Node, HashMap<ArrayList<Node>, Double>> students_percorsi) {
-        System.out.println("NODI STUDENTI: " + students_percorsi.size());
+    public String printPercorsi(HashMap<Node, HashMap<ArrayList<Node>, Double>> students_percorsi) {
+        String output_fermate = "";
 
+        output_fermate += "NODI STUDENTI: " + students_percorsi.size() + "\n";
         for (Iterator<HashMap<ArrayList<Node>, Double>> it = students_percorsi.values().iterator(); it.hasNext(); ) {
             HashMap<ArrayList<Node>, Double> percorsi = it.next();
 
-            System.out.println("________________________");
+            output_fermate += "________________________" + "\n";
 
             for (Map.Entry<ArrayList<Node>, Double> entry : percorsi.entrySet()) {
                 ArrayList<Node> percorso = entry.getKey();
                 Double distanza = entry.getValue();
 
-                System.out.println("        DISTANZA PERCORSO: " + distanza);
+                output_fermate += "        DISTANZA PERCORSO: " + distanza + "\n";
 
                 for (Iterator<Node> it2 = percorso.iterator(); it2.hasNext(); ) {
                     Node node = it2.next();
 
-                    System.out.println("            id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon());
+                    output_fermate += "            id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
                 }
             }
         }
+        return output_fermate;
     }
-
 
 }

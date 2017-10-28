@@ -46,7 +46,7 @@ public class ControllerRoutes {
         }
 
         HashSet<Route> routes = applyDijkstra(nodes, checkpoints_routes);
-        printRoutes(routes);
+        System.out.print(printRoutes(routes));
 
         return routes;
 
@@ -96,20 +96,23 @@ public class ControllerRoutes {
         return routes;
     }
 
-    private void printRoutes(HashSet<Route> routes) {
-        System.out.println("Tratte " + routes.size());
+    public String printRoutes(HashSet<Route> routes) {
+        String output_routes = "";
+        output_routes += "Tratte " + routes.size() + "\n";
 
         for (Iterator<Route> it = routes.iterator(); it.hasNext(); ) {
             Route route = it.next();
 
-            System.out.println("        TRATTA: " + route.getName());
-            System.out.println("            DISTANZA: " + route.getDistanza());
+            output_routes += "        TRATTA: " + route.getName() + "\n";
+            output_routes += "            DISTANZA: " + route.getDistanza() + "\n";
 
             for (Iterator<Node> it1 = route.getNodes().iterator(); it1.hasNext(); ) {
                 Node node = it1.next();
 
-                System.out.println("            id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon());
+                output_routes += "            id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
             }
         }
+        return output_routes;
     }
+
 }

@@ -15,7 +15,7 @@ public class Visit {
 
         //visita in profondità
         ArrayList<Node> visit_nodes = visitaFrom(startingNode);
-        printVisit(visit_nodes);
+        System.out.print(printVisit(visit_nodes));
 
         return visit_nodes;
     }
@@ -52,14 +52,16 @@ public class Visit {
         }
     }
 
-    private void printVisit(ArrayList<Node> nodes) {
-        System.out.println("VISITA -->");
+    public String printVisit(ArrayList<Node> nodes) {
+        String output_visit = "";
+        output_visit += "VISITA -->" + "\n";
 
         for (Iterator<Node> it = nodes.iterator(); it.hasNext(); ) {
             Node node = it.next();
 
-            System.out.println("        id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon());
+            output_visit += "        id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
         }
+        return output_visit;
     }
 
 }

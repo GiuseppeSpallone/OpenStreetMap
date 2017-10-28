@@ -60,7 +60,7 @@ public class Dijkstra {
         if (mark)
             setMarkPercorso(percorso);
 
-        printPercorso(percorso);
+        System.out.print(printPercorso(percorso));
 
         return percorso;
     }
@@ -108,14 +108,17 @@ public class Dijkstra {
         }
     }
 
-    private void printPercorso(ArrayList<Node> percorso) {
-        System.out.println("             DISTANZA --> " + percorso.get(percorso.size() - 1).getDistanza());
+    public String printPercorso(ArrayList<Node> percorso) {
+        String output_dijkstra = "";
+        output_dijkstra += "             DISTANZA --> " + percorso.get(percorso.size() - 1).getDistanza() + "\n";
 
-        System.out.println("             PERCORSO --> ");
+        output_dijkstra += "             PERCORSO --> \n";
         for (Iterator<Node> it = percorso.iterator(); it.hasNext(); ) {
             Node nd = it.next();
-            System.out.println("                            id: " + nd.getId() + "; index: " + nd.getIndex() + "; distanza: " + nd.getDistanza());
+            output_dijkstra += "                            id: " + nd.getId() + "; index: " + nd.getIndex() + "; distanza: " + nd.getDistanza() + "\n";
         }
+
+        return output_dijkstra;
     }
 
 
