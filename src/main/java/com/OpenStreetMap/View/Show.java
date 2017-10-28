@@ -189,6 +189,8 @@ public class Show extends JFrame {
         mappa_panel.repaint();
     }
 
+    //
+
     private void menuItem8ActionPerformed(ActionEvent e) {
         resetComponent();
         resetMark();
