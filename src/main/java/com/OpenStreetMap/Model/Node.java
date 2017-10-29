@@ -18,6 +18,7 @@ public class Node {
     private int mark = -1;
 
     private boolean flag1;
+    private int comp;
     private boolean tunnel = false;
 
     //Dijkstra
@@ -212,5 +213,13 @@ public class Node {
 
     public void setRoute(Route route) {
         this.route = route;
+    }
+
+    public int getComp() {
+        return comp;
+    }
+
+    public void setComp(int comp) {
+        this.comp = comp;
     }
 }

@@ -75,7 +75,7 @@ public class Show extends JFrame {
         file = openFile();
 
         if (file != null) {
-            importMap.create(file, 5, 2, 100, true, false);
+            importMap.create(file, 5, 2, 100, false, false);
             nodes = importMap.getNodes();
             arcs = importMap.getArcs();
 
@@ -188,8 +188,6 @@ public class Show extends JFrame {
 
         mappa_panel.repaint();
     }
-
-    //
 
     private void menuItem8ActionPerformed(ActionEvent e) {
         resetComponent();

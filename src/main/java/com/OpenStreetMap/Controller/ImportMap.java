@@ -6,11 +6,14 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 public class ImportMap {
+
+    Visit visit = new Visit();
 
     private HashMap<Long, Node> nodes = null;
     private HashMap<Long, Way> ways = null;
@@ -118,46 +121,35 @@ public class ImportMap {
                 System.out.println("     CLEAR --> BUILDINGS ");
             }
 
+            printALL();
             applyDimension(nodes, buildings, minlatT, maxlatT, minlonT, maxlonT);
             System.out.println("APPLY DIMENSION");
+            printALL();
             normalize(nodes, arcs);
             System.out.println("NORMALIZE");
+            printALL();
             applyOneway(arcs);
             System.out.println("APPLY ONEWAY");
+            printALL();
             removeRepetition(arcs);
             System.out.println("REMOVE REPETITION");
+            printALL();
 
-            /*Node rif = Visit.removeUnconnected(nodes, arcs);
+            /*Node rif = visit.removeUnconnected(nodes, arcs);
+            System.out.println("__ " + rif.getId());
             System.out.println("REMOVE UNCONNECTED");
-            Visit.removeNotStrongConnected(nodes, arcs, rif);
+            visit.removeNotStrongConnected(nodes, arcs, rif);
             System.out.println("REMOVE NOT STRONG CONNECTED");
             removeMiters(buildings, arcs);
             System.out.println("REMOVE MITERS");*/
 
-            /*Node startingNode2 = null;
-            Long idNode = 2314744735L;
-            Long idNode = 2314745275L;
-            Long idNode = 1567596942L;
-            if (nodes.containsKey(idNode)) {
-                startingNode2 = nodes.get(idNode);
-            } else {
-                System.out.println("Nodo non presente");
-            }*/
+            int i = 0;
+            for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+                Node n = it.next();
+                n.setIndex(i++);
+            }
 
-            /*Node startingNode = randomNode(nodes);
-            Visit visite = new Visite();
-            visite.visita(nodes, startingNode);*/
-
-            /*Algorithms algorithms = new Algorithms();
-//            Long s = 1567597028L;
-//            Long d = 2314745275L;
-//            Node sorgente = nodes.get(s);
-//            Node destinazione = nodes.get(d);
-            Node sorgente = randomNode(nodes);
-            Node destinazione = randomNode(nodes);
-            algorithms.dijkstra(sorgente, destinazione, nodes);
-
-            setIndexNodes(nodes);*/
+            printALL();
 
         } catch (IOException | NumberFormatException | JDOMException e) {
             System.out.println("Exception: " + e.getMessage());
@@ -473,18 +465,20 @@ public class ImportMap {
 
                     children_way_nd = we.getChildren("nd");
 
-                    ArrayList<Node> nodes_way = new ArrayList<>();
+                    //ArrayList<Node> nodes_way = new ArrayList<>();
 
                     //esamino i nodi delle strade
                     if (children_way_nd.size() > 0) {
                         for (Iterator it2 = children_way_nd.iterator(); it2.hasNext(); ) {
                             Element nd2 = (Element) it2.next();
 
-                            ArrayList<Way> ways_node = new ArrayList<>();
+                            //ArrayList<Way> ways_node = new ArrayList<>();
 
                             Long ref = Long.parseLong(nd2.getAttribute("ref").getValue());
 
-                            if (nodes.containsKey(ref)) {
+                            if (!nodes.containsKey(ref)) {
+                                System.out.println("Ref Not Found! " + ref);
+                            } else {
                                 Node node = nodes.get(ref);
                                 way.nd.add(node);
                                 node.nd_ways.add(way);
@@ -681,51 +675,50 @@ public class ImportMap {
         }
     }
 
-    private void normalize(HashMap<Long, Node> nodes, HashSet<Arc> arcs) {
+    private void normalize(HashMap<Long, Node> nodes, HashSet<Arc> arc) {
         ArrayList<Node> del = new ArrayList<>(nodes.size());
         ArrayList<Node> nd = new ArrayList<>(nodes.values());
-
         Collections.shuffle(nd);
-
         for (Iterator<Node> it = nd.iterator(); it.hasNext(); ) {
             Node n = it.next();
-
-            if (n.getNd_arcs().size() == 2) {
-                if (n.getNd_arcs().get(0).isOneway() == n.getNd_arcs().get(1).isOneway()) {
-                    Node nA, nB;
-                    Arc a = n.getNd_arcs().get(0);
-                    double l = a.getLength();
-                    boolean inv = false;
-                    if (a.getFrom() == n) {
-                        nA = a.getTo();
-                        inv = true;
-                    } else {
-                        nA = a.getFrom();
-                    }
-                    a = n.getNd_arcs().get(1);
-                    l += a.getLength();
-                    if (a.getFrom() == n) {
-                        nB = a.getTo();
-                    } else {
-                        nB = a.getFrom();
-                    }
-                    if (nA != n && n != nB && nA != nB && testDel(nA, n, nB, l)) {
-                        del.add(n);
-
-                        nA.getNd_arcs().remove(n.getNd_arcs().get(0));
-                        nB.getNd_arcs().remove(n.getNd_arcs().get(1));
-                        arcs.remove(n.getNd_arcs().get(0));
-                        arcs.remove(n.getNd_arcs().get(1));
-                        Arc ar = null;
-                        if (inv) {
-                            ar = new Arc(nB, nA, l);
+            if (n.nd_arcs.size() == 2) {
+                if (n.nd_arcs.get(0).isOneway() == n.nd_arcs.get(1).isOneway()) {
+                    if (n.nd_arcs.get(0).isTunnel() == n.nd_arcs.get(1).isTunnel()) {
+                        Node nA, nB;
+                        Arc a = n.nd_arcs.get(0);
+                        double l = a.getLength();
+                        boolean inv = false;
+                        if (a.getFrom() == n) {
+                            nA = a.getTo();
+                            inv = true;
                         } else {
-                            ar = new Arc(nA, nB, l);
+                            nA = a.getFrom();
                         }
-                        ar.setOneway(n.getNd_arcs().get(0).isOneway());
-                        arcs.add(ar);
-                        nA.getNd_arcs().add(ar);
-                        nB.getNd_arcs().add(ar);
+                        a = n.nd_arcs.get(1);
+                        l += a.getLength();
+                        if (a.getFrom() == n) {
+                            nB = a.getTo();
+                        } else {
+                            nB = a.getFrom();
+                        }
+                        if (nA != n && n != nB && nA != nB && testDel(nA, n, nB, l)) {
+                            del.add(n);
+
+                            nA.nd_arcs.remove(n.nd_arcs.get(0));
+                            nB.nd_arcs.remove(n.nd_arcs.get(1));
+                            arc.remove(n.nd_arcs.get(0));
+                            arc.remove(n.nd_arcs.get(1));
+                            Arc ar = null;
+                            if (inv) {
+                                ar = new Arc(nB, nA, l);
+                            } else {
+                                ar = new Arc(nA, nB, l);
+                            }
+                            ar.setOneway(n.nd_arcs.get(0).isOneway());
+                            arc.add(ar);
+                            nA.nd_arcs.add(ar);
+                            nB.nd_arcs.add(ar);
+                        }
                     }
                 }
             }
@@ -740,6 +733,7 @@ public class ImportMap {
             Node n = it.next();
             n.setIndex(i++);
         }
+
     }
 
     private boolean testDel(Node nA, Node n, Node nB, double l) {
@@ -848,6 +842,7 @@ public class ImportMap {
 
     public void printALL() {
         System.out.println("   Nodi num: " + nodes.size());
+        System.out.println("   Buildings num: " + buildings.size());
         System.out.println("   Archi num: " + arcs.size());
         System.out.println("   Strade num: " + ways.size());
     }
