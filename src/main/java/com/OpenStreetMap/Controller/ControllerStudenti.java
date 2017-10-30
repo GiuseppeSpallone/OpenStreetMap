@@ -3,11 +3,11 @@ package com.OpenStreetMap.Controller;
 
 import com.OpenStreetMap.Model.Node;
 import com.OpenStreetMap.Model.Route;
-
 import java.util.*;
 
 public class ControllerStudenti {
     Dijkstra dijkstra = new Dijkstra();
+    GoogleCoordinate googleCoordinate = new GoogleCoordinate();
 
     public HashSet<Node> read(String stringAreaText, HashMap<Long, Node> nodes, HashSet<Route> routes) {
         reset(nodes);
@@ -43,6 +43,36 @@ public class ControllerStudenti {
                 i++;
 
         }
+
+        while (arrayString[i].equals("*")) {
+
+            i++;
+            String name_route = arrayString[i];
+            i++;
+            String paese = arrayString[i];
+            i++;
+            int num_studenti = Integer.parseInt(arrayString[i]);
+
+            Route route = Route.getRouteByName(routes, name_route);
+
+            double[] lat_lon = googleCoordinate.loadGoogleCoordinate(paese);
+            float latitudine = (float) lat_lon[0];
+            float longitudine = (float) lat_lon[1];
+            System.out.println(paese + " coordinate: " + latitudine + " " + longitudine);
+
+            Node node = Node.nodeVicinoByLatLon(nodes, latitudine, longitudine);
+            node.setRoute(route);
+            node.setNum_studenti(num_studenti);
+
+            System.out.println("     Nodo lat: " + node.getLat() + " lon: " + node.getLon() + " tratta: " + node.getRoute().getName() + " num: " + node.getNum_studenti());
+
+            nodes_students.add(node);
+
+            if (i < arrayString.length - 1)
+                i++;
+
+        }
+
         return nodes_students;
 
     }

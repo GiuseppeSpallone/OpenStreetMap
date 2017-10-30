@@ -31,7 +31,7 @@ public class Dijkstra {
         while (node != destinazione) {
             node = queue.poll(); //estraggo nodo con distanza minore
 
-            for (Iterator<Arc> it1 = node.getNd_arcs().iterator(); it1.hasNext(); ) {
+            for (Iterator<Arc> it1 = node.nd_arcs.iterator(); it1.hasNext(); ) {
                 Arc arc = it1.next();
 
                 Node from = arc.getFrom();

@@ -34,12 +34,4 @@ public class Way {
         this.tunnel = tunnel;
     }
 
-    public ArrayList<Node> getNd() {
-        return nd;
-    }
-
-    public void setNd(ArrayList<Node> nd) {
-        this.nd = nd;
-    }
-
 }

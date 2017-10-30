@@ -32,6 +32,8 @@ public class ImportMap {
 
     public void create(File file, float sogliaCurva, float unitiSuzeMt, float risoluzioneMt, boolean import_building, boolean import_cycleway) {
 
+        System.out.println(java.lang.Runtime.getRuntime().maxMemory());
+
         prop = 1 / unitiSuzeMt;
         SGL = sogliaCurva;
         RIS = risoluzioneMt;
@@ -121,35 +123,30 @@ public class ImportMap {
                 System.out.println("     CLEAR --> BUILDINGS ");
             }
 
-            printALL();
-            applyDimension(nodes, buildings, minlatT, maxlatT, minlonT, maxlonT);
             System.out.println("APPLY DIMENSION");
-            printALL();
-            normalize(nodes, arcs);
+            applyDimension(nodes, buildings, minlatT, maxlatT, minlonT, maxlonT);
+
             System.out.println("NORMALIZE");
+            normalize(nodes, arcs);
             printALL();
-            applyOneway(arcs);
+
             System.out.println("APPLY ONEWAY");
-            printALL();
-            removeRepetition(arcs);
+            applyOneway(arcs);
+
             System.out.println("REMOVE REPETITION");
-            printALL();
+            removeRepetition(arcs);
 
-            /*Node rif = visit.removeUnconnected(nodes, arcs);
-            System.out.println("__ " + rif.getId());
             System.out.println("REMOVE UNCONNECTED");
-            visit.removeNotStrongConnected(nodes, arcs, rif);
-            System.out.println("REMOVE NOT STRONG CONNECTED");
+            Node rif = visit.removeUnconnected(nodes, arcs);
+            System.out.println("rif: " + rif.getId());
+
+            /*System.out.println("REMOVE NOT STRONG CONNECTED");
+            visit.removeNotStrongConnected(nodes, arcs, rif);*/
+
+            System.out.println("REMOVE MITERS");
             removeMiters(buildings, arcs);
-            System.out.println("REMOVE MITERS");*/
 
-            int i = 0;
-            for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
-                Node n = it.next();
-                n.setIndex(i++);
-            }
-
-            printALL();
+            setIndexNodes(nodes);
 
         } catch (IOException | NumberFormatException | JDOMException e) {
             System.out.println("Exception: " + e.getMessage());
@@ -316,21 +313,25 @@ public class ImportMap {
                         for (Iterator it2 = children_way_nd.iterator(); it2.hasNext(); ) {
                             Element nd2 = (Element) it2.next();
 
-                            ArrayList<Way> ways_node = new ArrayList<>();
+                            //ArrayList<Way> ways_node = new ArrayList<>();
 
                             Long ref = Long.parseLong(nd2.getAttribute("ref").getValue());
 
                             if (nodes.containsKey(ref)) {
                                 Node node = nodes.get(ref); //creo nodo
-                                nodes_way.add(node); //aggiungo nodo in array
+                                way.nd.add(node);
+                                node.nd_ways.add(way);
+
+                                /*nodes_way.add(node); //aggiungo nodo in array
                                 ways_node.add(way); //aggiungo strada in array
-                                node.setNd_ways(ways_node); //set array di strade in nodo
+                                node.setNd_ways(ways_node); //set array di strade in nodo*/
+
                                 ways.put(way.getId(), way); //aggiungo strada in hashmap strade
                             }
                         }
-                        way.setNd(nodes_way); //set array di nodi in strada
+                        //way.setNd(nodes_way); //set array di nodi in strada
                         if (oneway && cycleway_opposite_lane) {
-                            Collections.reverse(way.getNd());
+                            Collections.reverse(way.nd);
                         }
 
                     }
@@ -546,7 +547,7 @@ public class ImportMap {
             Way w = it.next();
             Node old = null;
 
-            for (Iterator<Node> it1 = w.getNd().iterator(); it1.hasNext(); ) {
+            for (Iterator<Node> it1 = w.nd.iterator(); it1.hasNext(); ) {
                 Node n = it1.next();
 
                 //arcs_node = new ArrayList<>();
@@ -631,7 +632,7 @@ public class ImportMap {
 
         for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
             Node n = it.next();
-            if (n.getNd_ways().size() <= 0) {
+            if (n.nd_ways.size() <= 0) {
                 del.add(n);
             } else {
                 if (n.getLat() < minlatT) {
@@ -649,9 +650,9 @@ public class ImportMap {
         for (Iterator<Node> it = del.iterator(); it.hasNext(); ) {
             Node n = it.next();
             nodes.remove(n.getId());
-            for (Iterator<Way> it1 = n.getNd_ways().iterator(); it1.hasNext(); ) {
+            for (Iterator<Way> it1 = n.nd_ways.iterator(); it1.hasNext(); ) {
                 Way way = it1.next();
-                way.getNd().remove(n);
+                way.nd.remove(n);
             }
         }
         del.clear();
@@ -766,8 +767,8 @@ public class ImportMap {
             a.setOneway(true);
             Arc b = new Arc(a.getTo(), a.getFrom(), a.getLength());
             b.setOneway(true);
-            a.getTo().getNd_arcs().add(b);
-            a.getFrom().getNd_arcs().add(b);
+            a.getTo().nd_arcs.add(b);
+            a.getFrom().nd_arcs.add(b);
             arc.add(b);
         }
     }
@@ -789,8 +790,8 @@ public class ImportMap {
         for (Iterator<Arc> it = del.iterator(); it.hasNext(); ) {
             Arc a = it.next();
             arc.remove(a);
-            a.getFrom().getNd_arcs().remove(a);
-            a.getTo().getNd_arcs().remove(a);
+            a.getFrom().nd_arcs.remove(a);
+            a.getTo().nd_arcs.remove(a);
         }
     }
 
@@ -865,7 +866,7 @@ public class ImportMap {
         ways.forEach((key, value) -> {
             System.out.println("id: " + value.getId());
 
-            ArrayList<Node> nodes = value.getNd();
+            ArrayList<Node> nodes = value.nd;
             if (nodes != null && nodes.size() > 0) {
                 System.out.println("nodes: " + nodes.size());
                 nodes.forEach((nd) -> {

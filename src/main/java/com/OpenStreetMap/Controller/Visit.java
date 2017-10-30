@@ -22,9 +22,10 @@ public class Visit {
 
     private ArrayList<Node> visitaFrom(Node node) {
         node.setMark(1);
+        node.setComp(1);
         nodes.add(node);
 
-        for (Iterator<Arc> it = node.getNd_arcs().iterator(); it.hasNext(); ) {
+        for (Iterator<Arc> it = node.nd_arcs.iterator(); it.hasNext(); ) {
             Arc arc = it.next();
 
             arc.setMark(1);
@@ -134,13 +135,14 @@ public class Visit {
         HashSet<Long> strongConnect = new HashSet<>(nodes.size());
         HashSet<Node> raggiunti = new HashSet<>();
         strongConnect.add(rif.getId());
+
         for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
             Node n = it.next();
             n.setComp(0);
         }
-        System.out.println("A");
+
         visitaFrom(rif);
-        System.out.println("B");
+
         ArrayList<Node> del = new ArrayList<>();
         for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
             Node n = it.next();

@@ -8,6 +8,7 @@ import java.util.*;
 
 public class ControllerRoutes {
     Dijkstra dijkstra = new Dijkstra();
+    GoogleCoordinate googleCoordinate = new GoogleCoordinate();
 
     public HashSet<Route> read(String stringAreaText, HashMap<Long, Node> nodes) {
         String arrayString[] = null;
@@ -32,6 +33,27 @@ public class ControllerRoutes {
                 float longitudine = Float.parseFloat(arrayString[i]);
 
                 Node node = Node.nodeByLatLon(nodes, latitudine, longitudine);
+
+                System.out.println("     Nodo lat: " + node.getLat() + " lon: " + node.getLon());
+
+                nodes_route.add(node);
+
+                if (i < arrayString.length - 1)
+                    i++;
+
+            }
+
+            while (arrayString[i].equals("*")) {
+
+                i++;
+                String paese = arrayString[i];
+
+                double[] lat_lon = googleCoordinate.loadGoogleCoordinate(paese);
+                float latitudine = (float) lat_lon[0];
+                float longitudine = (float) lat_lon[1];
+                System.out.println(paese + " coordinate: " + latitudine + " " + longitudine);
+
+                Node node = Node.nodeVicinoByLatLon(nodes, latitudine, longitudine);
 
                 System.out.println("     Nodo lat: " + node.getLat() + " lon: " + node.getLon());
 

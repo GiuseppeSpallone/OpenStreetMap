@@ -70,7 +70,7 @@ public class Database {
 
             wayObject.append("id_way", value.getId());
 
-            ArrayList<Node> nodes = value.getNd();
+            ArrayList<Node> nodes = value.nd;
             if (nodes != null && nodes.size() > 0) {
                 ArrayList<BasicDBObject> nodesObject = new ArrayList<>();
 

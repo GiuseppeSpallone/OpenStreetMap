@@ -99,6 +99,28 @@ public class Node {
         return null;
     }
 
+    public static Node nodeVicinoByLatLon(HashMap<Long, Node> nodes, float lat, float lon) {
+        Node node = null;
+        float dist = Float.MAX_VALUE;
+
+        if (lat != 0 && lon != 0) {
+            for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+                Node nd = it.next();
+
+                float latitudine = nd.getLat();
+                float longitudine = nd.getLon();
+
+                float d = (lat - latitudine) * (lat - latitudine) + (lon - longitudine) * (lon - longitudine);
+                if (d < dist) {
+                    dist = d;
+                    node = nd;
+                }
+            }
+        }
+        System.out.println("Latitudine o longitudine non inseriti");
+        return node;
+    }
+
     public Long getId() {
         return id;
     }
@@ -145,18 +167,6 @@ public class Node {
 
     public void setY(int y) {
         this.y = y;
-    }
-
-    public ArrayList<Way> getNd_ways() {
-        return nd_ways;
-    }
-
-    public void setNd_ways(ArrayList<Way> nd_ways) {
-        this.nd_ways = nd_ways;
-    }
-
-    public ArrayList<Arc> getNd_arcs() {
-        return nd_arcs;
     }
 
     public boolean isFlag1() {
