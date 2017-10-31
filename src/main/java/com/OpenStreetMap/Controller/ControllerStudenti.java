@@ -3,6 +3,7 @@ package com.OpenStreetMap.Controller;
 
 import com.OpenStreetMap.Model.Node;
 import com.OpenStreetMap.Model.Route;
+
 import java.util.*;
 
 public class ControllerStudenti {
@@ -152,6 +153,36 @@ public class ControllerStudenti {
         System.out.println("FERMATE IDEALI -->");
         System.out.print(printPercorsi(idealStop));
         return idealStop;
+    }
+
+    public HashMap<Node, HashMap<ArrayList<Node>, Double>> allRoute(HashMap<Long, Node> nodes, HashSet<Node> nodes_students, HashSet<Route> routes) {
+        HashMap<Node, HashMap<ArrayList<Node>, Double>> students_percorsi = new HashMap();
+        HashMap<ArrayList<Node>, Double> percorsi = null;
+
+        for (Iterator<Node> it = nodes_students.iterator(); it.hasNext(); ) {
+            Node node_student = it.next();
+
+            for (Iterator<Route> it1 = routes.iterator(); it1.hasNext(); ) {
+                Route route = it1.next();
+                percorsi = new HashMap<>();
+                double distanza = 0;
+
+                for (Iterator<Node> it2 = route.getNodes().iterator(); it2.hasNext(); ) {
+                    Node node_route = it2.next();
+
+                    ArrayList<Node> percorso = new ArrayList<>();
+
+                    percorso = dijkstra.run(node_student, node_route, nodes, false);
+                    distanza = percorso.get(percorso.size() - 1).getDistanza();
+                    percorsi.put(percorso, distanza);
+                }
+            }
+            students_percorsi.put(node_student, percorsi);
+        }
+
+        System.out.println("FERMATE -->");
+        System.out.print(printPercorsi(students_percorsi));
+        return students_percorsi;
     }
 
     public String printPercorsi(HashMap<Node, HashMap<ArrayList<Node>, Double>> students_percorsi) {

@@ -29,6 +29,7 @@ public class Node {
     //Tratta
     private int num_studenti;
     private Route route;
+    private Route idealRoute;
 
     public ArrayList<Way> nd_ways = new ArrayList<>();
     public ArrayList<Arc> nd_arcs = new ArrayList<>();
