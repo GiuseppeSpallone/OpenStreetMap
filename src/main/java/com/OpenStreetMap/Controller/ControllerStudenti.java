@@ -1,12 +1,13 @@
 package com.OpenStreetMap.Controller;
 
-
 import com.OpenStreetMap.Model.Node;
+import com.OpenStreetMap.Model.Percorso;
 import com.OpenStreetMap.Model.Route;
 
 import java.util.*;
 
 public class ControllerStudenti {
+
     Dijkstra dijkstra = new Dijkstra();
     GoogleCoordinate googleCoordinate = new GoogleCoordinate();
 
@@ -40,8 +41,9 @@ public class ControllerStudenti {
 
             nodes_students.add(node);
 
-            if (i < arrayString.length - 1)
+            if (i < arrayString.length - 1) {
                 i++;
+            }
 
         }
 
@@ -69,8 +71,9 @@ public class ControllerStudenti {
 
             nodes_students.add(node);
 
-            if (i < arrayString.length - 1)
+            if (i < arrayString.length - 1) {
                 i++;
+            }
 
         }
 
@@ -88,126 +91,165 @@ public class ControllerStudenti {
     }
 
     private void reset(HashMap<Long, Node> nodes) {
-        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext();) {
             Node node = it.next();
             node.setNum_studenti(0);
         }
     }
 
-    public HashMap<Node, HashMap<ArrayList<Node>, Double>> allStop(HashMap<Long, Node> nodes, HashSet<Node> nodes_students, HashSet<Route> routes) {
-        HashMap<Node, HashMap<ArrayList<Node>, Double>> students_percorsi = new HashMap();
-        HashMap<ArrayList<Node>, Double> percorsi = null;
+    public HashMap<Node, HashSet<Percorso>> allRoute(HashMap<Long, Node> nodes, HashSet<Node> nodes_students, HashSet<Route> routes) {
+        //tutte le route
+        HashMap<Node, HashSet<Percorso>> students_percorsi = new HashMap<>();
 
-        for (Iterator<Node> it = nodes_students.iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nodes_students.iterator(); it.hasNext();) {
             Node node_student = it.next();
 
-            for (Iterator<Route> it1 = routes.iterator(); it1.hasNext(); ) {
+            HashSet<Percorso> percorsi_students = new HashSet<>();
+
+            for (Iterator<Route> it1 = routes.iterator(); it1.hasNext();) {
+                Route route = it1.next();
+
+                for (Iterator<Node> it2 = route.getPercorso().getNodes().iterator(); it2.hasNext();) {
+                    Node node_route = it2.next();
+                    Percorso percorso = dijkstra.run(node_student, node_route, nodes, false);
+                    percorsi_students.add(percorso);
+                }
+            }
+            students_percorsi.put(node_student, percorsi_students);
+        }
+        System.out.print(printPercorsi(students_percorsi));
+
+        return students_percorsi;
+    }
+
+    public HashMap<Node, HashSet<Percorso>> route(HashMap<Long, Node> nodes, HashSet<Node> nodes_students, HashSet<Route> routes) {
+        //solo route prefissata
+        HashMap<Node, HashSet<Percorso>> students_percorsi = new HashMap<>();
+
+        for (Iterator<Node> it = nodes_students.iterator(); it.hasNext();) {
+            Node node_student = it.next();
+
+            HashSet<Percorso> percorsi_students = new HashSet<>();
+
+            for (Iterator<Route> it1 = routes.iterator(); it1.hasNext();) {
                 Route route = it1.next();
 
                 if (node_student.getRoute() == route) {
-                    percorsi = new HashMap<>();
-                    double distanza = 0;
 
-                    for (Iterator<Node> it2 = route.getNodes().iterator(); it2.hasNext(); ) {
+                    for (Iterator<Node> it2 = route.getPercorso().getNodes().iterator(); it2.hasNext();) {
                         Node node_route = it2.next();
-
-                        ArrayList<Node> percorso = new ArrayList<>();
-
-                        percorso = dijkstra.run(node_student, node_route, nodes, false);
-                        distanza = percorso.get(percorso.size() - 1).getDistanza();
-                        percorsi.put(percorso, distanza);
+                        Percorso percorso = dijkstra.run(node_student, node_route, nodes, false);
+                        percorsi_students.add(percorso);
                     }
-
                 }
             }
-            students_percorsi.put(node_student, percorsi);
+            students_percorsi.put(node_student, percorsi_students);
         }
-
-        System.out.println("FERMATE -->");
         System.out.print(printPercorsi(students_percorsi));
         return students_percorsi;
     }
 
-    public HashMap<Node, HashMap<ArrayList<Node>, Double>> idealStop(HashMap<Node, HashMap<ArrayList<Node>, Double>> students_percorsi) {
-        HashMap<Node, HashMap<ArrayList<Node>, Double>> idealStop = new HashMap<>();
+    public HashMap<Node, Percorso> ideal(HashMap<Node, HashSet<Percorso>> students, HashSet<Route> routes, boolean ideal) {
+        HashMap<Node, Percorso> students_min_percorsi = new HashMap<>();
 
-        for (Map.Entry<Node, HashMap<ArrayList<Node>, Double>> entry : students_percorsi.entrySet()) {
+        for (Map.Entry<Node, HashSet<Percorso>> entry : students.entrySet()) {
             Node node = entry.getKey();
-            HashMap<ArrayList<Node>, Double> percorsi = entry.getValue();
-            HashMap<ArrayList<Node>, Double> minPercorsi = new HashMap<>();
+            HashSet<Percorso> percorsi = entry.getValue();
 
-            Map.Entry<ArrayList<Node>, Double> min = null;
-            for (Map.Entry<ArrayList<Node>, Double> entry1 : percorsi.entrySet()) {
-                ArrayList<Node> percorso = entry1.getKey();
-                Double distanza = entry1.getValue();
+            Percorso minPercorso = null;
+            for (Iterator<Percorso> it = percorsi.iterator(); it.hasNext();) {
+                Percorso percorso = it.next();
 
-                if (min == null || min.getValue() > distanza) {
-                    min = entry1;
+                if (minPercorso == null || minPercorso.getDistanza() > percorso.getDistanza()) {
+                    minPercorso = percorso;
                 }
             }
-            minPercorsi.put(min.getKey(), min.getValue());
 
-            idealStop.put(node, minPercorsi);
+            Node stop = minPercorso.getNodes().get(minPercorso.getNodes().size() - 1);
+            Route stopRoute = Route.getRouteByNode(routes, stop);
+
+            if (ideal) {
+                node.setIdealRoute(stopRoute);
+                node.setIdealStopIdealRoute(stop);
+                node.setIdealPercorso(minPercorso);
+            } else {
+                node.setIdealStop(stop);
+                node.setPercorso(minPercorso);
+            }
+
+            students_min_percorsi.put(node, minPercorso);
         }
 
         System.out.println("FERMATE IDEALI -->");
-        System.out.print(printPercorsi(idealStop));
-        return idealStop;
+        System.out.print(printPercorso(students_min_percorsi));
+        return students_min_percorsi;
     }
 
-    public HashMap<Node, HashMap<ArrayList<Node>, Double>> allRoute(HashMap<Long, Node> nodes, HashSet<Node> nodes_students, HashSet<Route> routes) {
-        HashMap<Node, HashMap<ArrayList<Node>, Double>> students_percorsi = new HashMap();
-        HashMap<ArrayList<Node>, Double> percorsi = null;
+    public String printPercorsi(HashMap<Node, HashSet<Percorso>> students_percorsi) {
+        String output_percorsi = "";
 
-        for (Iterator<Node> it = nodes_students.iterator(); it.hasNext(); ) {
-            Node node_student = it.next();
+        output_percorsi += "NODI STUDENTI: " + students_percorsi.size() + "\n";
+        for (Iterator<HashSet<Percorso>> it = students_percorsi.values().iterator(); it.hasNext();) {
+            HashSet<Percorso> percorsi = it.next();
 
-            for (Iterator<Route> it1 = routes.iterator(); it1.hasNext(); ) {
-                Route route = it1.next();
-                percorsi = new HashMap<>();
-                double distanza = 0;
+            output_percorsi += "________________________" + "\n";
 
-                for (Iterator<Node> it2 = route.getNodes().iterator(); it2.hasNext(); ) {
-                    Node node_route = it2.next();
+            for (Iterator<Percorso> it1 = percorsi.iterator(); it1.hasNext();) {
+                Percorso percorso = it1.next();
 
-                    ArrayList<Node> percorso = new ArrayList<>();
+                output_percorsi += "\nDISTANZA PERCORSO: " + percorso.getDistanza() + "\n";
 
-                    percorso = dijkstra.run(node_student, node_route, nodes, false);
-                    distanza = percorso.get(percorso.size() - 1).getDistanza();
-                    percorsi.put(percorso, distanza);
-                }
-            }
-            students_percorsi.put(node_student, percorsi);
-        }
-
-        System.out.println("FERMATE -->");
-        System.out.print(printPercorsi(students_percorsi));
-        return students_percorsi;
-    }
-
-    public String printPercorsi(HashMap<Node, HashMap<ArrayList<Node>, Double>> students_percorsi) {
-        String output_fermate = "";
-
-        output_fermate += "NODI STUDENTI: " + students_percorsi.size() + "\n";
-        for (Iterator<HashMap<ArrayList<Node>, Double>> it = students_percorsi.values().iterator(); it.hasNext(); ) {
-            HashMap<ArrayList<Node>, Double> percorsi = it.next();
-
-            output_fermate += "________________________" + "\n";
-
-            for (Map.Entry<ArrayList<Node>, Double> entry : percorsi.entrySet()) {
-                ArrayList<Node> percorso = entry.getKey();
-                Double distanza = entry.getValue();
-
-                output_fermate += "\nDISTANZA PERCORSO: " + distanza + "\n";
-
-                for (Iterator<Node> it2 = percorso.iterator(); it2.hasNext(); ) {
+                for (Iterator<Node> it2 = percorso.getNodes().iterator(); it2.hasNext();) {
                     Node node = it2.next();
 
-                    output_fermate += "id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
+                    output_percorsi += "id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
                 }
             }
         }
-        return output_fermate;
+        return output_percorsi;
     }
 
+    public String printPercorso(HashMap<Node, Percorso> students_min_percorsi) {
+        String output_percorso = "";
+
+        output_percorso += "NODI STUDENTI: " + students_min_percorsi.size() + "\n";
+        for (Iterator<Percorso> it = students_min_percorsi.values().iterator(); it.hasNext();) {
+            Percorso percorso = it.next();
+
+            output_percorso += "________________________" + "\n";
+
+            output_percorso += "\nDISTANZA PERCORSO: " + percorso.getDistanza() + "\n";
+
+            for (Iterator<Node> it2 = percorso.getNodes().iterator(); it2.hasNext();) {
+                Node node = it2.next();
+
+                output_percorso += "id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
+            }
+
+        }
+        return output_percorso;
+    }
+
+    public String printReportStudenti(HashSet<Node> nodes_students) {
+        String output = "";
+
+        output += "NODI STUDENTI: " + nodes_students.size() + "\n";
+        output += "________________________" + "\n";
+        for (Iterator<Node> it = nodes_students.iterator(); it.hasNext();) {
+            Node node = it.next();
+
+            Route route = node.getRoute();
+            Route idealRoute = node.getIdealRoute();
+            Node idealStop = node.getIdealStop();
+            Node idealStopIdealRoute = node.getIdealStopIdealRoute();
+            Percorso percorso = node.getPercorso();
+            Percorso idealPercorso = node.getIdealPercorso();
+
+            output += "ROUTE PREFISSATA\n";
+            output += "route: " + route.getName() + " stop: " + idealStop.getIndex() + " distanza: " + percorso.getDistanza() + "\n";
+            output += "ROUTE IDEALE\n";
+            output += "route: " + idealRoute.getName() + " stop: " + idealStopIdealRoute.getIndex() + " distanza: " + idealPercorso.getDistanza() + "\n";
+        }
+        return output;
+    }
 }
