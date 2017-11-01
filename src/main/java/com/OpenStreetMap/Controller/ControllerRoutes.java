@@ -1,12 +1,14 @@
 package com.OpenStreetMap.Controller;
 
 import com.OpenStreetMap.Model.Node;
+import com.OpenStreetMap.Model.Percorso;
 import com.OpenStreetMap.Model.Route;
 
 import java.awt.*;
 import java.util.*;
 
 public class ControllerRoutes {
+
     Dijkstra dijkstra = new Dijkstra();
     GoogleCoordinate googleCoordinate = new GoogleCoordinate();
 
@@ -14,7 +16,7 @@ public class ControllerRoutes {
         String arrayString[] = null;
         arrayString = splitta(stringAreaText);
 
-        HashMap<String, ArrayList<Node>> checkpoints_routes = new HashMap<>();
+        HashMap<Route, ArrayList<Node>> checkpoints_routes = new HashMap<>();
         ArrayList<Node> nodes_route = null;
 
         int i = 0;
@@ -24,6 +26,12 @@ public class ControllerRoutes {
             i++;
             String name = arrayString[i];
             i++;
+            int numFermate = Integer.parseInt(arrayString[i]);
+            i++;
+
+            Route route = new Route();
+            route.setName(name);
+            route.setNumFermate(numFermate);
 
             while (arrayString[i].equals("#")) {
 
@@ -38,8 +46,9 @@ public class ControllerRoutes {
 
                 nodes_route.add(node);
 
-                if (i < arrayString.length - 1)
+                if (i < arrayString.length - 1) {
                     i++;
+                }
 
             }
 
@@ -59,11 +68,12 @@ public class ControllerRoutes {
 
                 nodes_route.add(node);
 
-                if (i < arrayString.length - 1)
+                if (i < arrayString.length - 1) {
                     i++;
+                }
 
             }
-            checkpoints_routes.put(name, nodes_route);
+            checkpoints_routes.put(route, nodes_route);
 
         }
 
@@ -83,18 +93,14 @@ public class ControllerRoutes {
         return s.split(" ");
     }
 
-    private HashSet<Route> applyDijkstra(HashMap<Long, Node> nodes, HashMap<String, ArrayList<Node>> checkpoint_routes) {
+    private HashSet<Route> applyDijkstra(HashMap<Long, Node> nodes, HashMap<Route, ArrayList<Node>> checkpoint_routes) {
         HashSet<Route> routes = new HashSet<>();
 
-        for (Map.Entry<String, ArrayList<Node>> entry : checkpoint_routes.entrySet()) {
-            String name = entry.getKey();
+        for (Map.Entry<Route, ArrayList<Node>> entry : checkpoint_routes.entrySet()) {
+            Route route = entry.getKey();
             ArrayList<Node> checkpoints = entry.getValue();
 
-            ArrayList<Node> percorso = new ArrayList<>();
-            double distanza = 0;
-
-            Route route = new Route();
-            route.setName(name);
+            ArrayList<Percorso> percorso = new ArrayList<>();
 
             //set color
             int red = 5 * (int) (Math.random() * 52);
@@ -105,13 +111,32 @@ public class ControllerRoutes {
 
             for (int i = 0; i < checkpoints.size(); i++) {
                 if (i != checkpoints.size() - 1) {
-
-                    percorso.addAll(dijkstra.run(checkpoints.get(i), checkpoints.get(i + 1), nodes, false));
-                    distanza += percorso.get(percorso.size() - 1).getDistanza();
+                    Percorso pezzo = dijkstra.run(checkpoints.get(i), checkpoints.get(i + 1), nodes, false);
+                    percorso.add(pezzo);
                 }
             }
-            route.setNodes(percorso);
-            route.setDistanza(distanza);
+
+            //unire i pezzi dei percorsi
+            Percorso p = new Percorso();
+            ArrayList<Node> nodi_p = new ArrayList<>();
+            double d = 0;
+            for (Iterator<Percorso> it = percorso.iterator(); it.hasNext();) {
+                Percorso p_ = it.next();
+
+                d += p_.getDistanza();
+
+                for (Iterator<Node> it1 = p_.getNodes().iterator(); it1.hasNext();) {
+                    Node n_ = it1.next();
+
+                    nodi_p.add(n_);
+
+                }
+            }
+            p.setNodes(nodi_p);
+            p.setDistanza(d);
+
+            route.setPercorso(p);
+            route.setDistanza(p.getDistanza());
             routes.add(route);
         }
 
@@ -123,13 +148,14 @@ public class ControllerRoutes {
         output_routes += "NUMERO TRATTE " + routes.size() + "\n";
         output_routes += "________________________" + "\n";
 
-        for (Iterator<Route> it = routes.iterator(); it.hasNext(); ) {
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
             Route route = it.next();
 
             output_routes += "\nTratta: " + route.getName() + "\n";
+            output_routes += "numero fermate: " + route.getNumFermate() + "\n";
             output_routes += "distanza: " + route.getDistanza() + "\n";
 
-            for (Iterator<Node> it1 = route.getNodes().iterator(); it1.hasNext(); ) {
+            for (Iterator<Node> it1 = route.getPercorso().getNodes().iterator(); it1.hasNext();) {
                 Node node = it1.next();
 
                 output_routes += "id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";

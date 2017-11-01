@@ -10,6 +10,7 @@ import com.OpenStreetMap.Controller.ImportPlotMap;
 import com.OpenStreetMap.Controller.Visit;
 import com.OpenStreetMap.Model.Arc;
 import com.OpenStreetMap.Model.Node;
+import com.OpenStreetMap.Model.Percorso;
 import com.OpenStreetMap.Model.Route;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -84,16 +85,9 @@ public class GUI extends javax.swing.JFrame {
         utenti_jButton = new javax.swing.JButton();
         jScrollPane5 = new javax.swing.JScrollPane();
         utentiOutput_jTextArea = new javax.swing.JTextArea();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        allStopRoute_jTextArea = new javax.swing.JTextArea();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        idealStopRoute_jTextArea = new javax.swing.JTextArea();
-        allRoute_jButton = new javax.swing.JButton();
-        jScrollPane7 = new javax.swing.JScrollPane();
-        allStopIdealRoute_jTextArea = new javax.swing.JTextArea();
-        jScrollPane8 = new javax.swing.JScrollPane();
-        idealStopIdealRoute_jTextArea = new javax.swing.JTextArea();
         idealRoute_jButton = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        utentiTratteOutput_jTextArea = new javax.swing.JTextArea();
         altro_jPanel = new javax.swing.JPanel();
         sLat_jTextField = new javax.swing.JTextField();
         sLon_jTextField = new javax.swing.JTextField();
@@ -133,7 +127,7 @@ public class GUI extends javax.swing.JFrame {
         mappa_jPanel.setLayout(mappa_jPanelLayout);
         mappa_jPanelLayout.setHorizontalGroup(
             mappa_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1456, Short.MAX_VALUE)
+            .addGap(0, 1174, Short.MAX_VALUE)
         );
         mappa_jPanelLayout.setVerticalGroup(
             mappa_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -168,7 +162,7 @@ public class GUI extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(tratte_jButton)
-                .addContainerGap(499, Short.MAX_VALUE))
+                .addContainerGap(217, Short.MAX_VALUE))
         );
         tratte_jPanelLayout.setVerticalGroup(
             tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -201,35 +195,16 @@ public class GUI extends javax.swing.JFrame {
         utentiOutput_jTextArea.setRows(5);
         jScrollPane5.setViewportView(utentiOutput_jTextArea);
 
-        allStopRoute_jTextArea.setColumns(20);
-        allStopRoute_jTextArea.setRows(5);
-        jScrollPane3.setViewportView(allStopRoute_jTextArea);
-
-        idealStopRoute_jTextArea.setColumns(20);
-        idealStopRoute_jTextArea.setRows(5);
-        jScrollPane6.setViewportView(idealStopRoute_jTextArea);
-
-        allRoute_jButton.setText("All");
-        allRoute_jButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                allRoute_jButtonActionPerformed(evt);
-            }
-        });
-
-        allStopIdealRoute_jTextArea.setColumns(20);
-        allStopIdealRoute_jTextArea.setRows(5);
-        jScrollPane7.setViewportView(allStopIdealRoute_jTextArea);
-
-        idealStopIdealRoute_jTextArea.setColumns(20);
-        idealStopIdealRoute_jTextArea.setRows(5);
-        jScrollPane8.setViewportView(idealStopIdealRoute_jTextArea);
-
-        idealRoute_jButton.setText("Ideal");
+        idealRoute_jButton.setText("Tratte");
         idealRoute_jButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 idealRoute_jButtonActionPerformed(evt);
             }
         });
+
+        utentiTratteOutput_jTextArea.setColumns(20);
+        utentiTratteOutput_jTextArea.setRows(5);
+        jScrollPane2.setViewportView(utentiTratteOutput_jTextArea);
 
         javax.swing.GroupLayout utenti_jPanelLayout = new javax.swing.GroupLayout(utenti_jPanel);
         utenti_jPanel.setLayout(utenti_jPanelLayout);
@@ -237,55 +212,42 @@ public class GUI extends javax.swing.JFrame {
             utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(utenti_jPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
-                    .addComponent(jScrollPane4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(utenti_jPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, utenti_jPanelLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addComponent(utenti_jButton)
-                        .addGap(149, 149, 149)))
-                .addGroup(utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(289, 289, 289))
                     .addGroup(utenti_jPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane5))
-                .addContainerGap())
-            .addGroup(utenti_jPanelLayout.createSequentialGroup()
-                .addGap(341, 341, 341)
-                .addComponent(allRoute_jButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(idealRoute_jButton)
-                .addGap(410, 410, 410))
+                        .addGap(38, 38, 38)
+                        .addComponent(idealRoute_jButton)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         utenti_jPanelLayout.setVerticalGroup(
             utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(utenti_jPanelLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(utenti_jPanelLayout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                            .addComponent(jScrollPane5))
-                        .addGap(18, 18, 18))
+                            .addComponent(jScrollPane5)))
+                    .addGroup(utenti_jPanelLayout.createSequentialGroup()
+                        .addGap(73, 73, 73)
+                        .addComponent(utenti_jButton)))
+                .addGroup(utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(utenti_jPanelLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane2)
+                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, utenti_jPanelLayout.createSequentialGroup()
-                        .addComponent(utenti_jButton)
-                        .addGap(74, 74, 74)))
-                .addGroup(utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane8))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(allRoute_jButton)
-                    .addComponent(idealRoute_jButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 265, Short.MAX_VALUE)
+                        .addComponent(idealRoute_jButton)
+                        .addGap(226, 226, 226))))
         );
 
         jTabbedPane.addTab("Utenti", utenti_jPanel);
@@ -372,7 +334,7 @@ public class GUI extends javax.swing.JFrame {
                 .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(dijkstra_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(visita_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(478, Short.MAX_VALUE))
+                .addContainerGap(196, Short.MAX_VALUE))
         );
         altro_jPanelLayout.setVerticalGroup(
             altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -701,7 +663,7 @@ public class GUI extends javax.swing.JFrame {
         Node sorgente = Node.nodeByLatLon(nodes, lat_s, lon_s);
         Node destinazione = Node.nodeByLatLon(nodes, lat_d, lon_d);
 
-        ArrayList<Node> percorso = dijkstra.run(sorgente, destinazione, nodes, true);
+        Percorso percorso = dijkstra.run(sorgente, destinazione, nodes, true);
 
         String output_dijkstra = dijkstra.printPercorso(percorso);
         dijkstraOutput_jTextArea.setText(output_dijkstra);
@@ -724,27 +686,18 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_visita_jButtonActionPerformed
 
     private void idealRoute_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idealRoute_jButtonActionPerformed
-        HashMap<Node, HashMap<ArrayList<Node>, Double>> allRoute = controllerStudenti.allRoute(nodes, nodes_students, routes);
-        String output_fermate = controllerStudenti.printPercorsi(allRoute);
-        allStopIdealRoute_jTextArea.setText(output_fermate);
+        HashMap<Node, HashSet<Percorso>> students_percorsi_ideal = controllerStudenti.allRoute(nodes, nodes_students, routes);
+        HashMap<Node, HashSet<Percorso>> students_percorsi = controllerStudenti.route(nodes, nodes_students, routes);
 
-        HashMap<Node, HashMap<ArrayList<Node>, Double>> idealStop = controllerStudenti.idealStop(allRoute);
-        String output_fermateIdeal = controllerStudenti.printPercorsi(idealStop);
-        idealStopIdealRoute_jTextArea.setText(output_fermateIdeal);
+        HashMap<Node, Percorso> students_min_percorsi_ideal = controllerStudenti.ideal(students_percorsi_ideal, routes, true);
+        HashMap<Node, Percorso> students_min_percorsi = controllerStudenti.ideal(students_percorsi, routes, false);
+
+        String students_routes = controllerStudenti.printReportStudenti(nodes_students);
+        utentiTratteOutput_jTextArea.setText(students_routes);
     }//GEN-LAST:event_idealRoute_jButtonActionPerformed
 
-    private void allRoute_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allRoute_jButtonActionPerformed
-        HashMap<Node, HashMap<ArrayList<Node>, Double>> allStop = controllerStudenti.allStop(nodes, nodes_students, routes);
-        String output_fermate = controllerStudenti.printPercorsi(allStop);
-        allStopRoute_jTextArea.setText(output_fermate);
-
-        HashMap<Node, HashMap<ArrayList<Node>, Double>> idealStop = controllerStudenti.idealStop(allStop);
-        String output_fermateIdeal = controllerStudenti.printPercorsi(idealStop);
-        idealStopRoute_jTextArea.setText(output_fermateIdeal);
-    }//GEN-LAST:event_allRoute_jButtonActionPerformed
-
     private void utenti_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_utenti_jButtonActionPerformed
-        String area = utentiInput_jTextArea.getText().toString();
+        String area = utentiInput_jTextArea.getText();
 
         nodes_students = controllerStudenti.read(area, nodes, routes);
         String output_nodes_students = "";
@@ -795,9 +748,6 @@ public class GUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton allRoute_jButton;
-    private javax.swing.JTextArea allStopIdealRoute_jTextArea;
-    private javax.swing.JTextArea allStopRoute_jTextArea;
     private javax.swing.JPanel altro_jPanel;
     private javax.swing.JMenuItem cancella_jMenuItem;
     private javax.swing.JMenuItem caricaEsporta_jMenuItem;
@@ -810,19 +760,14 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem disegna_jMenuItem;
     private javax.swing.JMenuItem esci_jMenuItem;
     private javax.swing.JButton idealRoute_jButton;
-    private javax.swing.JTextArea idealStopIdealRoute_jTextArea;
-    private javax.swing.JTextArea idealStopRoute_jTextArea;
     private javax.swing.JMenuItem inserisciDB_jMenuItem;
     private javax.swing.JMenuBar jMenuBar;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane11;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JScrollPane jScrollPane7;
-    private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JScrollPane jScrollPane9;
     private javax.swing.JTabbedPane jTabbedPane;
     private javax.swing.JTextField lat_jTextField;
@@ -840,6 +785,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JPanel tratte_jPanel;
     private javax.swing.JTextArea utentiInput_jTextArea;
     private javax.swing.JTextArea utentiOutput_jTextArea;
+    private javax.swing.JTextArea utentiTratteOutput_jTextArea;
     private javax.swing.JButton utenti_jButton;
     private javax.swing.JPanel utenti_jPanel;
     private javax.swing.JTextArea visitaOutput_jTextArea;
@@ -891,10 +837,7 @@ public class GUI extends javax.swing.JFrame {
         tratteOutput_jTextArea.setText("");
         utentiInput_jTextArea.setText("");
         utentiOutput_jTextArea.setText("");
-        allStopRoute_jTextArea.setText("");
-        idealStopRoute_jTextArea.setText("");
-        allStopIdealRoute_jTextArea.setText("");
-        idealStopIdealRoute_jTextArea.setText("");
+        utentiTratteOutput_jTextArea.setText("");
         sLat_jTextField.setText("");
         sLon_jTextField.setText("");
         dLat_jTextField.setText("");
@@ -1119,8 +1062,8 @@ public class GUI extends javax.swing.JFrame {
 
                     g.setColor(r.getColor());
 
-                    for (int i = 0; i < r.getNodes().size(); i++) {
-                        Node r_n = r.getNodes().get(i);
+                    for (int i = 0; i < r.getPercorso().getNodes().size(); i++) {
+                        Node r_n = r.getPercorso().getNodes().get(i);
 
                         double x = (r_n.getX() - minX * 1.0) * rap;
                         double y = (r_n.getY() - minY * 1.0) * rap;
@@ -1128,8 +1071,8 @@ public class GUI extends javax.swing.JFrame {
                         g.setFont(g.getFont().deriveFont(10f));
                         g.drawString("" + r_n.getIndex(), (int) x, (int) y);
 
-                        if (i != r.getNodes().size() - 1) {
-                            Arc arc = Arc.arcByFromTo(r_n, r.getNodes().get(i + 1));
+                        if (i != r.getPercorso().getNodes().size() - 1) {
+                            Arc arc = Arc.arcByFromTo(r_n, r.getPercorso().getNodes().get(i + 1));
 
                             double x1 = (arc.getFrom().getX() - minX * 1.0) * rap;
                             double y1 = (arc.getFrom().getY() - minY * 1.0) * rap;

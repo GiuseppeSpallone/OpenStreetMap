@@ -25,11 +25,15 @@ public class Node {
     private double distanza;
     private Node predecessore;
     //private int mark;
-
+    
     //Tratta
     private int num_studenti;
     private Route route;
     private Route idealRoute;
+    private Node idealStop;
+    private Node idealStopIdealRoute;
+    private Percorso percorso;
+    private Percorso idealPercorso;
 
     public ArrayList<Way> nd_ways = new ArrayList<>();
     public ArrayList<Arc> nd_arcs = new ArrayList<>();
@@ -209,6 +213,14 @@ public class Node {
     public void setPredecessore(Node predecessore) {
         this.predecessore = predecessore;
     }
+    
+    public int getComp() {
+        return comp;
+    }
+
+    public void setComp(int comp) {
+        this.comp = comp;
+    }
 
     public int getNum_studenti() {
         return num_studenti;
@@ -226,11 +238,48 @@ public class Node {
         this.route = route;
     }
 
-    public int getComp() {
-        return comp;
+    public Percorso getPercorso() {
+        return percorso;
     }
 
-    public void setComp(int comp) {
-        this.comp = comp;
+    public void setPercorso(Percorso percorso) {
+        this.percorso = percorso;
     }
+    
+
+    public Route getIdealRoute() {
+        return idealRoute;
+    }
+
+    public void setIdealRoute(Route idealRoute) {
+        this.idealRoute = idealRoute;
+    }
+
+    public Node getIdealStop() {
+        return idealStop;
+    }
+
+    public void setIdealStop(Node idealStop) {
+        this.idealStop = idealStop;
+    }
+
+    public Node getIdealStopIdealRoute() {
+        return idealStopIdealRoute;
+    }
+
+    public void setIdealStopIdealRoute(Node idealStopIdealRoute) {
+        this.idealStopIdealRoute = idealStopIdealRoute;
+    }
+
+    public Percorso getIdealPercorso() {
+        return idealPercorso;
+    }
+
+    public void setIdealPercorso(Percorso idealPercorso) {
+        this.idealPercorso = idealPercorso;
+    }
+    
+    
+    
+    
 }

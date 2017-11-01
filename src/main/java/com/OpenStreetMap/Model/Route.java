@@ -1,22 +1,38 @@
 package com.OpenStreetMap.Model;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
 public class Route {
+
     private String name;
-    private ArrayList<Node> nodes;
+    private Percorso percorso;
     private double distanza;
     private Color color;
+    private int numFermate;
 
     public static Route getRouteByName(HashSet<Route> routes, String name) {
-        for (Iterator<Route> it = routes.iterator(); it.hasNext(); ) {
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
             Route route = it.next();
 
             if (route.getName().equals(name)) {
                 return route;
+            }
+        }
+        return null;
+    }
+
+    public static Route getRouteByNode(HashSet<Route> routes, Node node) {
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
+            Route route = it.next();
+
+            for (Iterator<Node> it2 = route.getPercorso().getNodes().iterator(); it2.hasNext();) {
+                Node nd = it2.next();
+
+                if (nd == node) {
+                    return route;
+                }
             }
         }
         return null;
@@ -30,12 +46,12 @@ public class Route {
         this.name = name;
     }
 
-    public ArrayList<Node> getNodes() {
-        return nodes;
+    public Percorso getPercorso() {
+        return percorso;
     }
 
-    public void setNodes(ArrayList<Node> nodes) {
-        this.nodes = nodes;
+    public void setPercorso(Percorso percorso) {
+        this.percorso = percorso;
     }
 
     public double getDistanza() {
@@ -53,4 +69,13 @@ public class Route {
     public void setColor(Color color) {
         this.color = color;
     }
+
+    public int getNumFermate() {
+        return numFermate;
+    }
+
+    public void setNumFermate(int numFermate) {
+        this.numFermate = numFermate;
+    }
+
 }

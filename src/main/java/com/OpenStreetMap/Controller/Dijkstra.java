@@ -2,16 +2,19 @@ package com.OpenStreetMap.Controller;
 
 import com.OpenStreetMap.Model.Arc;
 import com.OpenStreetMap.Model.Node;
+import com.OpenStreetMap.Model.Percorso;
 
 import java.util.*;
 
 public class Dijkstra {
 
-    public ArrayList<Node> run(Node sorgente, Node destinazione, HashMap<Long, Node> nodes, boolean mark) {
+    public Percorso run(Node sorgente, Node destinazione, HashMap<Long, Node> nodes, boolean mark) {
         System.out.println("DIJKSTRA --> ");
         System.out.println("             SORGENTE index: " + sorgente.getIndex() + "; id: " + sorgente.getId() + "; coordinate: " + sorgente.getLat() + "," + sorgente.getLon());
         System.out.println("             DESTINAZIONE index: " + destinazione.getIndex() + "; id: " + destinazione.getId() + "; coordinate: " + destinazione.getLat() + "," + destinazione.getLon());
 
+        Percorso p = new Percorso();
+        
         //reset distanza e predecessore
         reset(nodes);
 
@@ -56,13 +59,17 @@ public class Dijkstra {
             }
         }
         ArrayList<Node> percorso = setPredecessorePercorso(sorgente, destinazione);
+        double d = percorso.get(percorso.size() - 1).getDistanza();
+        
+        p.setDistanza(d);
+        p.setNodes(percorso);
 
         if (mark)
             setMarkPercorso(percorso);
 
-        System.out.print(printPercorso(percorso));
+        System.out.print(printPercorso(p));
 
-        return percorso;
+        return p;
     }
 
     private void reset(HashMap<Long, Node> nodes) {
@@ -108,11 +115,11 @@ public class Dijkstra {
         }
     }
 
-    public String printPercorso(ArrayList<Node> percorso) {
+    public String printPercorso(Percorso percorso) {
         String output_dijkstra = "";
-        output_dijkstra += "DISTANZA: " + percorso.get(percorso.size() - 1).getDistanza() + "\n";
+        output_dijkstra += "DISTANZA: " + percorso.getDistanza() + "\n";
 
-        for (Iterator<Node> it = percorso.iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = percorso.getNodes().iterator(); it.hasNext(); ) {
             Node nd = it.next();
             output_dijkstra += "id: " + nd.getId() + "; index: " + nd.getIndex() + "; distanza: " + nd.getDistanza() + "\n";
         }
