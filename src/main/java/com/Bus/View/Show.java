@@ -2,8 +2,16 @@
  * Created by JFormDesigner on Wed Oct 11 17:43:14 CEST 2017
  */
 
-package com.OpenStreetMap.View;
+package com.Bus.View;
 
+import com.Bus.Controller.ControllerRoutes;
+import com.Bus.Controller.ImportMap;
+import com.Bus.Controller.Dijkstra;
+import com.Bus.Controller.Database;
+import com.Bus.Controller.Visit;
+import com.Bus.Controller.ControllerStudenti;
+import com.Bus.Controller.ImportPlotMap;
+import com.Bus.Controller.ExportMap;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -12,10 +20,9 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.OpenStreetMap.Controller.*;
-import com.OpenStreetMap.Model.Arc;
-import com.OpenStreetMap.Model.Node;
-import com.OpenStreetMap.Model.Route;
+import com.Bus.Model.Arc;
+import com.Bus.Model.Node;
+import com.Bus.Model.Route;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 

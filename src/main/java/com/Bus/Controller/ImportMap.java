@@ -1,6 +1,8 @@
-package com.OpenStreetMap.Controller;
+package com.Bus.Controller;
 
-import com.OpenStreetMap.Model.*;
+import com.Bus.Model.Way;
+import com.Bus.Model.Arc;
+import com.Bus.Model.Node;
 
 import org.jdom.Document;
 import org.jdom.Element;

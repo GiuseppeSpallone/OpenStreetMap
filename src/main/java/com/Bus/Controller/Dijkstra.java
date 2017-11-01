@@ -1,7 +1,7 @@
-package com.OpenStreetMap.Controller;
+package com.Bus.Controller;
 
-import com.OpenStreetMap.Model.Arc;
-import com.OpenStreetMap.Model.Node;
+import com.Bus.Model.Arc;
+import com.Bus.Model.Node;
 
 import java.util.*;
 
@@ -110,12 +110,11 @@ public class Dijkstra {
 
     public String printPercorso(ArrayList<Node> percorso) {
         String output_dijkstra = "";
-        output_dijkstra += "             DISTANZA --> " + percorso.get(percorso.size() - 1).getDistanza() + "\n";
+        output_dijkstra += "DISTANZA: " + percorso.get(percorso.size() - 1).getDistanza() + "\n";
 
-        output_dijkstra += "             PERCORSO --> \n";
         for (Iterator<Node> it = percorso.iterator(); it.hasNext(); ) {
             Node nd = it.next();
-            output_dijkstra += "                            id: " + nd.getId() + "; index: " + nd.getIndex() + "; distanza: " + nd.getDistanza() + "\n";
+            output_dijkstra += "id: " + nd.getId() + "; index: " + nd.getIndex() + "; distanza: " + nd.getDistanza() + "\n";
         }
 
         return output_dijkstra;

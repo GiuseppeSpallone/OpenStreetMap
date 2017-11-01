@@ -1,7 +1,7 @@
-package com.OpenStreetMap.Controller;
+package com.Bus.Controller;
 
-import com.OpenStreetMap.Model.Arc;
-import com.OpenStreetMap.Model.Node;
+import com.Bus.Model.Arc;
+import com.Bus.Model.Node;
 
 import java.io.BufferedReader;
 import java.io.File;

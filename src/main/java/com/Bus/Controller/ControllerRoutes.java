@@ -1,7 +1,7 @@
-package com.OpenStreetMap.Controller;
+package com.Bus.Controller;
 
-import com.OpenStreetMap.Model.Node;
-import com.OpenStreetMap.Model.Route;
+import com.Bus.Model.Node;
+import com.Bus.Model.Route;
 
 import java.awt.*;
 import java.util.*;
@@ -120,18 +120,19 @@ public class ControllerRoutes {
 
     public String printRoutes(HashSet<Route> routes) {
         String output_routes = "";
-        output_routes += "Tratte " + routes.size() + "\n";
+        output_routes += "NUMERO TRATTE " + routes.size() + "\n";
+        output_routes += "________________________" + "\n";
 
         for (Iterator<Route> it = routes.iterator(); it.hasNext(); ) {
             Route route = it.next();
 
-            output_routes += "        TRATTA: " + route.getName() + "\n";
-            output_routes += "            DISTANZA: " + route.getDistanza() + "\n";
+            output_routes += "\nTratta: " + route.getName() + "\n";
+            output_routes += "distanza: " + route.getDistanza() + "\n";
 
             for (Iterator<Node> it1 = route.getNodes().iterator(); it1.hasNext(); ) {
                 Node node = it1.next();
 
-                output_routes += "            id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
+                output_routes += "id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
             }
         }
         return output_routes;

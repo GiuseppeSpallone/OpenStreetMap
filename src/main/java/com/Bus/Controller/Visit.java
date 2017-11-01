@@ -1,7 +1,7 @@
-package com.OpenStreetMap.Controller;
+package com.Bus.Controller;
 
-import com.OpenStreetMap.Model.Arc;
-import com.OpenStreetMap.Model.Node;
+import com.Bus.Model.Arc;
+import com.Bus.Model.Node;
 import sun.misc.Queue;
 
 import java.util.*;
@@ -55,12 +55,11 @@ public class Visit {
 
     public String printVisit(ArrayList<Node> nodes) {
         String output_visit = "";
-        output_visit += "VISITA -->" + "\n";
 
         for (Iterator<Node> it = nodes.iterator(); it.hasNext(); ) {
             Node node = it.next();
 
-            output_visit += "        id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
+            output_visit += "id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
         }
         return output_visit;
     }

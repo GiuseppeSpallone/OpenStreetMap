@@ -1,4 +1,4 @@
-package com.OpenStreetMap;
+package com.Bus;
 
 public class App {
 

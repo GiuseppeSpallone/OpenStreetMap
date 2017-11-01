@@ -1,8 +1,8 @@
-package com.OpenStreetMap.Controller;
+package com.Bus.Controller;
 
 
-import com.OpenStreetMap.Model.Node;
-import com.OpenStreetMap.Model.Route;
+import com.Bus.Model.Node;
+import com.Bus.Model.Route;
 
 import java.util.*;
 
@@ -198,12 +198,12 @@ public class ControllerStudenti {
                 ArrayList<Node> percorso = entry.getKey();
                 Double distanza = entry.getValue();
 
-                output_fermate += "        DISTANZA PERCORSO: " + distanza + "\n";
+                output_fermate += "\nDISTANZA PERCORSO: " + distanza + "\n";
 
                 for (Iterator<Node> it2 = percorso.iterator(); it2.hasNext(); ) {
                     Node node = it2.next();
 
-                    output_fermate += "            id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
+                    output_fermate += "id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
                 }
             }
         }
