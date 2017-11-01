@@ -1,6 +1,6 @@
-package com.Bus.Model;
+package com.OpenStreetMap.Model;
 
-import com.Bus.Controller.ImportMap;
+import com.OpenStreetMap.Controller.ImportMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;

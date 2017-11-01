@@ -1,7 +1,7 @@
-package com.Bus.Controller;
+package com.OpenStreetMap.Controller;
 
-import com.Bus.Model.Node;
-import com.Bus.Model.Route;
+import com.OpenStreetMap.Model.Node;
+import com.OpenStreetMap.Model.Route;
 
 import java.awt.*;
 import java.util.*;

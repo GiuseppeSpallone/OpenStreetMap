@@ -1,8 +1,8 @@
-package com.Bus.Controller;
+package com.OpenStreetMap.Controller;
 
-import com.Bus.Model.Arc;
-import com.Bus.Model.Node;
-import com.Bus.Model.Way;
+import com.OpenStreetMap.Model.Arc;
+import com.OpenStreetMap.Model.Node;
+import com.OpenStreetMap.Model.Way;
 import com.mongodb.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;

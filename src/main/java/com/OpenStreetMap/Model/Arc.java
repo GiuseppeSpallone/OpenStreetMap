@@ -1,4 +1,4 @@
-package com.Bus.Model;
+package com.OpenStreetMap.Model;
 
 import java.util.Iterator;
 
