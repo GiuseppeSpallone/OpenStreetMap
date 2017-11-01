@@ -27,6 +27,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GUI extends javax.swing.JFrame {
@@ -50,6 +52,10 @@ public class GUI extends javax.swing.JFrame {
 
     private File file = null;
 
+    boolean plotMap = true;
+    boolean plotRoute = true;
+    boolean plotStudents = true;
+
     public GUI() {
         initComponents();
     }
@@ -64,7 +70,8 @@ public class GUI extends javax.swing.JFrame {
     private void initComponents() {
 
         jTabbedPane = new javax.swing.JTabbedPane();
-        mappa_jPanel = new JPanel(){
+        jPanel1 = new javax.swing.JPanel();
+        mappaPlot_jPanel = new JPanel(){
 
             @Override
             public void paint(Graphics g) {
@@ -73,21 +80,21 @@ public class GUI extends javax.swing.JFrame {
             }
 
         };
+        mappaTratte_jPanel = new javax.swing.JPanel();
+        mappa_jCheckBox = new javax.swing.JCheckBox();
+        tratte_jCheckBox = new javax.swing.JCheckBox();
+        utenti_jCheckBox = new javax.swing.JCheckBox();
+        tratteOutput_jScrollPane = new javax.swing.JScrollPane();
+        tratteOutput_jPanel = new javax.swing.JPanel();
+        utentiOutput_jScrollPane = new javax.swing.JScrollPane();
+        studentiOutput_jPanel = new javax.swing.JPanel();
         tratte_jPanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tratteOutput_jTextArea = new javax.swing.JTextArea();
         tratte_jButton = new javax.swing.JButton();
+        idealRoute_jButton = new javax.swing.JButton();
         jScrollPane11 = new javax.swing.JScrollPane();
         tratteInput_jTextArea = new javax.swing.JTextArea();
-        utenti_jPanel = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         utentiInput_jTextArea = new javax.swing.JTextArea();
-        utenti_jButton = new javax.swing.JButton();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        utentiOutput_jTextArea = new javax.swing.JTextArea();
-        idealRoute_jButton = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        utentiTratteOutput_jTextArea = new javax.swing.JTextArea();
         altro_jPanel = new javax.swing.JPanel();
         sLat_jTextField = new javax.swing.JTextField();
         sLon_jTextField = new javax.swing.JTextField();
@@ -116,34 +123,121 @@ public class GUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        mappa_jPanel.setBackground(new java.awt.Color(255, 255, 255));
-        mappa_jPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+        mappaPlot_jPanel.setBackground(new java.awt.Color(255, 255, 255));
+        mappaPlot_jPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                mappa_jPanelMouseClicked(evt);
+                mappaPlot_jPanelMouseClicked(evt);
             }
         });
 
-        javax.swing.GroupLayout mappa_jPanelLayout = new javax.swing.GroupLayout(mappa_jPanel);
-        mappa_jPanel.setLayout(mappa_jPanelLayout);
-        mappa_jPanelLayout.setHorizontalGroup(
-            mappa_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1174, Short.MAX_VALUE)
+        javax.swing.GroupLayout mappaPlot_jPanelLayout = new javax.swing.GroupLayout(mappaPlot_jPanel);
+        mappaPlot_jPanel.setLayout(mappaPlot_jPanelLayout);
+        mappaPlot_jPanelLayout.setHorizontalGroup(
+            mappaPlot_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1030, Short.MAX_VALUE)
         );
-        mappa_jPanelLayout.setVerticalGroup(
-            mappa_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 679, Short.MAX_VALUE)
+        mappaPlot_jPanelLayout.setVerticalGroup(
+            mappaPlot_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jTabbedPane.addTab("Mappa", mappa_jPanel);
+        mappa_jCheckBox.setSelected(true);
+        mappa_jCheckBox.setText("Mappa");
+        mappa_jCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mappa_jCheckBoxActionPerformed(evt);
+            }
+        });
 
-        tratteOutput_jTextArea.setColumns(20);
-        tratteOutput_jTextArea.setRows(5);
-        jScrollPane1.setViewportView(tratteOutput_jTextArea);
+        tratte_jCheckBox.setSelected(true);
+        tratte_jCheckBox.setText("Tratte");
+        tratte_jCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tratte_jCheckBoxActionPerformed(evt);
+            }
+        });
 
-        tratte_jButton.setText("Crea");
+        utenti_jCheckBox.setSelected(true);
+        utenti_jCheckBox.setText("Studenti");
+        utenti_jCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                utenti_jCheckBoxActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout mappaTratte_jPanelLayout = new javax.swing.GroupLayout(mappaTratte_jPanel);
+        mappaTratte_jPanel.setLayout(mappaTratte_jPanelLayout);
+        mappaTratte_jPanelLayout.setHorizontalGroup(
+            mappaTratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mappaTratte_jPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(mappaTratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(mappa_jCheckBox)
+                    .addComponent(tratte_jCheckBox)
+                    .addComponent(utenti_jCheckBox))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        mappaTratte_jPanelLayout.setVerticalGroup(
+            mappaTratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mappaTratte_jPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(mappa_jCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(tratte_jCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(utenti_jCheckBox)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        tratteOutput_jPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        tratteOutput_jPanel.setLayout(new javax.swing.BoxLayout(tratteOutput_jPanel, javax.swing.BoxLayout.PAGE_AXIS));
+        tratteOutput_jScrollPane.setViewportView(tratteOutput_jPanel);
+
+        studentiOutput_jPanel.setLayout(new javax.swing.BoxLayout(studentiOutput_jPanel, javax.swing.BoxLayout.PAGE_AXIS));
+        utentiOutput_jScrollPane.setViewportView(studentiOutput_jPanel);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(mappaPlot_jPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(mappaTratte_jPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tratteOutput_jScrollPane)
+                    .addComponent(utentiOutput_jScrollPane))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(mappaPlot_jPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(mappaTratte_jPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(tratteOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                        .addComponent(utentiOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+
+        jTabbedPane.addTab("Mappa", jPanel1);
+
+        tratte_jButton.setText("Tratte");
         tratte_jButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tratte_jButtonActionPerformed(evt);
+            }
+        });
+
+        idealRoute_jButton.setText("Studenti");
+        idealRoute_jButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                idealRoute_jButtonActionPerformed(evt);
             }
         });
 
@@ -151,106 +245,46 @@ public class GUI extends javax.swing.JFrame {
         tratteInput_jTextArea.setRows(5);
         jScrollPane11.setViewportView(tratteInput_jTextArea);
 
+        utentiInput_jTextArea.setColumns(20);
+        utentiInput_jTextArea.setRows(5);
+        jScrollPane4.setViewportView(utentiInput_jTextArea);
+
         javax.swing.GroupLayout tratte_jPanelLayout = new javax.swing.GroupLayout(tratte_jPanel);
         tratte_jPanel.setLayout(tratte_jPanelLayout);
         tratte_jPanelLayout.setHorizontalGroup(
             tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tratte_jPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(tratte_jButton)
-                .addContainerGap(217, Short.MAX_VALUE))
+                .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(tratte_jPanelLayout.createSequentialGroup()
+                        .addGap(153, 153, 153)
+                        .addComponent(tratte_jButton))
+                    .addGroup(tratte_jPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 354, Short.MAX_VALUE)
+                .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tratte_jPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tratte_jPanelLayout.createSequentialGroup()
+                        .addComponent(idealRoute_jButton)
+                        .addGap(183, 183, 183))))
         );
         tratte_jPanelLayout.setVerticalGroup(
             tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tratte_jPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
                     .addComponent(jScrollPane11))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tratte_jPanelLayout.createSequentialGroup()
-                .addContainerGap(330, Short.MAX_VALUE)
-                .addComponent(tratte_jButton)
-                .addGap(324, 324, 324))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tratte_jButton)
+                    .addComponent(idealRoute_jButton))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Tratte", tratte_jPanel);
-
-        utentiInput_jTextArea.setColumns(20);
-        utentiInput_jTextArea.setRows(5);
-        jScrollPane4.setViewportView(utentiInput_jTextArea);
-
-        utenti_jButton.setText("Crea");
-        utenti_jButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                utenti_jButtonActionPerformed(evt);
-            }
-        });
-
-        utentiOutput_jTextArea.setColumns(20);
-        utentiOutput_jTextArea.setRows(5);
-        jScrollPane5.setViewportView(utentiOutput_jTextArea);
-
-        idealRoute_jButton.setText("Tratte");
-        idealRoute_jButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                idealRoute_jButtonActionPerformed(evt);
-            }
-        });
-
-        utentiTratteOutput_jTextArea.setColumns(20);
-        utentiTratteOutput_jTextArea.setRows(5);
-        jScrollPane2.setViewportView(utentiTratteOutput_jTextArea);
-
-        javax.swing.GroupLayout utenti_jPanelLayout = new javax.swing.GroupLayout(utenti_jPanel);
-        utenti_jPanel.setLayout(utenti_jPanelLayout);
-        utenti_jPanelLayout.setHorizontalGroup(
-            utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(utenti_jPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(utenti_jPanelLayout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(utenti_jButton)
-                        .addGap(289, 289, 289))
-                    .addGroup(utenti_jPanelLayout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addComponent(idealRoute_jButton)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-        );
-        utenti_jPanelLayout.setVerticalGroup(
-            utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(utenti_jPanelLayout.createSequentialGroup()
-                .addGroup(utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(utenti_jPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                            .addComponent(jScrollPane5)))
-                    .addGroup(utenti_jPanelLayout.createSequentialGroup()
-                        .addGap(73, 73, 73)
-                        .addComponent(utenti_jButton)))
-                .addGroup(utenti_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(utenti_jPanelLayout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, utenti_jPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 265, Short.MAX_VALUE)
-                        .addComponent(idealRoute_jButton)
-                        .addGap(226, 226, 226))))
-        );
-
-        jTabbedPane.addTab("Utenti", utenti_jPanel);
 
         sLon_jTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -319,13 +353,14 @@ public class GUI extends javax.swing.JFrame {
                             .addComponent(lat_jTextField, javax.swing.GroupLayout.Alignment.LEADING))
                         .addGap(18, 18, 18)
                         .addComponent(randomVisita_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(dLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(altro_jPanelLayout.createSequentialGroup()
-                        .addComponent(dLat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(dLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dLat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(sLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(sLat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addComponent(randomDijkstra_jButton))
-                    .addComponent(sLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sLat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(randomDijkstra_jButton)))
                 .addGap(41, 41, 41)
                 .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
@@ -334,27 +369,30 @@ public class GUI extends javax.swing.JFrame {
                 .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(dijkstra_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(visita_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(196, Short.MAX_VALUE))
+                .addContainerGap(300, Short.MAX_VALUE))
         );
         altro_jPanelLayout.setVerticalGroup(
             altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, altro_jPanelLayout.createSequentialGroup()
-                .addGap(73, 73, 73)
                 .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane9)
                     .addGroup(altro_jPanelLayout.createSequentialGroup()
+                        .addGap(73, 73, 73)
+                        .addComponent(jScrollPane9))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, altro_jPanelLayout.createSequentialGroup()
+                        .addGap(103, 103, 103)
                         .addComponent(sLat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(sLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(altro_jPanelLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(sLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(dLat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(altro_jPanelLayout.createSequentialGroup()
-                                .addGap(1, 1, 1)
+                                .addGap(34, 34, 34)
                                 .addComponent(randomDijkstra_jButton)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(dLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(dLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)))
                 .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(altro_jPanelLayout.createSequentialGroup()
                         .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -374,9 +412,9 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(altro_jPanelLayout.createSequentialGroup()
                 .addGap(138, 138, 138)
                 .addComponent(dijkstra_jButton)
-                .addGap(205, 205, 205)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(visita_jButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(211, 211, 211))
         );
 
         jTabbedPane.addTab("Altro", altro_jPanel);
@@ -455,7 +493,7 @@ public class GUI extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 709, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -470,7 +508,7 @@ public class GUI extends javax.swing.JFrame {
             cancella_jMenuItem.setEnabled(true);
             jTabbedPane.setEnabled(true);
 
-            mappa_jPanel.repaint();
+            mappaPlot_jPanel.repaint();
         }
     }//GEN-LAST:event_disegna_jMenuItemActionPerformed
 
@@ -498,7 +536,7 @@ public class GUI extends javax.swing.JFrame {
                             cancella_jMenuItem.setEnabled(true);
                             jTabbedPane.setEnabled(true);
 
-                            mappa_jPanel.repaint();
+                            mappaPlot_jPanel.repaint();
                         }
                     }
                 } else {
@@ -539,9 +577,71 @@ public class GUI extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, "Elementi inseriti");
     }//GEN-LAST:event_inserisciDB_jMenuItemActionPerformed
 
-    private void sLon_jTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sLon_jTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_sLon_jTextFieldActionPerformed
+    private void reset_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reset_jMenuItemActionPerformed
+        resetComponent();
+        resetMark();
+        resetStudent();
+        routes = null;
+        nodes_students = null;
+
+        mappaPlot_jPanel.repaint();
+    }//GEN-LAST:event_reset_jMenuItemActionPerformed
+
+    private void cancella_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancella_jMenuItemActionPerformed
+        resetComponent();
+        resetMark();
+        cancel();
+
+        mappaPlot_jPanel.repaint();
+    }//GEN-LAST:event_cancella_jMenuItemActionPerformed
+
+    private void visita_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visita_jButtonActionPerformed
+        float lat = Float.parseFloat(lat_jTextField.getText());
+        float lon = Float.parseFloat(lon_jTextField.getText());
+
+        Node startingNode = Node.nodeByLatLon(nodes, lat, lon);
+
+        ArrayList<Node> visit_nodes = visit.visita(nodes, startingNode);
+
+        String output_visit = visit.printVisit(visit_nodes);
+        visitaOutput_jTextArea.setText(output_visit);
+
+        mappaPlot_jPanel.repaint();
+    }//GEN-LAST:event_visita_jButtonActionPerformed
+
+    private void randomVisita_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomVisita_jButtonActionPerformed
+        Node startingNode = Node.randomNode(nodes);
+
+        lat_jTextField.setText(String.valueOf(startingNode.getLat()));
+        lon_jTextField.setText(String.valueOf(startingNode.getLon()));
+    }//GEN-LAST:event_randomVisita_jButtonActionPerformed
+
+    private void dijkstra_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dijkstra_jButtonActionPerformed
+        float lat_s = Float.parseFloat(sLat_jTextField.getText());
+        float lon_s = Float.parseFloat(sLon_jTextField.getText());
+        float lat_d = Float.parseFloat(dLat_jTextField.getText());
+        float lon_d = Float.parseFloat(dLon_jTextField.getText());
+
+        Node sorgente = Node.nodeByLatLon(nodes, lat_s, lon_s);
+        Node destinazione = Node.nodeByLatLon(nodes, lat_d, lon_d);
+
+        Percorso percorso = dijkstra.run(sorgente, destinazione, nodes, true);
+
+        String output_dijkstra = dijkstra.printPercorso(percorso);
+        dijkstraOutput_jTextArea.setText(output_dijkstra);
+
+        mappaPlot_jPanel.repaint();
+    }//GEN-LAST:event_dijkstra_jButtonActionPerformed
+
+    private void randomDijkstra_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomDijkstra_jButtonActionPerformed
+        Node sorgente = Node.randomNode(nodes);
+        Node destinazione = Node.randomNode(nodes);
+
+        sLat_jTextField.setText(String.valueOf(sorgente.getLat()));
+        sLon_jTextField.setText(String.valueOf(sorgente.getLon()));
+        dLat_jTextField.setText(String.valueOf(destinazione.getLat()));
+        dLon_jTextField.setText(String.valueOf(destinazione.getLon()));
+    }//GEN-LAST:event_randomDijkstra_jButtonActionPerformed
 
     private void dLon_jTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dLon_jTextFieldActionPerformed
         // TODO add your handling code here:
@@ -551,7 +651,62 @@ public class GUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_dLat_jTextFieldActionPerformed
 
-    private void mappa_jPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mappa_jPanelMouseClicked
+    private void sLon_jTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sLon_jTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_sLon_jTextFieldActionPerformed
+
+    private void idealRoute_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idealRoute_jButtonActionPerformed
+        String area = utentiInput_jTextArea.getText();
+        nodes_students = controllerStudenti.read(area, nodes, routes);
+
+        HashMap<Node, HashSet<Percorso>> students_percorsi_ideal = controllerStudenti.allRoute(nodes, nodes_students, routes);
+        HashMap<Node, HashSet<Percorso>> students_percorsi = controllerStudenti.route(nodes, nodes_students, routes);
+        HashMap<Node, Percorso> students_min_percorsi_ideal = controllerStudenti.ideal(students_percorsi_ideal, routes, true);
+        HashMap<Node, Percorso> students_min_percorsi = controllerStudenti.ideal(students_percorsi, routes, false);
+
+        writeStudents();
+        mappaPlot_jPanel.repaint();
+    }//GEN-LAST:event_idealRoute_jButtonActionPerformed
+
+    private void tratte_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tratte_jButtonActionPerformed
+        String area = tratteInput_jTextArea.getText();
+        routes = controllerRoutes.read(area, nodes);
+        writeRoute();
+
+        mappaPlot_jPanel.repaint();
+    }//GEN-LAST:event_tratte_jButtonActionPerformed
+
+    private void utenti_jCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_utenti_jCheckBoxActionPerformed
+        if (utenti_jCheckBox.isSelected()) {
+            plotStudents = true;
+            mappaPlot_jPanel.repaint();
+        } else {
+            plotStudents = false;
+            mappaPlot_jPanel.repaint();
+        }
+    }//GEN-LAST:event_utenti_jCheckBoxActionPerformed
+
+    private void tratte_jCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tratte_jCheckBoxActionPerformed
+        if (tratte_jCheckBox.isSelected()) {
+            plotRoute = true;
+            mappaPlot_jPanel.repaint();
+        } else {
+            plotRoute = false;
+            mappaPlot_jPanel.repaint();
+        }
+    }//GEN-LAST:event_tratte_jCheckBoxActionPerformed
+
+    private void mappa_jCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mappa_jCheckBoxActionPerformed
+        if (mappa_jCheckBox.isSelected()) {
+            plotMap = true;
+            mappaPlot_jPanel.repaint();
+        } else {
+            plotMap = false;
+            mappaPlot_jPanel.repaint();
+        }
+    }//GEN-LAST:event_mappa_jCheckBoxActionPerformed
+
+    private void mappaPlot_jPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mappaPlot_jPanelMouseClicked
         int x = evt.getX();
         int y = evt.getY();
 
@@ -606,111 +761,7 @@ public class GUI extends javax.swing.JFrame {
             case ANNULLA:
                 break;
         }
-    }//GEN-LAST:event_mappa_jPanelMouseClicked
-
-    private void reset_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reset_jMenuItemActionPerformed
-        resetComponent();
-        resetMark();
-        resetStudent();
-        routes = null;
-        nodes_students = null;
-
-        mappa_jPanel.repaint();
-    }//GEN-LAST:event_reset_jMenuItemActionPerformed
-
-    private void cancella_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancella_jMenuItemActionPerformed
-        resetComponent();
-        resetMark();
-        cancel();
-
-        mappa_jPanel.repaint();
-    }//GEN-LAST:event_cancella_jMenuItemActionPerformed
-
-    private void tratte_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tratte_jButtonActionPerformed
-        String area = tratteInput_jTextArea.getText();
-
-        routes = controllerRoutes.read(area, nodes);
-
-        String output_routes = controllerRoutes.printRoutes(routes);
-        tratteOutput_jTextArea.setText(output_routes);
-
-        mappa_jPanel.repaint();
-    }//GEN-LAST:event_tratte_jButtonActionPerformed
-
-    private void randomDijkstra_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomDijkstra_jButtonActionPerformed
-        Node sorgente = Node.randomNode(nodes);
-        Node destinazione = Node.randomNode(nodes);
-
-        sLat_jTextField.setText(String.valueOf(sorgente.getLat()));
-        sLon_jTextField.setText(String.valueOf(sorgente.getLon()));
-        dLat_jTextField.setText(String.valueOf(destinazione.getLat()));
-        dLon_jTextField.setText(String.valueOf(destinazione.getLon()));
-    }//GEN-LAST:event_randomDijkstra_jButtonActionPerformed
-
-    private void randomVisita_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomVisita_jButtonActionPerformed
-        Node startingNode = Node.randomNode(nodes);
-
-        lat_jTextField.setText(String.valueOf(startingNode.getLat()));
-        lon_jTextField.setText(String.valueOf(startingNode.getLon()));
-    }//GEN-LAST:event_randomVisita_jButtonActionPerformed
-
-    private void dijkstra_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dijkstra_jButtonActionPerformed
-        float lat_s = Float.parseFloat(sLat_jTextField.getText());
-        float lon_s = Float.parseFloat(sLon_jTextField.getText());
-        float lat_d = Float.parseFloat(dLat_jTextField.getText());
-        float lon_d = Float.parseFloat(dLon_jTextField.getText());
-
-        Node sorgente = Node.nodeByLatLon(nodes, lat_s, lon_s);
-        Node destinazione = Node.nodeByLatLon(nodes, lat_d, lon_d);
-
-        Percorso percorso = dijkstra.run(sorgente, destinazione, nodes, true);
-
-        String output_dijkstra = dijkstra.printPercorso(percorso);
-        dijkstraOutput_jTextArea.setText(output_dijkstra);
-
-        mappa_jPanel.repaint();
-    }//GEN-LAST:event_dijkstra_jButtonActionPerformed
-
-    private void visita_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visita_jButtonActionPerformed
-        float lat = Float.parseFloat(lat_jTextField.getText());
-        float lon = Float.parseFloat(lon_jTextField.getText());
-
-        Node startingNode = Node.nodeByLatLon(nodes, lat, lon);
-
-        ArrayList<Node> visit_nodes = visit.visita(nodes, startingNode);
-
-        String output_visit = visit.printVisit(visit_nodes);
-        visitaOutput_jTextArea.setText(output_visit);
-
-        mappa_jPanel.repaint();
-    }//GEN-LAST:event_visita_jButtonActionPerformed
-
-    private void idealRoute_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idealRoute_jButtonActionPerformed
-        HashMap<Node, HashSet<Percorso>> students_percorsi_ideal = controllerStudenti.allRoute(nodes, nodes_students, routes);
-        HashMap<Node, HashSet<Percorso>> students_percorsi = controllerStudenti.route(nodes, nodes_students, routes);
-
-        HashMap<Node, Percorso> students_min_percorsi_ideal = controllerStudenti.ideal(students_percorsi_ideal, routes, true);
-        HashMap<Node, Percorso> students_min_percorsi = controllerStudenti.ideal(students_percorsi, routes, false);
-
-        String students_routes = controllerStudenti.printReportStudenti(nodes_students);
-        utentiTratteOutput_jTextArea.setText(students_routes);
-    }//GEN-LAST:event_idealRoute_jButtonActionPerformed
-
-    private void utenti_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_utenti_jButtonActionPerformed
-        String area = utentiInput_jTextArea.getText();
-
-        nodes_students = controllerStudenti.read(area, nodes, routes);
-        String output_nodes_students = "";
-        for (Iterator<Node> it = nodes_students.iterator(); it.hasNext();) {
-            Node node = it.next();
-
-            output_nodes_students += "id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + " tratta: " + node.getRoute().getName() + " num: " + node.getNum_studenti() + "\n";
-
-        }
-        utentiOutput_jTextArea.setText(output_nodes_students);
-
-        mappa_jPanel.repaint();
-    }//GEN-LAST:event_utenti_jButtonActionPerformed
+    }//GEN-LAST:event_mappaPlot_jPanelMouseClicked
 
     /**
      * @param args the command line arguments
@@ -762,32 +813,33 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JButton idealRoute_jButton;
     private javax.swing.JMenuItem inserisciDB_jMenuItem;
     private javax.swing.JMenuBar jMenuBar;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane11;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane9;
     private javax.swing.JTabbedPane jTabbedPane;
     private javax.swing.JTextField lat_jTextField;
     private javax.swing.JTextField lon_jTextField;
+    private javax.swing.JPanel mappaPlot_jPanel;
+    private javax.swing.JPanel mappaTratte_jPanel;
+    private javax.swing.JCheckBox mappa_jCheckBox;
     private javax.swing.JMenu mappa_jMenu;
-    private javax.swing.JPanel mappa_jPanel;
     private javax.swing.JButton randomDijkstra_jButton;
     private javax.swing.JButton randomVisita_jButton;
     private javax.swing.JMenuItem reset_jMenuItem;
     private javax.swing.JTextField sLat_jTextField;
     private javax.swing.JTextField sLon_jTextField;
+    private javax.swing.JPanel studentiOutput_jPanel;
     private javax.swing.JTextArea tratteInput_jTextArea;
-    private javax.swing.JTextArea tratteOutput_jTextArea;
+    private javax.swing.JPanel tratteOutput_jPanel;
+    private javax.swing.JScrollPane tratteOutput_jScrollPane;
     private javax.swing.JButton tratte_jButton;
+    private javax.swing.JCheckBox tratte_jCheckBox;
     private javax.swing.JPanel tratte_jPanel;
     private javax.swing.JTextArea utentiInput_jTextArea;
-    private javax.swing.JTextArea utentiOutput_jTextArea;
-    private javax.swing.JTextArea utentiTratteOutput_jTextArea;
-    private javax.swing.JButton utenti_jButton;
-    private javax.swing.JPanel utenti_jPanel;
+    private javax.swing.JScrollPane utentiOutput_jScrollPane;
+    private javax.swing.JCheckBox utenti_jCheckBox;
     private javax.swing.JTextArea visitaOutput_jTextArea;
     private javax.swing.JButton visita_jButton;
     // End of variables declaration//GEN-END:variables
@@ -834,10 +886,7 @@ public class GUI extends javax.swing.JFrame {
     private void resetComponent() {
 
         tratteInput_jTextArea.setText("");
-        tratteOutput_jTextArea.setText("");
         utentiInput_jTextArea.setText("");
-        utentiOutput_jTextArea.setText("");
-        utentiTratteOutput_jTextArea.setText("");
         sLat_jTextField.setText("");
         sLon_jTextField.setText("");
         dLat_jTextField.setText("");
@@ -846,6 +895,11 @@ public class GUI extends javax.swing.JFrame {
         lat_jTextField.setText("");
         lon_jTextField.setText("");
         visitaOutput_jTextArea.setText("");
+
+        tratteOutput_jPanel.removeAll();
+        tratteOutput_jPanel.validate();
+        studentiOutput_jPanel.removeAll();
+        studentiOutput_jPanel.validate();
     }
 
     private void resetMark() {
@@ -910,11 +964,11 @@ public class GUI extends javax.swing.JFrame {
 
             double rap = 1;
             double rh = h / w;
-            double rhC = (mappa_jPanel.getSize().height * 1.0) / (mappa_jPanel.getSize().width * 1.0);
+            double rhC = (mappaPlot_jPanel.getSize().height * 1.0) / (mappaPlot_jPanel.getSize().width * 1.0);
             if (rh > rhC) {
-                rap = (mappa_jPanel.getSize().height * 1.0) / h;
+                rap = (mappaPlot_jPanel.getSize().height * 1.0) / h;
             } else {
-                rap = (mappa_jPanel.getSize().width * 1.0) / w;
+                rap = (mappaPlot_jPanel.getSize().width * 1.0) / w;
             }
 
             double dist = Double.MAX_VALUE;
@@ -963,6 +1017,74 @@ public class GUI extends javax.swing.JFrame {
         return false;
     }
 
+    private void writeRoute() {
+        tratteOutput_jPanel.removeAll();
+        tratteOutput_jPanel.validate();
+
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
+            Route route = it.next();
+
+            String name = route.getName();
+            Color color = route.getColor();
+            int numFermate = route.getNumFermate();
+            double distanza = route.getDistanza();
+
+            JLabel name_JLabel = new JLabel("Tratta: " + name);
+            name_JLabel.setForeground(color);
+            JLabel numFermate_JLabel = new JLabel("Fermate: " + numFermate);
+            JLabel distanza_JLabel = new JLabel("Distanza: " + distanza);
+            JSeparator jSeparator = new JSeparator();
+
+            tratteOutput_jPanel.add(name_JLabel);
+            tratteOutput_jPanel.add(numFermate_JLabel);
+            tratteOutput_jPanel.add(distanza_JLabel);
+            tratteOutput_jPanel.add(jSeparator);
+        }
+    }
+
+    private void writeStudents() {
+        studentiOutput_jPanel.removeAll();
+        studentiOutput_jPanel.validate();
+        for (Iterator<Node> it = nodes_students.iterator(); it.hasNext();) {
+            Node node = it.next();
+
+            int numStudents = node.getNum_studenti();
+            String route = node.getRoute().getName();
+            Color color_route = node.getRoute().getColor();
+            String routeIdeal = node.getIdealRoute().getName();
+            Color color_routeIdeal = node.getIdealRoute().getColor();
+
+            int idealStop = node.getIdealStop().getIndex();
+            int idealStopIdealRoute = node.getIdealStopIdealRoute().getIndex();
+
+            double distanza = node.getPercorso().getDistanza();
+            double distanzaIdeal = node.getPercorso().getDistanza();
+
+            JLabel numStudents_JLabel = new JLabel("Nodo: " + node.getIndex() + "; Studenti:" + numStudents);
+            JLabel route_JLabel = new JLabel("Tratta: " + route);
+            route_JLabel.setForeground(color_route);
+            JLabel idealStop_JLabel = new JLabel("Fermata ideale: " + idealStop);
+            idealStop_JLabel.setForeground(color_route);
+            JLabel distanza_JLabel = new JLabel("Distanza: " + distanza);
+
+            JLabel routeIdeal_JLabel = new JLabel("Tratta ideale: " + routeIdeal);
+            routeIdeal_JLabel.setForeground(color_routeIdeal);
+            JLabel idealStopIdealRoute_JLabel = new JLabel("Fermata ideale: " + idealStopIdealRoute);
+            idealStopIdealRoute_JLabel.setForeground(color_routeIdeal);
+            JLabel distanzaIdeal_JLabel = new JLabel("Distanza: " + distanzaIdeal);
+            JSeparator jSeparator = new JSeparator();
+
+            studentiOutput_jPanel.add(numStudents_JLabel);
+            studentiOutput_jPanel.add(route_JLabel);
+            studentiOutput_jPanel.add(idealStop_JLabel);
+            studentiOutput_jPanel.add(distanza_JLabel);
+            studentiOutput_jPanel.add(routeIdeal_JLabel);
+            studentiOutput_jPanel.add(idealStopIdealRoute_JLabel);
+            studentiOutput_jPanel.add(distanzaIdeal_JLabel);
+            studentiOutput_jPanel.add(jSeparator);
+        }
+    }
+
     private void disegna(Graphics gg) {
 
         Graphics2D g = (Graphics2D) gg;
@@ -994,69 +1116,60 @@ public class GUI extends javax.swing.JFrame {
 
             double rap = 1;
             double rh = h / w;
-            double rhC = (mappa_jPanel.getSize().height * 1.0) / (mappa_jPanel.getSize().width * 1.0);
+            double rhC = (mappaPlot_jPanel.getSize().height * 1.0) / (mappaPlot_jPanel.getSize().width * 1.0);
             if (rh > rhC) {
-                rap = (mappa_jPanel.getSize().height * 1.0) / h;
+                rap = (mappaPlot_jPanel.getSize().height * 1.0) / h;
             } else {
-                rap = (mappa_jPanel.getSize().width * 1.0) / w;
+                rap = (mappaPlot_jPanel.getSize().width * 1.0) / w;
             }
 
-            //Disegna archi
-            for (Arc arc : arcs_paint) {
+            if (plotMap) {
+                //Disegna archi
+                for (Arc arc : arcs_paint) {
 
-                if (arc.getMark() == 1) {
-                    g.setColor(Color.blue);
-                    g.setStroke(new BasicStroke(2));
-                }
-                if (arc.getMark() == 0) {
-                    g.setColor(Color.black);
-                    g.setStroke(new BasicStroke(1));
-
-                }
-                double x1 = (arc.getFrom().getX() - minX * 1.0) * rap;
-                double y1 = (arc.getFrom().getY() - minY * 1.0) * rap;
-                double x2 = (arc.getTo().getX() - minX * 1.0) * rap;
-                double y2 = (arc.getTo().getY() - minY * 1.0) * rap;
-
-                g.drawLine((int) x1, (int) y1, (int) x2, (int) y2);
-            }
-
-            //Disegna nodi
-            for (Node n : nodes_paint.values()) {
-                double x1 = (n.getX() - minX * 1.0) * rap;
-                double y1 = (n.getY() - minY * 1.0) * rap;
-                int mark = n.getMark();
-
-                //studenti
-                Route route = n.getRoute();
-                int num_studenti = n.getNum_studenti();
-
-                if (num_studenti > 0) {
-                    g.setColor(route.getColor());
-                    g.fillOval((int) x1, (int) y1, num_studenti, num_studenti);
-                    g.setFont(g.getFont().deriveFont(10f));
-                    g.drawString("" + n.getIndex(), (int) x1, (int) y1);
-                }
-
-                switch (mark) {
-                    case -1:
-                        g.setColor(Color.black);
-                        break;
-                    case 0:
-                        g.setColor(Color.red);
-                        g.setFont(g.getFont().deriveFont(10f));
-                        g.drawString("" + n.getIndex(), (int) x1, (int) y1);
-                        break;
-                    case 1:
+                    if (arc.getMark() == 1) {
                         g.setColor(Color.blue);
-                        g.setFont(g.getFont().deriveFont(10f));
-                        g.drawString("" + n.getIndex(), (int) x1, (int) y1);
-                        break;
+                        g.setStroke(new BasicStroke(2));
+                    }
+                    if (arc.getMark() == 0) {
+                        g.setColor(Color.black);
+                        g.setStroke(new BasicStroke(1));
+
+                    }
+                    double x1 = (arc.getFrom().getX() - minX * 1.0) * rap;
+                    double y1 = (arc.getFrom().getY() - minY * 1.0) * rap;
+                    double x2 = (arc.getTo().getX() - minX * 1.0) * rap;
+                    double y2 = (arc.getTo().getY() - minY * 1.0) * rap;
+
+                    g.drawLine((int) x1, (int) y1, (int) x2, (int) y2);
+                }
+
+                //Disegna nodi
+                for (Node n : nodes_paint.values()) {
+                    double x1 = (n.getX() - minX * 1.0) * rap;
+                    double y1 = (n.getY() - minY * 1.0) * rap;
+                    int mark = n.getMark();
+
+                    switch (mark) {
+                        case -1:
+                            g.setColor(Color.black);
+                            break;
+                        case 0:
+                            g.setColor(Color.red);
+                            g.setFont(g.getFont().deriveFont(10f));
+                            g.drawString("" + n.getIndex(), (int) x1, (int) y1);
+                            break;
+                        case 1:
+                            g.setColor(Color.blue);
+                            g.setFont(g.getFont().deriveFont(10f));
+                            g.drawString("" + n.getIndex(), (int) x1, (int) y1);
+                            break;
+                    }
                 }
             }
 
             //Disegna tratte
-            if (routes != null) {
+            if (routes != null && plotRoute) {
                 for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
                     Route r = it.next();
 
@@ -1085,6 +1198,26 @@ public class GUI extends javax.swing.JFrame {
                         }
                     }
                 }
+
+                //Disegna studenti
+                if (nodes_students != null && plotStudents) {
+                    for (Node n : nodes_students) {
+                        double x1 = (n.getX() - minX * 1.0) * rap;
+                        double y1 = (n.getY() - minY * 1.0) * rap;
+
+                        //studenti
+                        Route route = n.getRoute();
+                        int num_studenti = n.getNum_studenti();
+
+                        if (num_studenti > 0) {
+                            g.setColor(route.getColor());
+                            g.fillOval((int) x1, (int) y1, num_studenti, num_studenti);
+                            g.setFont(g.getFont().deriveFont(10f));
+                            g.drawString("" + n.getIndex(), (int) x1, (int) y1);
+                        }
+                    }
+                }
+
             }
         }
     }
