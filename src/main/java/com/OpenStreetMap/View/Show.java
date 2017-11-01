@@ -1,6 +1,7 @@
 /*
  * Created by JFormDesigner on Wed Oct 11 17:43:14 CEST 2017
- */
+ *//*
+
 
 package com.OpenStreetMap.View;
 
@@ -1143,3 +1144,4 @@ public class Show extends JFrame {
     }
 
 }
+*/
