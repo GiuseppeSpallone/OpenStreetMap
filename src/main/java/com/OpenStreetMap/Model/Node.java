@@ -34,6 +34,7 @@ public class Node {
     private Node idealStopIdealRoute;
     private Percorso percorso;
     private Percorso idealPercorso;
+    private Node realStop = null;
 
     public ArrayList<Way> nd_ways = new ArrayList<>();
     public ArrayList<Arc> nd_arcs = new ArrayList<>();
@@ -277,6 +278,14 @@ public class Node {
 
     public void setIdealPercorso(Percorso idealPercorso) {
         this.idealPercorso = idealPercorso;
+    }
+
+    public Node getRealStop() {
+        return realStop;
+    }
+
+    public void setRealStop(Node realStop) {
+        this.realStop = realStop;
     }
     
     

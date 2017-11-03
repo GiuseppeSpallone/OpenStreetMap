@@ -12,7 +12,7 @@ public class Route {
     private double distanza;
     private Color color;
     private int numFermate;
-    private ArrayList<Node> fermate;
+    private ArrayList<Node> fermate = null;
 
     public static Route getRouteByName(HashSet<Route> routes, String name) {
         for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
@@ -87,7 +87,5 @@ public class Route {
     public void setFermate(ArrayList<Node> fermate) {
         this.fermate = fermate;
     }
-    
-    
 
 }

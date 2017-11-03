@@ -1,6 +1,7 @@
 package com.OpenStreetMap.View;
 
 import com.OpenStreetMap.Controller.ControllerRoutes;
+import com.OpenStreetMap.Controller.ControllerStop;
 import com.OpenStreetMap.Controller.ControllerStudenti;
 import com.OpenStreetMap.Controller.Database;
 import com.OpenStreetMap.Controller.Dijkstra;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -39,6 +41,7 @@ public class GUI extends javax.swing.JFrame {
     ImportPlotMap importPlotMap = new ImportPlotMap();
     ControllerRoutes controllerRoutes = new ControllerRoutes();
     ControllerStudenti controllerStudenti = new ControllerStudenti();
+    ControllerStop controllerStop = new ControllerStop();
     Visit visit = new Visit();
     Dijkstra dijkstra = new Dijkstra();
 
@@ -49,6 +52,7 @@ public class GUI extends javax.swing.JFrame {
     private HashSet<Arc> arcs_paint = null;
     private HashSet<Route> routes = null;
     private HashSet<Node> nodes_students = null;
+    private HashMap<Node, Double> stops = null;
 
     private File file = null;
 
@@ -72,7 +76,7 @@ public class GUI extends javax.swing.JFrame {
     private void initComponents() {
 
         jTabbedPane = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
+        mappa_jPanel = new javax.swing.JPanel();
         mappaTratte_jPanel = new javax.swing.JPanel();
         mappa_jCheckBox = new javax.swing.JCheckBox();
         tratte_jCheckBox = new javax.swing.JCheckBox();
@@ -81,6 +85,9 @@ public class GUI extends javax.swing.JFrame {
         tratteOutput_jPanel = new javax.swing.JPanel();
         utentiOutput_jScrollPane = new javax.swing.JScrollPane();
         studentiOutput_jPanel = new javax.swing.JPanel();
+        calcolaFermate_jScrollPane = new javax.swing.JScrollPane();
+        calcolaFermate_jPanel = new javax.swing.JPanel();
+        calcolaFermate_jButton = new javax.swing.JButton();
         mappaPlot_jScrollPane = new javax.swing.JScrollPane();
         mappaPlot_jPanel = new JPanel(){
 
@@ -125,7 +132,6 @@ public class GUI extends javax.swing.JFrame {
         inserisciDB_jMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1300, 800));
         setResizable(false);
 
         mappa_jCheckBox.setSelected(true);
@@ -152,30 +158,6 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout mappaTratte_jPanelLayout = new javax.swing.GroupLayout(mappaTratte_jPanel);
-        mappaTratte_jPanel.setLayout(mappaTratte_jPanelLayout);
-        mappaTratte_jPanelLayout.setHorizontalGroup(
-            mappaTratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mappaTratte_jPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(mappaTratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mappa_jCheckBox)
-                    .addComponent(tratte_jCheckBox)
-                    .addComponent(utenti_jCheckBox))
-                .addContainerGap(110, Short.MAX_VALUE))
-        );
-        mappaTratte_jPanelLayout.setVerticalGroup(
-            mappaTratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mappaTratte_jPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(mappa_jCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(tratte_jCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(utenti_jCheckBox)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         tratteOutput_jPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tratteOutput_jPanel.setLayout(new javax.swing.BoxLayout(tratteOutput_jPanel, javax.swing.BoxLayout.PAGE_AXIS));
         tratteOutput_jScrollPane.setViewportView(tratteOutput_jPanel);
@@ -183,8 +165,52 @@ public class GUI extends javax.swing.JFrame {
         studentiOutput_jPanel.setLayout(new javax.swing.BoxLayout(studentiOutput_jPanel, javax.swing.BoxLayout.PAGE_AXIS));
         utentiOutput_jScrollPane.setViewportView(studentiOutput_jPanel);
 
+        calcolaFermate_jPanel.setLayout(new javax.swing.BoxLayout(calcolaFermate_jPanel, javax.swing.BoxLayout.PAGE_AXIS));
+        calcolaFermate_jScrollPane.setViewportView(calcolaFermate_jPanel);
+
+        calcolaFermate_jButton.setText("Calcola Fermate");
+        calcolaFermate_jButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                calcolaFermate_jButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout mappaTratte_jPanelLayout = new javax.swing.GroupLayout(mappaTratte_jPanel);
+        mappaTratte_jPanel.setLayout(mappaTratte_jPanelLayout);
+        mappaTratte_jPanelLayout.setHorizontalGroup(
+            mappaTratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(tratteOutput_jScrollPane, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(utentiOutput_jScrollPane)
+            .addComponent(calcolaFermate_jScrollPane)
+            .addGroup(mappaTratte_jPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(mappa_jCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(tratte_jCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(utenti_jCheckBox)
+                .addContainerGap(14, Short.MAX_VALUE))
+            .addComponent(calcolaFermate_jButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        mappaTratte_jPanelLayout.setVerticalGroup(
+            mappaTratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mappaTratte_jPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(mappaTratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(mappa_jCheckBox)
+                    .addComponent(tratte_jCheckBox)
+                    .addComponent(utenti_jCheckBox))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tratteOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(utentiOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(calcolaFermate_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(calcolaFermate_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE))
+        );
+
         mappaPlot_jPanel.setBackground(new java.awt.Color(255, 255, 255));
-        mappaPlot_jPanel.setPreferredSize(null);
         mappaPlot_jPanel.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 mappaPlot_jPanelMouseWheelMoved(evt);
@@ -204,42 +230,34 @@ public class GUI extends javax.swing.JFrame {
         );
         mappaPlot_jPanelLayout.setVerticalGroup(
             mappaPlot_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 679, Short.MAX_VALUE)
+            .addGap(0, 738, Short.MAX_VALUE)
         );
 
         mappaPlot_jScrollPane.setViewportView(mappaPlot_jPanel);
         mappaPlot_jPanel.getAccessibleContext().setAccessibleDescription("");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout mappa_jPanelLayout = new javax.swing.GroupLayout(mappa_jPanel);
+        mappa_jPanel.setLayout(mappa_jPanelLayout);
+        mappa_jPanelLayout.setHorizontalGroup(
+            mappa_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mappa_jPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(mappaPlot_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1054, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(mappaPlot_jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1142, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mappaTratte_jPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tratteOutput_jScrollPane)
-                    .addComponent(utentiOutput_jScrollPane))
+                .addComponent(mappaTratte_jPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+        mappa_jPanelLayout.setVerticalGroup(
+            mappa_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mappa_jPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(mappaTratte_jPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(tratteOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                        .addComponent(utentiOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(mappaPlot_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGroup(mappa_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(mappaPlot_jScrollPane)
+                    .addComponent(mappaTratte_jPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        jTabbedPane.addTab("Mappa", jPanel1);
+        jTabbedPane.addTab("Mappa", mappa_jPanel);
 
         tratte_jButton.setText("Tratte");
         tratte_jButton.addActionListener(new java.awt.event.ActionListener() {
@@ -275,7 +293,7 @@ public class GUI extends javax.swing.JFrame {
                     .addGroup(tratte_jPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 354, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 447, Short.MAX_VALUE)
                 .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tratte_jPanelLayout.createSequentialGroup()
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -295,7 +313,7 @@ public class GUI extends javax.swing.JFrame {
                 .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tratte_jButton)
                     .addComponent(idealRoute_jButton))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(127, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Tratte", tratte_jPanel);
@@ -383,7 +401,7 @@ public class GUI extends javax.swing.JFrame {
                 .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(dijkstra_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(visita_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(300, Short.MAX_VALUE))
+                .addContainerGap(403, Short.MAX_VALUE))
         );
         altro_jPanelLayout.setVerticalGroup(
             altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -406,7 +424,7 @@ public class GUI extends javax.swing.JFrame {
                                 .addComponent(randomDijkstra_jButton)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(dLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)))
                 .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(altro_jPanelLayout.createSequentialGroup()
                         .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -507,9 +525,7 @@ public class GUI extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 709, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jTabbedPane)
         );
 
         pack();
@@ -673,21 +689,34 @@ public class GUI extends javax.swing.JFrame {
         String area = utentiInput_jTextArea.getText();
         nodes_students = controllerStudenti.read(area, nodes, routes);
 
-        HashMap<Node, HashSet<Percorso>> students_percorsi_ideal = controllerStudenti.allRoute(nodes, nodes_students, routes);
-        HashMap<Node, HashSet<Percorso>> students_percorsi = controllerStudenti.route(nodes, nodes_students, routes);
-        HashMap<Node, Percorso> students_min_percorsi_ideal = controllerStudenti.ideal(students_percorsi_ideal, routes, true);
-        HashMap<Node, Percorso> students_min_percorsi = controllerStudenti.ideal(students_percorsi, routes, false);
+        if (!nodes_students.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Creati nodi studenti ");
 
-        writeStudents();
-        mappaPlot_jPanel.repaint();
+            HashMap<Node, HashSet<Percorso>> students_percorsi_ideal = controllerStudenti.allRoute(nodes, nodes_students, routes);
+            HashMap<Node, HashSet<Percorso>> students_percorsi = controllerStudenti.route(nodes, nodes_students, routes);
+            HashMap<Node, Percorso> students_min_percorsi_ideal = controllerStudenti.ideal(students_percorsi_ideal, routes, true);
+            HashMap<Node, Percorso> students_min_percorsi = controllerStudenti.ideal(students_percorsi, routes, false);
+
+            writeStudents();
+            mappaPlot_jPanel.repaint();
+        } else {
+            JOptionPane.showMessageDialog(null, "Nodi studenti non creati");
+        }
+
+
     }//GEN-LAST:event_idealRoute_jButtonActionPerformed
 
     private void tratte_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tratte_jButtonActionPerformed
         String area = tratteInput_jTextArea.getText();
         routes = controllerRoutes.read(area, nodes);
-        writeRoute();
 
-        mappaPlot_jPanel.repaint();
+        if (!routes.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Create " + routes.size() + " tratte");
+            writeRoute();
+            mappaPlot_jPanel.repaint();
+        } else {
+            JOptionPane.showMessageDialog(null, "Tratte non create");
+        }
     }//GEN-LAST:event_tratte_jButtonActionPerformed
 
     private void utenti_jCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_utenti_jCheckBoxActionPerformed
@@ -732,7 +761,7 @@ public class GUI extends javax.swing.JFrame {
             JLabel node_label = new JLabel("index: " + n.getIndex() + "; id: " + n.getId() + " lat: " + n.getLat() + " lon: " + n.getLon());
             panelMouseListener.add(node_label);
         } else {
-            JLabel node_label = new JLabel("index: " + n.getIndex() + "; id: " + n.getId() + " lat: " + n.getLat() + " lon: " + n.getLon() + " num: " + n.getNum_studenti());
+            JLabel node_label = new JLabel("index: " + n.getIndex() + "; id: " + n.getId() + " lat: " + n.getLat() + " lon: " + n.getLon() + " num: " + n.getNum_studenti() + " stop: " + n.getRealStop().getIndex());
             panelMouseListener.add(node_label);
         }
 
@@ -790,6 +819,21 @@ public class GUI extends javax.swing.JFrame {
         System.out.println("scroll mouse: " + zoom);
     }//GEN-LAST:event_mappaPlot_jPanelMouseWheelMoved
 
+    private void calcolaFermate_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcolaFermate_jButtonActionPerformed
+        /*stops = controllerStop.stop(nodes, routes, nodes_students);
+
+        if (!stops.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Create fermate");
+            writeStops();
+            mappaPlot_jPanel.repaint();
+        } else {
+            JOptionPane.showMessageDialog(null, "Fermate non create");
+        }*/
+
+        controllerStop.oneStop(nodes, routes, nodes_students);
+        mappaPlot_jPanel.repaint();
+    }//GEN-LAST:event_calcolaFermate_jButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -827,6 +871,9 @@ public class GUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel altro_jPanel;
+    private javax.swing.JButton calcolaFermate_jButton;
+    private javax.swing.JPanel calcolaFermate_jPanel;
+    private javax.swing.JScrollPane calcolaFermate_jScrollPane;
     private javax.swing.JMenuItem cancella_jMenuItem;
     private javax.swing.JMenuItem caricaEsporta_jMenuItem;
     private javax.swing.JMenuItem connettiDB_jMenuItem;
@@ -840,7 +887,6 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JButton idealRoute_jButton;
     private javax.swing.JMenuItem inserisciDB_jMenuItem;
     private javax.swing.JMenuBar jMenuBar;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane11;
     private javax.swing.JScrollPane jScrollPane4;
@@ -853,6 +899,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JPanel mappaTratte_jPanel;
     private javax.swing.JCheckBox mappa_jCheckBox;
     private javax.swing.JMenu mappa_jMenu;
+    private javax.swing.JPanel mappa_jPanel;
     private javax.swing.JButton randomDijkstra_jButton;
     private javax.swing.JButton randomVisita_jButton;
     private javax.swing.JMenuItem reset_jMenuItem;
@@ -928,6 +975,8 @@ public class GUI extends javax.swing.JFrame {
         tratteOutput_jPanel.validate();
         studentiOutput_jPanel.removeAll();
         studentiOutput_jPanel.validate();
+        calcolaFermate_jPanel.removeAll();
+        calcolaFermate_jPanel.validate();
     }
 
     private void resetMark() {
@@ -1068,6 +1117,7 @@ public class GUI extends javax.swing.JFrame {
             tratteOutput_jPanel.add(distanza_JLabel);
             tratteOutput_jPanel.add(jSeparator);
         }
+        tratte_jPanel.validate();
     }
 
     private void writeStudents() {
@@ -1111,6 +1161,27 @@ public class GUI extends javax.swing.JFrame {
             studentiOutput_jPanel.add(distanzaIdeal_JLabel);
             studentiOutput_jPanel.add(jSeparator);
         }
+        studentiOutput_jPanel.validate();
+    }
+
+    private void writeStops() {
+        calcolaFermate_jPanel.removeAll();
+        calcolaFermate_jPanel.validate();
+
+        for (Map.Entry<Node, Double> entry : stops.entrySet()) {
+            Node student = entry.getKey();
+            Double distanza = entry.getValue();
+
+            int indexStudent = student.getIndex();
+            int indexStop = student.getRealStop().getIndex();
+
+            JLabel numStudents_JLabel = new JLabel("Nodo: " + indexStudent + "; Fermata:" + indexStop);
+            JSeparator jSeparator = new JSeparator();
+
+            calcolaFermate_jPanel.add(numStudents_JLabel);
+            calcolaFermate_jPanel.add(jSeparator);
+        }
+        calcolaFermate_jPanel.validate();
     }
 
     private void disegna(Graphics gg) {
@@ -1225,6 +1296,19 @@ public class GUI extends javax.swing.JFrame {
 
                         }
                     }
+
+                    if (r.getFermate() != null) {
+                        for (int j = 0; j < r.getFermate().size(); j++) {
+                            Node stop = r.getFermate().get(j);
+
+                            double x = (stop.getX() - minX) * rap;
+                            double y = (stop.getY() - minY) * rap;
+
+                            g.setColor(Color.red);
+                            g.fillRect((int) x, (int) y, 10, 10);
+
+                        }
+                    }
                 }
 
                 //Disegna studenti
@@ -1243,9 +1327,9 @@ public class GUI extends javax.swing.JFrame {
                             g.setFont(g.getFont().deriveFont(10f));
                             g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                         }
+
                     }
                 }
-
             }
         }
     }
