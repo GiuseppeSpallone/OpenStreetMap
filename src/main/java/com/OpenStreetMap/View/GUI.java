@@ -830,6 +830,7 @@ public class GUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Fermate non create");
         }*/
 
+        //controllerStop.zeroStop(nodes, routes, nodes_students);
         controllerStop.oneStop(nodes, routes, nodes_students);
         mappaPlot_jPanel.repaint();
     }//GEN-LAST:event_calcolaFermate_jButtonActionPerformed
