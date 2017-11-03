@@ -1,6 +1,7 @@
 package com.OpenStreetMap.Model;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -11,6 +12,7 @@ public class Route {
     private double distanza;
     private Color color;
     private int numFermate;
+    private ArrayList<Node> fermate;
 
     public static Route getRouteByName(HashSet<Route> routes, String name) {
         for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
@@ -77,5 +79,15 @@ public class Route {
     public void setNumFermate(int numFermate) {
         this.numFermate = numFermate;
     }
+
+    public ArrayList<Node> getFermate() {
+        return fermate;
+    }
+
+    public void setFermate(ArrayList<Node> fermate) {
+        this.fermate = fermate;
+    }
+    
+    
 
 }

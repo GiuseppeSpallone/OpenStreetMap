@@ -56,6 +56,8 @@ public class GUI extends javax.swing.JFrame {
     boolean plotRoute = true;
     boolean plotStudents = true;
 
+    double zoom = 1.0;
+
     public GUI() {
         initComponents();
     }
@@ -71,6 +73,15 @@ public class GUI extends javax.swing.JFrame {
 
         jTabbedPane = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
+        mappaTratte_jPanel = new javax.swing.JPanel();
+        mappa_jCheckBox = new javax.swing.JCheckBox();
+        tratte_jCheckBox = new javax.swing.JCheckBox();
+        utenti_jCheckBox = new javax.swing.JCheckBox();
+        tratteOutput_jScrollPane = new javax.swing.JScrollPane();
+        tratteOutput_jPanel = new javax.swing.JPanel();
+        utentiOutput_jScrollPane = new javax.swing.JScrollPane();
+        studentiOutput_jPanel = new javax.swing.JPanel();
+        mappaPlot_jScrollPane = new javax.swing.JScrollPane();
         mappaPlot_jPanel = new JPanel(){
 
             @Override
@@ -80,14 +91,6 @@ public class GUI extends javax.swing.JFrame {
             }
 
         };
-        mappaTratte_jPanel = new javax.swing.JPanel();
-        mappa_jCheckBox = new javax.swing.JCheckBox();
-        tratte_jCheckBox = new javax.swing.JCheckBox();
-        utenti_jCheckBox = new javax.swing.JCheckBox();
-        tratteOutput_jScrollPane = new javax.swing.JScrollPane();
-        tratteOutput_jPanel = new javax.swing.JPanel();
-        utentiOutput_jScrollPane = new javax.swing.JScrollPane();
-        studentiOutput_jPanel = new javax.swing.JPanel();
         tratte_jPanel = new javax.swing.JPanel();
         tratte_jButton = new javax.swing.JButton();
         idealRoute_jButton = new javax.swing.JButton();
@@ -122,24 +125,8 @@ public class GUI extends javax.swing.JFrame {
         inserisciDB_jMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        mappaPlot_jPanel.setBackground(new java.awt.Color(255, 255, 255));
-        mappaPlot_jPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                mappaPlot_jPanelMouseClicked(evt);
-            }
-        });
-
-        javax.swing.GroupLayout mappaPlot_jPanelLayout = new javax.swing.GroupLayout(mappaPlot_jPanel);
-        mappaPlot_jPanel.setLayout(mappaPlot_jPanelLayout);
-        mappaPlot_jPanelLayout.setHorizontalGroup(
-            mappaPlot_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1030, Short.MAX_VALUE)
-        );
-        mappaPlot_jPanelLayout.setVerticalGroup(
-            mappaPlot_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
+        setPreferredSize(new java.awt.Dimension(1300, 800));
+        setResizable(false);
 
         mappa_jCheckBox.setSelected(true);
         mappa_jCheckBox.setText("Mappa");
@@ -175,7 +162,7 @@ public class GUI extends javax.swing.JFrame {
                     .addComponent(mappa_jCheckBox)
                     .addComponent(tratte_jCheckBox)
                     .addComponent(utenti_jCheckBox))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(110, Short.MAX_VALUE))
         );
         mappaTratte_jPanelLayout.setVerticalGroup(
             mappaTratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -196,13 +183,40 @@ public class GUI extends javax.swing.JFrame {
         studentiOutput_jPanel.setLayout(new javax.swing.BoxLayout(studentiOutput_jPanel, javax.swing.BoxLayout.PAGE_AXIS));
         utentiOutput_jScrollPane.setViewportView(studentiOutput_jPanel);
 
+        mappaPlot_jPanel.setBackground(new java.awt.Color(255, 255, 255));
+        mappaPlot_jPanel.setPreferredSize(null);
+        mappaPlot_jPanel.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                mappaPlot_jPanelMouseWheelMoved(evt);
+            }
+        });
+        mappaPlot_jPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                mappaPlot_jPanelMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout mappaPlot_jPanelLayout = new javax.swing.GroupLayout(mappaPlot_jPanel);
+        mappaPlot_jPanel.setLayout(mappaPlot_jPanelLayout);
+        mappaPlot_jPanelLayout.setHorizontalGroup(
+            mappaPlot_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1278, Short.MAX_VALUE)
+        );
+        mappaPlot_jPanelLayout.setVerticalGroup(
+            mappaPlot_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 679, Short.MAX_VALUE)
+        );
+
+        mappaPlot_jScrollPane.setViewportView(mappaPlot_jPanel);
+        mappaPlot_jPanel.getAccessibleContext().setAccessibleDescription("");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(mappaPlot_jPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(mappaPlot_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1054, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(mappaTratte_jPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -212,16 +226,16 @@ public class GUI extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mappaPlot_jPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(mappaTratte_jPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(tratteOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                        .addComponent(utentiOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(utentiOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(mappaPlot_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -763,6 +777,19 @@ public class GUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_mappaPlot_jPanelMouseClicked
 
+    private void mappaPlot_jPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_mappaPlot_jPanelMouseWheelMoved
+
+        if (evt.getWheelRotation() < 0) {
+            zoom++;
+        } else if (evt.getWheelRotation() > 0) {
+            if (zoom > 1) {
+                zoom--;
+            }
+        }
+        mappaPlot_jPanel.repaint();
+        System.out.println("scroll mouse: " + zoom);
+    }//GEN-LAST:event_mappaPlot_jPanelMouseWheelMoved
+
     /**
      * @param args the command line arguments
      */
@@ -822,6 +849,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JTextField lat_jTextField;
     private javax.swing.JTextField lon_jTextField;
     private javax.swing.JPanel mappaPlot_jPanel;
+    private javax.swing.JScrollPane mappaPlot_jScrollPane;
     private javax.swing.JPanel mappaTratte_jPanel;
     private javax.swing.JCheckBox mappa_jCheckBox;
     private javax.swing.JMenu mappa_jMenu;
@@ -959,24 +987,24 @@ public class GUI extends javax.swing.JFrame {
                 }
             }
 
-            double w = ((maxX - minX));
             double h = ((maxY - minY));
+            double w = ((maxX - minX));
 
-            double rap = 1;
+            double rap = 1.0;
             double rh = h / w;
-            double rhC = (mappaPlot_jPanel.getSize().height * 1.0) / (mappaPlot_jPanel.getSize().width * 1.0);
+            double rhC = (mappaPlot_jPanel.getSize().height * zoom) / (mappaPlot_jPanel.getSize().width * zoom);
             if (rh > rhC) {
-                rap = (mappaPlot_jPanel.getSize().height * 1.0) / h;
+                rap = (mappaPlot_jPanel.getSize().height * zoom) / h;
             } else {
-                rap = (mappaPlot_jPanel.getSize().width * 1.0) / w;
+                rap = (mappaPlot_jPanel.getSize().width * zoom) / w;
             }
 
             double dist = Double.MAX_VALUE;
 
             //Stampa nodi
             for (Node n : nodes_paint.values()) {
-                double x1 = (n.getX() - minX * 1.0) * rap;
-                double y1 = (n.getY() - minY * 1.0) * rap;
+                double x1 = (n.getX() - minX) * rap;
+                double y1 = (n.getY() - minY) * rap;
                 double d = (x - x1) * (x - x1) + (y - y1) * (y - y1);
                 if (d < dist) {
                     dist = d;
@@ -1098,29 +1126,29 @@ public class GUI extends javax.swing.JFrame {
         if (nodes_paint != null && arcs_paint != null) {
             for (Node n : nodes_paint.values()) {
                 if (n.getX() > maxX) {
-                    maxX = n.getX();
+                    maxX = (n.getX());
                 }
                 if (n.getX() < minX) {
-                    minX = n.getX();
+                    minX = (n.getX());
                 }
                 if (n.getY() > maxY) {
-                    maxY = n.getY();
+                    maxY = (n.getY());
                 }
                 if (n.getY() < minY) {
-                    minY = n.getY();
+                    minY = (n.getY());
                 }
             }
 
-            double w = ((maxX - minX));
             double h = ((maxY - minY));
+            double w = ((maxX - minX));
 
             double rap = 1;
             double rh = h / w;
-            double rhC = (mappaPlot_jPanel.getSize().height * 1.0) / (mappaPlot_jPanel.getSize().width * 1.0);
+            double rhC = (mappaPlot_jPanel.getSize().height * zoom) / (mappaPlot_jPanel.getSize().width * zoom);
             if (rh > rhC) {
-                rap = (mappaPlot_jPanel.getSize().height * 1.0) / h;
+                rap = (mappaPlot_jPanel.getSize().height * zoom) / h;
             } else {
-                rap = (mappaPlot_jPanel.getSize().width * 1.0) / w;
+                rap = (mappaPlot_jPanel.getSize().width * zoom) / w;
             }
 
             if (plotMap) {
@@ -1136,18 +1164,18 @@ public class GUI extends javax.swing.JFrame {
                         g.setStroke(new BasicStroke(1));
 
                     }
-                    double x1 = (arc.getFrom().getX() - minX * 1.0) * rap;
-                    double y1 = (arc.getFrom().getY() - minY * 1.0) * rap;
-                    double x2 = (arc.getTo().getX() - minX * 1.0) * rap;
-                    double y2 = (arc.getTo().getY() - minY * 1.0) * rap;
+                    double x1 = (arc.getFrom().getX() - minX) * rap;
+                    double y1 = (arc.getFrom().getY() - minY) * rap;
+                    double x2 = (arc.getTo().getX() - minX) * rap;
+                    double y2 = (arc.getTo().getY() - minY) * rap;
 
                     g.drawLine((int) x1, (int) y1, (int) x2, (int) y2);
                 }
 
                 //Disegna nodi
                 for (Node n : nodes_paint.values()) {
-                    double x1 = (n.getX() - minX * 1.0) * rap;
-                    double y1 = (n.getY() - minY * 1.0) * rap;
+                    double x1 = (n.getX() - minX) * rap;
+                    double y1 = (n.getY() - minY) * rap;
                     int mark = n.getMark();
 
                     switch (mark) {
@@ -1178,8 +1206,8 @@ public class GUI extends javax.swing.JFrame {
                     for (int i = 0; i < r.getPercorso().getNodes().size(); i++) {
                         Node r_n = r.getPercorso().getNodes().get(i);
 
-                        double x = (r_n.getX() - minX * 1.0) * rap;
-                        double y = (r_n.getY() - minY * 1.0) * rap;
+                        double x = (r_n.getX() - minX) * rap;
+                        double y = (r_n.getY() - minY) * rap;
 
                         g.setFont(g.getFont().deriveFont(10f));
                         g.drawString("" + r_n.getIndex(), (int) x, (int) y);
@@ -1187,10 +1215,10 @@ public class GUI extends javax.swing.JFrame {
                         if (i != r.getPercorso().getNodes().size() - 1) {
                             Arc arc = Arc.arcByFromTo(r_n, r.getPercorso().getNodes().get(i + 1));
 
-                            double x1 = (arc.getFrom().getX() - minX * 1.0) * rap;
-                            double y1 = (arc.getFrom().getY() - minY * 1.0) * rap;
-                            double x2 = (arc.getTo().getX() - minX * 1.0) * rap;
-                            double y2 = (arc.getTo().getY() - minY * 1.0) * rap;
+                            double x1 = (arc.getFrom().getX() - minX) * rap;
+                            double y1 = (arc.getFrom().getY() - minY) * rap;
+                            double x2 = (arc.getTo().getX() - minX) * rap;
+                            double y2 = (arc.getTo().getY() - minY) * rap;
 
                             g.setStroke(new BasicStroke(2));
                             g.drawLine((int) x1, (int) y1, (int) x2, (int) y2);
@@ -1202,8 +1230,8 @@ public class GUI extends javax.swing.JFrame {
                 //Disegna studenti
                 if (nodes_students != null && plotStudents) {
                     for (Node n : nodes_students) {
-                        double x1 = (n.getX() - minX * 1.0) * rap;
-                        double y1 = (n.getY() - minY * 1.0) * rap;
+                        double x1 = (n.getX() - minX) * rap;
+                        double y1 = (n.getY() - minY) * rap;
 
                         //studenti
                         Route route = n.getRoute();
