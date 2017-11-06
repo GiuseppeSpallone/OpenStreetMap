@@ -33,9 +33,6 @@ public class ImportMap {
     private float maxlon = 0;
 
     public void create(File file, float sogliaCurva, float unitiSuzeMt, float risoluzioneMt, boolean import_building, boolean import_cycleway) {
-
-        System.out.println(java.lang.Runtime.getRuntime().maxMemory());
-
         prop = 1 / unitiSuzeMt;
         SGL = sogliaCurva;
         RIS = risoluzioneMt;
@@ -138,9 +135,9 @@ public class ImportMap {
             System.out.println("REMOVE REPETITION");
             removeRepetition(arcs);
 
-            System.out.println("REMOVE UNCONNECTED");
+            /*System.out.println("REMOVE UNCONNECTED");
             Node rif = visit.removeUnconnected(nodes, arcs);
-            System.out.println("rif: " + rif.getId());
+            System.out.println("rif: " + rif.getId());*/
 
             /*System.out.println("REMOVE NOT STRONG CONNECTED");
             visit.removeNotStrongConnected(nodes, arcs, rif);*/

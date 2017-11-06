@@ -3,6 +3,7 @@ package com.OpenStreetMap.Model;
 import java.util.ArrayList;
 
 public class Percorso {
+
     private double distanza;
     private ArrayList<Node> nodes;
 
@@ -21,7 +22,5 @@ public class Percorso {
     public void setNodes(ArrayList<Node> nodes) {
         this.nodes = nodes;
     }
-    
-    
-    
+
 }

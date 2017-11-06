@@ -22,6 +22,67 @@ public class ControllerStop {
      */
     Dijkstra dijkstra = new Dijkstra();
 
+    public void stop(HashSet<Node> nodes_students, HashSet<Route> routes) {
+
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
+            Route route = it.next();
+            Percorso percorso_route = route.getPercorso();
+            ArrayList<Node> nodes_route = percorso_route.getNodes();
+            Node partenza = nodes_route.get(0);
+            Node arrivo = nodes_route.get(nodes_route.size() - 1);
+
+            ArrayList<Node> stops = new ArrayList<>();
+            stops.add(partenza);
+            stops.add(arrivo);
+
+            double distanza_ideal_stops = Double.MAX_VALUE;
+            
+            double value = 0;
+            double num = 0;
+            double z = 0;
+            double min_z = Double.MAX_VALUE;
+
+            for (Iterator<Node> it2 = nodes_students.iterator(); it2.hasNext();) {
+                Node node_student = it2.next();
+                int num_studenti = node_student.getNum_studenti();
+                ArrayList<Percorso> percorsi = node_student.getPercorsi();
+
+                double minDistanza = Double.MAX_VALUE;
+                Node stop = null;
+
+                for (Iterator<Percorso> it3 = percorsi.iterator(); it3.hasNext();) {
+                    Percorso percorso = it3.next();
+                    ArrayList<Node> nds = percorso.getNodes();
+                    double distanza = percorso.getDistanza();
+                    Node lastNode = nds.get(nds.size() - 1);
+
+                    for (int i = 0; i < stops.size(); i++) {
+                        if (lastNode == stops.get(i)) {
+                            if (distanza <= minDistanza) {
+                                minDistanza = distanza;
+                                stop = stops.get(i);
+                            }
+                        }
+                    }
+                }
+
+                value += ((double) num_studenti * minDistanza);
+                num += (double) num_studenti;
+                z += value / num;
+
+                for (int j = 0; j < stops.size(); j++) {
+                    if (z <= distanza_ideal_stops) {
+                        distanza_ideal_stops = z;
+                    }
+                }
+
+                //route.setFermate(ideal_stops);
+            }
+
+        }
+
+    }
+
     public void zeroStop(HashMap<Long, Node> nodes, HashSet<Route> routes, HashSet<Node> nodes_students) {
         String out = "";
 

@@ -61,6 +61,11 @@ public class GUI extends javax.swing.JFrame {
     boolean plotStudents = true;
 
     double zoom = 1.0;
+    double sfasx = 0;
+    double sfasy = 0;
+
+    double px = 0;
+    double py = 0;
 
     public GUI() {
         initComponents();
@@ -211,6 +216,11 @@ public class GUI extends javax.swing.JFrame {
         );
 
         mappaPlot_jPanel.setBackground(new java.awt.Color(255, 255, 255));
+        mappaPlot_jPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                mappaPlot_jPanelMouseDragged(evt);
+            }
+        });
         mappaPlot_jPanel.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 mappaPlot_jPanelMouseWheelMoved(evt);
@@ -219,6 +229,9 @@ public class GUI extends javax.swing.JFrame {
         mappaPlot_jPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 mappaPlot_jPanelMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                mappaPlot_jPanelMousePressed(evt);
             }
         });
 
@@ -692,10 +705,8 @@ public class GUI extends javax.swing.JFrame {
         if (!nodes_students.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Creati nodi studenti ");
 
-            HashMap<Node, HashSet<Percorso>> students_percorsi_ideal = controllerStudenti.allRoute(nodes, nodes_students, routes);
-            HashMap<Node, HashSet<Percorso>> students_percorsi = controllerStudenti.route(nodes, nodes_students, routes);
-            HashMap<Node, Percorso> students_min_percorsi_ideal = controllerStudenti.ideal(students_percorsi_ideal, routes, true);
-            HashMap<Node, Percorso> students_min_percorsi = controllerStudenti.ideal(students_percorsi, routes, false);
+            nodes_students = controllerStudenti.applyPercorsi(nodes, nodes_students, routes);
+            nodes_students = controllerStudenti.idealPercorso(nodes_students);
 
             writeStudents();
             mappaPlot_jPanel.repaint();
@@ -834,6 +845,21 @@ public class GUI extends javax.swing.JFrame {
         controllerStop.oneStop(nodes, routes, nodes_students);
         mappaPlot_jPanel.repaint();
     }//GEN-LAST:event_calcolaFermate_jButtonActionPerformed
+
+    private void mappaPlot_jPanelMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mappaPlot_jPanelMouseDragged
+        sfasx += px - evt.getX();
+        sfasy += py - evt.getY();
+
+        px = evt.getX();
+        py = evt.getY();
+
+        mappaPlot_jPanel.repaint();
+    }//GEN-LAST:event_mappaPlot_jPanelMouseDragged
+
+    private void mappaPlot_jPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mappaPlot_jPanelMousePressed
+        px = evt.getX();
+        py = evt.getY();
+    }//GEN-LAST:event_mappaPlot_jPanelMousePressed
 
     /**
      * @param args the command line arguments
@@ -1130,14 +1156,10 @@ public class GUI extends javax.swing.JFrame {
             int numStudents = node.getNum_studenti();
             String route = node.getRoute().getName();
             Color color_route = node.getRoute().getColor();
-            String routeIdeal = node.getIdealRoute().getName();
-            Color color_routeIdeal = node.getIdealRoute().getColor();
 
             int idealStop = node.getIdealStop().getIndex();
-            int idealStopIdealRoute = node.getIdealStopIdealRoute().getIndex();
-
-            double distanza = node.getPercorso().getDistanza();
-            double distanzaIdeal = node.getPercorso().getDistanza();
+            double distanza = node.getIdealPercorso().getDistanza();
+            double distanzaIdeal = node.getIdealPercorso().getDistanza();
 
             JLabel numStudents_JLabel = new JLabel("Nodo: " + node.getIndex() + "; Studenti:" + numStudents);
             JLabel route_JLabel = new JLabel("Tratta: " + route);
@@ -1145,21 +1167,12 @@ public class GUI extends javax.swing.JFrame {
             JLabel idealStop_JLabel = new JLabel("Fermata ideale: " + idealStop);
             idealStop_JLabel.setForeground(color_route);
             JLabel distanza_JLabel = new JLabel("Distanza: " + distanza);
-
-            JLabel routeIdeal_JLabel = new JLabel("Tratta ideale: " + routeIdeal);
-            routeIdeal_JLabel.setForeground(color_routeIdeal);
-            JLabel idealStopIdealRoute_JLabel = new JLabel("Fermata ideale: " + idealStopIdealRoute);
-            idealStopIdealRoute_JLabel.setForeground(color_routeIdeal);
-            JLabel distanzaIdeal_JLabel = new JLabel("Distanza: " + distanzaIdeal);
             JSeparator jSeparator = new JSeparator();
 
             studentiOutput_jPanel.add(numStudents_JLabel);
             studentiOutput_jPanel.add(route_JLabel);
             studentiOutput_jPanel.add(idealStop_JLabel);
             studentiOutput_jPanel.add(distanza_JLabel);
-            studentiOutput_jPanel.add(routeIdeal_JLabel);
-            studentiOutput_jPanel.add(idealStopIdealRoute_JLabel);
-            studentiOutput_jPanel.add(distanzaIdeal_JLabel);
             studentiOutput_jPanel.add(jSeparator);
         }
         studentiOutput_jPanel.validate();
@@ -1222,6 +1235,9 @@ public class GUI extends javax.swing.JFrame {
             } else {
                 rap = (mappaPlot_jPanel.getSize().width * zoom) / w;
             }
+
+            minX = (int) (minX + sfasx / rap);
+            minY = (int) (minY + sfasy / rap);
 
             if (plotMap) {
                 //Disegna archi

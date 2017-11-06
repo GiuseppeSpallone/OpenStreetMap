@@ -11,33 +11,28 @@ public class Node {
     private Long id;
     private float lat;
     private float lon;
-
     private int index;
     private int x;
     private int y;
     private int mark = -1;
-
     private boolean flag1;
     private int comp;
     private boolean tunnel = false;
+    public ArrayList<Way> nd_ways = new ArrayList<>();
+    public ArrayList<Arc> nd_arcs = new ArrayList<>();
 
     //Dijkstra
     private double distanza;
     private Node predecessore;
     //private int mark;
-    
+
     //Tratta
     private int num_studenti;
-    private Route route;
-    private Route idealRoute;
-    private Node idealStop;
-    private Node idealStopIdealRoute;
-    private Percorso percorso;
+    private Route route; //rotta prefissata
+    private ArrayList<Percorso> percorsi;
     private Percorso idealPercorso;
+    private Node idealStop;
     private Node realStop = null;
-
-    public ArrayList<Way> nd_ways = new ArrayList<>();
-    public ArrayList<Arc> nd_arcs = new ArrayList<>();
 
     public double distanzaLatLog(Node n) {
         return ImportMap.distance(lat, n.getLat(), lon, n.getLon(), 0, 0);
@@ -81,7 +76,7 @@ public class Node {
         Node node = null;
 
         int i = 0;
-        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext();) {
             Node nd = it.next();
 
             if (i == random) {
@@ -94,7 +89,7 @@ public class Node {
 
     public static Node nodeByLatLon(HashMap<Long, Node> nodes, float lat, float lon) {
         if (lat != 0 && lon != 0) {
-            for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+            for (Iterator<Node> it = nodes.values().iterator(); it.hasNext();) {
                 Node node = it.next();
                 if (node.getLat() == lat && node.getLon() == lon) {
                     return node;
@@ -110,7 +105,7 @@ public class Node {
         float dist = Float.MAX_VALUE;
 
         if (lat != 0 && lon != 0) {
-            for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+            for (Iterator<Node> it = nodes.values().iterator(); it.hasNext();) {
                 Node nd = it.next();
 
                 float latitudine = nd.getLat();
@@ -214,7 +209,7 @@ public class Node {
     public void setPredecessore(Node predecessore) {
         this.predecessore = predecessore;
     }
-    
+
     public int getComp() {
         return comp;
     }
@@ -239,37 +234,12 @@ public class Node {
         this.route = route;
     }
 
-    public Percorso getPercorso() {
-        return percorso;
-    }
-
-    public void setPercorso(Percorso percorso) {
-        this.percorso = percorso;
-    }
-    
-
-    public Route getIdealRoute() {
-        return idealRoute;
-    }
-
-    public void setIdealRoute(Route idealRoute) {
-        this.idealRoute = idealRoute;
-    }
-
     public Node getIdealStop() {
         return idealStop;
     }
 
     public void setIdealStop(Node idealStop) {
         this.idealStop = idealStop;
-    }
-
-    public Node getIdealStopIdealRoute() {
-        return idealStopIdealRoute;
-    }
-
-    public void setIdealStopIdealRoute(Node idealStopIdealRoute) {
-        this.idealStopIdealRoute = idealStopIdealRoute;
     }
 
     public Percorso getIdealPercorso() {
@@ -287,8 +257,13 @@ public class Node {
     public void setRealStop(Node realStop) {
         this.realStop = realStop;
     }
-    
-    
-    
-    
+
+    public ArrayList<Percorso> getPercorsi() {
+        return percorsi;
+    }
+
+    public void setPercorsi(ArrayList<Percorso> percorsi) {
+        this.percorsi = percorsi;
+    }
+
 }
