@@ -2,7 +2,7 @@ package com.OpenStreetMap.Model;
 
 import java.util.ArrayList;
 
-public class Percorso{
+public class Percorso {
 
     private double distanza;
     private ArrayList<Node> nodes;

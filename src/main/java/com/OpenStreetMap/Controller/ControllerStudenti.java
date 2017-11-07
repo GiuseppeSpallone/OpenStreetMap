@@ -109,7 +109,6 @@ public class ControllerStudenti {
         for (Iterator<Node> it = nodes_students.iterator(); it.hasNext();) {
             Node node_student = it.next();
 
-            ArrayList<Percorso> percorsi_dijkstra = new ArrayList<>();
             ArrayList<Percorso> percorsi_euclide = new ArrayList<>();
 
             for (Iterator<Route> it1 = routes.iterator(); it1.hasNext();) {
@@ -129,25 +128,46 @@ public class ControllerStudenti {
                         double d = (node_route.getLat() - node_student.getLat()) * (node_route.getLat() - node_student.getLat()) + (node_route.getLon() - node_student.getLon()) * (node_route.getLon() - node_student.getLon());
                         percorso_euclide.setDistanza(d);
                         percorsi_euclide.add(percorso_euclide);
-
-                        Percorso percorso_dijkstra = dijkstra.run(node_student, node_route, nodes, false);
-                        percorsi_dijkstra.add(percorso_dijkstra);
                     }
 
                     System.out.println("\nEuclide\n");
                     for (int i = 0; i < percorsi_euclide.size(); i++) {
-                        System.out.println("distanza: " + percorsi_euclide.get(i).getDistanza());
-                    }
-
-                    System.out.println("\nDijkstra\n");
-                    for (int i = 0; i < percorsi_dijkstra.size(); i++) {
-                        System.out.println("distanza: " + percorsi_dijkstra.get(i).getDistanza());
+                        System.out.println("Dal nodo studente: " + percorsi_euclide.get(i).getNodes().get(0).getIndex()
+                                + " al nodo tratta " + percorsi_euclide.get(i).getNodes().get(1).getIndex()
+                                + " distanza: " + percorsi_euclide.get(i).getDistanza());
                     }
 
                 }
             }
+
+            System.out.println("\nEuclide ordinato\n");
+            for (int i = 0; i < percorsi_euclide.size(); i++) {
+                System.out.println("Dal nodo studente: " + percorsi_euclide.get(i).getNodes().get(0).getIndex()
+                        + " al nodo tratta " + percorsi_euclide.get(i).getNodes().get(1).getIndex()
+                        + " distanza: " + percorsi_euclide.get(i).getDistanza());
+            }
+
             node_student.setPercorsi_euclide(percorsi_euclide);
+
+            ArrayList<Percorso> percorsi_dijkstra = new ArrayList<>();
+
+            boolean min = false;
+            int i = 0;
+            while (!min && i < percorsi_euclide.size()) {
+                Percorso percorso_dijkstra = dijkstra.run(node_student, percorsi_euclide.get(i).getNodes().get(1), nodes, false);
+                percorsi_dijkstra.add(percorso_dijkstra);
+
+                if (percorso_dijkstra.getDistanza() <= percorsi_euclide.get(i).getDistanza()) {
+                    min = true;
+                }
+                i++;
+            }
             node_student.setPercorsi(percorsi_dijkstra);
+
+            System.out.println("\nDijkstra\n");
+            for (int j = 0; j < percorsi_dijkstra.size(); j++) {
+                System.out.println("distanza: " + percorsi_dijkstra.get(j).getDistanza());
+            }
         }
 
         return nodes_students;
