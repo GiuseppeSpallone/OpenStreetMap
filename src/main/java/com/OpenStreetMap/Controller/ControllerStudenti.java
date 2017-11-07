@@ -6,6 +6,13 @@ import com.OpenStreetMap.Model.Route;
 
 import java.util.*;
 
+/*
+% 1 1
+# 41.560066 14.665717
+# 41.560986 14.668059
+# 41.563812 14.670908
+# 1 41.567444 14.663317 20
+ */
 public class ControllerStudenti {
 
     Dijkstra dijkstra = new Dijkstra();
@@ -102,7 +109,8 @@ public class ControllerStudenti {
         for (Iterator<Node> it = nodes_students.iterator(); it.hasNext();) {
             Node node_student = it.next();
 
-            ArrayList<Percorso> percorsi_students = new ArrayList<>();
+            ArrayList<Percorso> percorsi_dijkstra = new ArrayList<>();
+            ArrayList<Percorso> percorsi_euclide = new ArrayList<>();
 
             for (Iterator<Route> it1 = routes.iterator(); it1.hasNext();) {
                 Route route = it1.next();
@@ -110,12 +118,36 @@ public class ControllerStudenti {
                 if (route == node_student.getRoute()) {
                     for (Iterator<Node> it2 = route.getPercorso().getNodes().iterator(); it2.hasNext();) {
                         Node node_route = it2.next();
-                        Percorso percorso = dijkstra.run(node_student, node_route, nodes, false);
-                        percorsi_students.add(percorso);
+
+                        Percorso percorso_euclide = new Percorso();
+
+                        ArrayList<Node> nodes_euclide = new ArrayList<>();
+                        nodes_euclide.add(node_student);
+                        nodes_euclide.add(node_route);
+                        percorso_euclide.setNodes(nodes_euclide);
+
+                        double d = (node_route.getLat() - node_student.getLat()) * (node_route.getLat() - node_student.getLat()) + (node_route.getLon() - node_student.getLon()) * (node_route.getLon() - node_student.getLon());
+                        percorso_euclide.setDistanza(d);
+                        percorsi_euclide.add(percorso_euclide);
+
+                        Percorso percorso_dijkstra = dijkstra.run(node_student, node_route, nodes, false);
+                        percorsi_dijkstra.add(percorso_dijkstra);
                     }
+
+                    System.out.println("\nEuclide\n");
+                    for (int i = 0; i < percorsi_euclide.size(); i++) {
+                        System.out.println("distanza: " + percorsi_euclide.get(i).getDistanza());
+                    }
+
+                    System.out.println("\nDijkstra\n");
+                    for (int i = 0; i < percorsi_dijkstra.size(); i++) {
+                        System.out.println("distanza: " + percorsi_dijkstra.get(i).getDistanza());
+                    }
+
                 }
             }
-            node_student.setPercorsi(percorsi_students);
+            node_student.setPercorsi_euclide(percorsi_euclide);
+            node_student.setPercorsi(percorsi_dijkstra);
         }
 
         return nodes_students;

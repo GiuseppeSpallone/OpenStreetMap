@@ -17,6 +17,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.io.File;
@@ -1272,12 +1273,12 @@ public class GUI extends javax.swing.JFrame {
                             break;
                         case 0:
                             g.setColor(Color.red);
-                            g.setFont(g.getFont().deriveFont(10f));
+                            g.setFont(new Font("Arial", Font.PLAIN, (int) (8*zoom)));
                             g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                             break;
                         case 1:
                             g.setColor(Color.blue);
-                            g.setFont(g.getFont().deriveFont(10f));
+                           g.setFont(new Font("Arial", Font.PLAIN, (int) (8*zoom)));
                             g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                             break;
                     }
@@ -1297,8 +1298,9 @@ public class GUI extends javax.swing.JFrame {
                         double x = (r_n.getX() - minX) * rap;
                         double y = (r_n.getY() - minY) * rap;
 
-                        g.setFont(g.getFont().deriveFont(10f));
+                        g.setFont(new Font("Arial", Font.PLAIN, (int) (12*zoom)));
                         g.drawString("" + r_n.getIndex(), (int) x, (int) y);
+                        g.fillRect((int) x, (int) y, (int) (5*zoom), (int) (5*zoom));
 
                         if (i != r.getPercorso().getNodes().size() - 1) {
                             Arc arc = Arc.arcByFromTo(r_n, r.getPercorso().getNodes().get(i + 1));
@@ -1322,7 +1324,7 @@ public class GUI extends javax.swing.JFrame {
                             double y = (stop.getY() - minY) * rap;
 
                             g.setColor(Color.red);
-                            g.fillRect((int) x, (int) y, 10, 10);
+                            g.fillRect((int) x, (int) y, (int) (10*zoom), (int) (10*zoom));
 
                         }
                     }
@@ -1341,7 +1343,7 @@ public class GUI extends javax.swing.JFrame {
                         if (num_studenti > 0) {
                             g.setColor(route.getColor());
                             g.fillOval((int) x1, (int) y1, num_studenti, num_studenti);
-                            g.setFont(g.getFont().deriveFont(10f));
+                            g.setFont(new Font("Arial", Font.PLAIN, (int) (12*zoom)));
                             g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                         }
 

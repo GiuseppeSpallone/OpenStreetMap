@@ -30,6 +30,7 @@ public class Node {
     private int num_studenti;
     private Route route; //rotta prefissata
     private ArrayList<Percorso> percorsi;
+    private ArrayList<Percorso> percorsi_euclide;
     private Percorso idealPercorso;
     private Node idealStop;
     private Node realStop = null;
@@ -265,5 +266,19 @@ public class Node {
     public void setPercorsi(ArrayList<Percorso> percorsi) {
         this.percorsi = percorsi;
     }
+
+    public ArrayList<Percorso> getPercorsi_euclide() {
+        return percorsi_euclide;
+    }
+
+    public void setPercorsi_euclide(ArrayList<Percorso> percorsi_euclide) {
+        this.percorsi_euclide = percorsi_euclide;
+    }
+
+    
+
+    
+
+    
 
 }
