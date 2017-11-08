@@ -34,6 +34,7 @@ public class Node {
     private Percorso idealPercorso;
     private Node idealStop;
     private Node realStop = null;
+    private double z;
 
     public double distanzaLatLog(Node n) {
         return ImportMap.distance(lat, n.getLat(), lon, n.getLon(), 0, 0);
@@ -273,6 +274,14 @@ public class Node {
 
     public void setPercorsi_euclide(ArrayList<Percorso> percorsi_euclide) {
         this.percorsi_euclide = percorsi_euclide;
+    }
+
+    public double getZ() {
+        return z;
+    }
+
+    public void setZ(double z) {
+        this.z = z;
     }
 
     
