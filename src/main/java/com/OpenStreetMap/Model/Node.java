@@ -29,12 +29,12 @@ public class Node {
     //Tratta
     private int num_studenti;
     private Route route; //rotta prefissata
-    private ArrayList<Percorso> percorsi;
-    private ArrayList<Percorso> percorsi_euclide;
-    private Percorso idealPercorso;
-    private Node idealStop;
-    private Node realStop = null;
-    private double z;
+    private ArrayList<Percorso> percorsi_dijkstra; //percorsi dijkstra verso tutti i nodi della tratta
+    private ArrayList<Percorso> percorsi_euclide; //percorsi euclidei verso tutti i nodi della tratta
+    private Percorso idealPercorso; //percorso verso la fermata ideale
+    private Node idealStop; //fermata ideale
+    private Percorso realPercorso; //percorso verso la fermata effettiva
+    private Node realStop; //fermata effettiva
 
     public double distanzaLatLog(Node n) {
         return ImportMap.distance(lat, n.getLat(), lon, n.getLon(), 0, 0);
@@ -260,12 +260,12 @@ public class Node {
         this.realStop = realStop;
     }
 
-    public ArrayList<Percorso> getPercorsi() {
-        return percorsi;
+    public ArrayList<Percorso> getPercorsi_dijkstra() {
+        return percorsi_dijkstra;
     }
 
-    public void setPercorsi(ArrayList<Percorso> percorsi) {
-        this.percorsi = percorsi;
+    public void setPercorsi_dijkstra(ArrayList<Percorso> percorsi_dijkstra) {
+        this.percorsi_dijkstra = percorsi_dijkstra;
     }
 
     public ArrayList<Percorso> getPercorsi_euclide() {
@@ -276,18 +276,12 @@ public class Node {
         this.percorsi_euclide = percorsi_euclide;
     }
 
-    public double getZ() {
-        return z;
+    public Percorso getRealPercorso() {
+        return realPercorso;
     }
 
-    public void setZ(double z) {
-        this.z = z;
+    public void setRealPercorso(Percorso realPercorso) {
+        this.realPercorso = realPercorso;
     }
-
-    
-
-    
-
-    
 
 }

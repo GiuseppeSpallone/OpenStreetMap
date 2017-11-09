@@ -5,9 +5,16 @@ import com.OpenStreetMap.Model.Percorso;
 import com.OpenStreetMap.Model.Route;
 
 import java.awt.*;
+import java.awt.color.ColorSpace;
 import java.util.*;
 
 public class ControllerRoutes {
+
+    private final String RED = "#ff0000";
+    private final String YELLOW = "#fffc00";
+    private final String GREEN = "#228b22";
+    private final String BLUE = "#0100ff";
+    private final String ORANGE = "#ffa500";
 
     Dijkstra dijkstra = new Dijkstra();
     GoogleCoordinate googleCoordinate = new GoogleCoordinate();
@@ -28,8 +35,32 @@ public class ControllerRoutes {
             i++;
             int numFermate = Integer.parseInt(arrayString[i]);
             i++;
+            String colorRoute = arrayString[i];
+            i++;
 
             Route route = new Route();
+
+            String stringColor = "";
+            switch (colorRoute) {
+                case "red":
+                    stringColor = RED;
+                    break;
+                case "yellow":
+                    stringColor = YELLOW;
+                    break;
+                case "green":
+                    stringColor = GREEN;
+                    break;
+                case "blue":
+                    stringColor = BLUE;
+                    break;
+                case "orange":
+                    stringColor = ORANGE;
+                    break;
+
+            }
+            Color color = Color.decode(stringColor);
+            route.setColor(color);
             route.setName(name);
             route.setNumFermate(numFermate);
 
@@ -103,12 +134,11 @@ public class ControllerRoutes {
             ArrayList<Percorso> percorso = new ArrayList<>();
 
             //set color
-            int red = 5 * (int) (Math.random() * 52);
+            /*int red = 5 * (int) (Math.random() * 52);
             int green = 5 * (int) (Math.random() * 52);
             int blue = 5 * (int) (Math.random() * 52);
             Color randomColor = new Color(red, green, blue);
-            route.setColor(randomColor);
-
+            route.setColor(randomColor);*/
             for (int i = 0; i < checkpoints.size(); i++) {
                 if (i != checkpoints.size() - 1) {
                     Percorso pezzo = dijkstra.run(checkpoints.get(i), checkpoints.get(i + 1), nodes, false);

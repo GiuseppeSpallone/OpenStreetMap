@@ -53,7 +53,6 @@ public class GUI extends javax.swing.JFrame {
     private HashSet<Arc> arcs_paint = null;
     private HashSet<Route> routes = null;
     private HashSet<Node> nodes_students = null;
-    private HashMap<Node, Double> stops = null;
 
     private File file = null;
 
@@ -87,13 +86,13 @@ public class GUI extends javax.swing.JFrame {
         mappa_jCheckBox = new javax.swing.JCheckBox();
         tratte_jCheckBox = new javax.swing.JCheckBox();
         utenti_jCheckBox = new javax.swing.JCheckBox();
+        calcolaFermate_jButton = new javax.swing.JButton();
         tratteOutput_jScrollPane = new javax.swing.JScrollPane();
         tratteOutput_jPanel = new javax.swing.JPanel();
         utentiOutput_jScrollPane = new javax.swing.JScrollPane();
         studentiOutput_jPanel = new javax.swing.JPanel();
         calcolaFermate_jScrollPane = new javax.swing.JScrollPane();
         calcolaFermate_jPanel = new javax.swing.JPanel();
-        calcolaFermate_jButton = new javax.swing.JButton();
         mappaPlot_jScrollPane = new javax.swing.JScrollPane();
         mappaPlot_jPanel = new JPanel(){
 
@@ -164,6 +163,13 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        calcolaFermate_jButton.setText("Calcola Fermate");
+        calcolaFermate_jButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                calcolaFermate_jButtonActionPerformed(evt);
+            }
+        });
+
         tratteOutput_jPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tratteOutput_jPanel.setLayout(new javax.swing.BoxLayout(tratteOutput_jPanel, javax.swing.BoxLayout.PAGE_AXIS));
         tratteOutput_jScrollPane.setViewportView(tratteOutput_jPanel);
@@ -173,13 +179,6 @@ public class GUI extends javax.swing.JFrame {
 
         calcolaFermate_jPanel.setLayout(new javax.swing.BoxLayout(calcolaFermate_jPanel, javax.swing.BoxLayout.PAGE_AXIS));
         calcolaFermate_jScrollPane.setViewportView(calcolaFermate_jPanel);
-
-        calcolaFermate_jButton.setText("Calcola Fermate");
-        calcolaFermate_jButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                calcolaFermate_jButtonActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout mappaTratte_jPanelLayout = new javax.swing.GroupLayout(mappaTratte_jPanel);
         mappaTratte_jPanel.setLayout(mappaTratte_jPanelLayout);
@@ -769,13 +768,8 @@ public class GUI extends javax.swing.JFrame {
         System.out.println("index: " + n.getIndex() + "; id: " + n.getId() + "; " + n.getLat() + "," + n.getLon());
 
         JPanel panelMouseListener = new JPanel();
-        if (n.getNum_studenti() <= 0) {
-            JLabel node_label = new JLabel("index: " + n.getIndex() + "; id: " + n.getId() + " lat: " + n.getLat() + " lon: " + n.getLon());
-            panelMouseListener.add(node_label);
-        } else {
-            JLabel node_label = new JLabel("index: " + n.getIndex() + "; id: " + n.getId() + " lat: " + n.getLat() + " lon: " + n.getLon() + " num: " + n.getNum_studenti() + " stop: " + n.getRealStop().getIndex());
-            panelMouseListener.add(node_label);
-        }
+        JLabel node_label = new JLabel("index: " + n.getIndex() + "; id: " + n.getId() + " lat: " + n.getLat() + " lon: " + n.getLon());
+        panelMouseListener.add(node_label);
 
         final int TRATTE = 0;
         final int UTENTI = 1;
@@ -828,21 +822,14 @@ public class GUI extends javax.swing.JFrame {
             }
         }
         mappaPlot_jPanel.repaint();
-        System.out.println("scroll mouse: " + zoom);
     }//GEN-LAST:event_mappaPlot_jPanelMouseWheelMoved
 
     private void calcolaFermate_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcolaFermate_jButtonActionPerformed
-        /*stops = controllerStop.stop(nodes, routes, nodes_students);
-
-        if (!stops.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Create fermate");
-            writeStops();
-            mappaPlot_jPanel.repaint();
-        } else {
-            JOptionPane.showMessageDialog(null, "Fermate non create");
-        }*/
 
         controllerStop.run(nodes_students, routes);
+
+        JOptionPane.showMessageDialog(null, "Create fermate");
+        writeStops();
         mappaPlot_jPanel.repaint();
     }//GEN-LAST:event_calcolaFermate_jButtonActionPerformed
 
@@ -1075,9 +1062,11 @@ public class GUI extends javax.swing.JFrame {
                 rap = (mappaPlot_jPanel.getSize().width * zoom) / w;
             }
 
+            minX = (int) (minX + sfasx / rap);
+            minY = (int) (minY + sfasy / rap);
+
             double dist = Double.MAX_VALUE;
 
-            //Stampa nodi
             for (Node n : nodes_paint.values()) {
                 double x1 = (n.getX() - minX) * rap;
                 double y1 = (n.getY() - minY) * rap;
@@ -1136,7 +1125,7 @@ public class GUI extends javax.swing.JFrame {
             JLabel name_JLabel = new JLabel("Tratta: " + name);
             name_JLabel.setForeground(color);
             JLabel numFermate_JLabel = new JLabel("Fermate: " + numFermate);
-            JLabel distanza_JLabel = new JLabel("Distanza: " + distanza);
+            JLabel distanza_JLabel = new JLabel("Lunghezza: " + (int) distanza + "m");
             JSeparator jSeparator = new JSeparator();
 
             tratteOutput_jPanel.add(name_JLabel);
@@ -1150,51 +1139,72 @@ public class GUI extends javax.swing.JFrame {
     private void writeStudents() {
         studentiOutput_jPanel.removeAll();
         studentiOutput_jPanel.validate();
-        for (Iterator<Node> it = nodes_students.iterator(); it.hasNext();) {
-            Node node = it.next();
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
+            Route route = it.next();
 
-            int numStudents = node.getNum_studenti();
-            String route = node.getRoute().getName();
-            Color color_route = node.getRoute().getColor();
+            for (Iterator<Node> it1 = nodes_students.iterator(); it1.hasNext();) {
+                Node node = it1.next();
+                Route route_student = node.getRoute();
 
-            int idealStop = node.getIdealStop().getIndex();
-            double distanza = node.getIdealPercorso().getDistanza();
-            double distanzaIdeal = node.getIdealPercorso().getDistanza();
+                if (route_student == route) {
+                    int numStudents = node.getNum_studenti();
+                    Color color_route = node.getRoute().getColor();
 
-            JLabel numStudents_JLabel = new JLabel("Nodo: " + node.getIndex() + "; Studenti:" + numStudents);
-            JLabel route_JLabel = new JLabel("Tratta: " + route);
-            route_JLabel.setForeground(color_route);
-            JLabel idealStop_JLabel = new JLabel("Fermata ideale: " + idealStop);
-            idealStop_JLabel.setForeground(color_route);
-            JLabel distanza_JLabel = new JLabel("Distanza: " + distanza);
-            JSeparator jSeparator = new JSeparator();
+                    int idealStop = node.getIdealStop().getIndex();
+                    double distanza = node.getIdealPercorso().getDistanza();
 
-            studentiOutput_jPanel.add(numStudents_JLabel);
-            studentiOutput_jPanel.add(route_JLabel);
-            studentiOutput_jPanel.add(idealStop_JLabel);
-            studentiOutput_jPanel.add(distanza_JLabel);
-            studentiOutput_jPanel.add(jSeparator);
+                    JLabel numStudents_JLabel = new JLabel("Studenti: " + node.getIndex() + "   n: " + numStudents);
+                    JLabel route_JLabel = new JLabel("Tratta: " + route_student.getName() + "   stop ideale: " + idealStop);
+                    route_JLabel.setForeground(color_route);
+                    JLabel distanza_JLabel = new JLabel("Distanza: " + (int) distanza + "m");
+                    JSeparator jSeparator = new JSeparator();
+
+                    studentiOutput_jPanel.add(numStudents_JLabel);
+                    studentiOutput_jPanel.add(route_JLabel);
+                    studentiOutput_jPanel.add(distanza_JLabel);
+                    studentiOutput_jPanel.add(jSeparator);
+                }
+
+            }
+
         }
+
         studentiOutput_jPanel.validate();
     }
 
     private void writeStops() {
         calcolaFermate_jPanel.removeAll();
         calcolaFermate_jPanel.validate();
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
+            Route route = it.next();
 
-        for (Map.Entry<Node, Double> entry : stops.entrySet()) {
-            Node student = entry.getKey();
-            Double distanza = entry.getValue();
+            for (Iterator<Node> it1 = nodes_students.iterator(); it1.hasNext();) {
+                Node node = it1.next();
+                Route route_student = node.getRoute();
 
-            int indexStudent = student.getIndex();
-            int indexStop = student.getRealStop().getIndex();
+                if (route_student == route) {
+                    int numStudents = node.getNum_studenti();
+                    Color color_route = node.getRoute().getColor();
 
-            JLabel numStudents_JLabel = new JLabel("Nodo: " + indexStudent + "; Fermata:" + indexStop);
-            JSeparator jSeparator = new JSeparator();
+                    int realStop = node.getRealStop().getIndex();
+                    double distanza = node.getRealPercorso().getDistanza();
 
-            calcolaFermate_jPanel.add(numStudents_JLabel);
-            calcolaFermate_jPanel.add(jSeparator);
+                    JLabel numStudents_JLabel = new JLabel("Studenti: " + node.getIndex() + "   n: " + numStudents);
+                    JLabel route_JLabel = new JLabel("Tratta: " + route_student.getName() + "   stop: " + realStop);
+                    route_JLabel.setForeground(color_route);
+                    JLabel distanza_JLabel = new JLabel("Distanza: " + (int) distanza + "m");
+                    JSeparator jSeparator = new JSeparator();
+
+                    calcolaFermate_jPanel.add(numStudents_JLabel);
+                    calcolaFermate_jPanel.add(route_JLabel);
+                    calcolaFermate_jPanel.add(distanza_JLabel);
+                    calcolaFermate_jPanel.add(jSeparator);
+                }
+
+            }
+
         }
+
         calcolaFermate_jPanel.validate();
     }
 
@@ -1272,12 +1282,12 @@ public class GUI extends javax.swing.JFrame {
                             break;
                         case 0:
                             g.setColor(Color.red);
-                            g.setFont(new Font("Arial", Font.PLAIN, (int) (8*zoom)));
+                            g.setFont(new Font("Arial", Font.PLAIN, (int) (8 * zoom)));
                             g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                             break;
                         case 1:
                             g.setColor(Color.blue);
-                           g.setFont(new Font("Arial", Font.PLAIN, (int) (8*zoom)));
+                            g.setFont(new Font("Arial", Font.PLAIN, (int) (8 * zoom)));
                             g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                             break;
                     }
@@ -1297,9 +1307,9 @@ public class GUI extends javax.swing.JFrame {
                         double x = (r_n.getX() - minX) * rap;
                         double y = (r_n.getY() - minY) * rap;
 
-                        g.setFont(new Font("Arial", Font.PLAIN, (int) (12*zoom)));
+                        g.setFont(new Font("Arial", Font.PLAIN, (int) (12 * zoom)));
                         g.drawString("" + r_n.getIndex(), (int) x, (int) y);
-                        g.fillRect((int) x, (int) y, (int) (5*zoom), (int) (5*zoom));
+                        g.fillRect((int) x, (int) y, (int) (5 * zoom), (int) (5 * zoom));
 
                         if (i != r.getPercorso().getNodes().size() - 1) {
                             Arc arc = Arc.arcByFromTo(r_n, r.getPercorso().getNodes().get(i + 1));
@@ -1315,15 +1325,15 @@ public class GUI extends javax.swing.JFrame {
                         }
                     }
 
-                    if (r.getFermate() != null) {
-                        for (int j = 0; j < r.getFermate().size(); j++) {
-                            Node stop = r.getFermate().get(j);
+                    if (r.getFermate_effettive() != null) {
+                        for (int j = 0; j < r.getFermate_effettive().size(); j++) {
+                            Node stop = r.getFermate_effettive().get(j);
 
                             double x = (stop.getX() - minX) * rap;
                             double y = (stop.getY() - minY) * rap;
 
                             g.setColor(Color.red);
-                            g.fillRect((int) x, (int) y, (int) (10*zoom), (int) (10*zoom));
+                            g.fillRect((int) x, (int) y, (int) (10 * zoom), (int) (10 * zoom));
 
                         }
                     }
@@ -1342,7 +1352,8 @@ public class GUI extends javax.swing.JFrame {
                         if (num_studenti > 0) {
                             g.setColor(route.getColor());
                             g.fillOval((int) x1, (int) y1, num_studenti, num_studenti);
-                            g.setFont(new Font("Arial", Font.PLAIN, (int) (12*zoom)));
+                            g.setFont(new Font("Arial", Font.PLAIN, (int) (12 * zoom)));
+                            //g.drawString("" + n.getNum_studenti(), (int) x1, (int) y1); //
                             g.drawString("" + n.getIndex(), (int) x1, (int) y1);
                         }
 

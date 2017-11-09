@@ -11,8 +11,12 @@ public class Route {
     private Percorso percorso;
     private double distanza;
     private Color color;
+
+    //fermate
+    private ArrayList<Combination> combinazioni;
     private int numFermate;
-    private ArrayList<Node> fermate = null;
+    private ArrayList<Node> fermate_effettive;
+    private Combination minCombination;
 
     public static Route getRouteByName(HashSet<Route> routes, String name) {
         for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
@@ -80,12 +84,30 @@ public class Route {
         this.numFermate = numFermate;
     }
 
-    public ArrayList<Node> getFermate() {
-        return fermate;
+    public ArrayList<Combination> getCombinazioni() {
+        return combinazioni;
     }
 
-    public void setFermate(ArrayList<Node> fermate) {
-        this.fermate = fermate;
+    public void setCombinazioni(ArrayList<Combination> combinazioni) {
+        this.combinazioni = combinazioni;
     }
+
+    public ArrayList<Node> getFermate_effettive() {
+        return fermate_effettive;
+    }
+
+    public void setFermate_effettive(ArrayList<Node> fermate_effettive) {
+        this.fermate_effettive = fermate_effettive;
+    }
+
+    public Combination getMinCombination() {
+        return minCombination;
+    }
+
+    public void setMinCombination(Combination minCombination) {
+        this.minCombination = minCombination;
+    }
+    
+    
 
 }

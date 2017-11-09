@@ -219,6 +219,14 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="utenti_jCheckBoxActionPerformed"/>
                   </Events>
                 </Component>
+                <Component class="javax.swing.JButton" name="calcolaFermate_jButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Calcola Fermate"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="calcolaFermate_jButtonActionPerformed"/>
+                  </Events>
+                </Component>
                 <Container class="javax.swing.JScrollPane" name="tratteOutput_jScrollPane">
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
@@ -260,14 +268,6 @@
                     </Container>
                   </SubComponents>
                 </Container>
-                <Component class="javax.swing.JButton" name="calcolaFermate_jButton">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Calcola Fermate"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="calcolaFermate_jButtonActionPerformed"/>
-                  </Events>
-                </Component>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JScrollPane" name="mappaPlot_jScrollPane">

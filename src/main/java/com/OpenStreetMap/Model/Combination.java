@@ -2,38 +2,28 @@ package com.OpenStreetMap.Model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 
 public class Combination {
 
-    private Route route;
-    private ArrayList<Node> stops;
-    private HashMap<Node, Percorso> students;
+    private ArrayList<Node> fermate;
+    private HashMap<Node, Percorso> minPercorsoFermata; //per ciascun studente il percorso verso la fermata più vicina
     private double value;
 
-    public Route getRoute() {
-        return route;
+    public ArrayList<Node> getFermate() {
+        return fermate;
     }
 
-    public void setRoute(Route route) {
-        this.route = route;
+    public void setFermate(ArrayList<Node> fermate) {
+        this.fermate = fermate;
     }
 
-    public ArrayList<Node> getStops() {
-        return stops;
+    public HashMap<Node, Percorso> getMinPercorsoFermata() {
+        return minPercorsoFermata;
     }
 
-    public void setStops(ArrayList<Node> stops) {
-        this.stops = stops;
-    }
-
-    public HashMap<Node, Percorso> getStudents() {
-        return students;
-    }
-
-    public void setStudents(HashMap<Node, Percorso> students) {
-        this.students = students;
+    public void setMinPercorsoFermata(HashMap<Node, Percorso> minPercorsoFermata) {
+        this.minPercorsoFermata = minPercorsoFermata;
     }
 
     public double getValue() {
@@ -44,14 +34,14 @@ public class Combination {
         this.value = value;
     }
 
-    public static boolean isStops(HashSet<Combination> combinations, ArrayList<Node> stops) {
+    public static boolean isStops(ArrayList<Combination> combinations, ArrayList<Node> stops) {
         boolean is = false;
 
         for (Iterator<Combination> it = combinations.iterator(); it.hasNext();) {
             Combination combination = it.next();
-            ArrayList<Node> stops_combination = combination.getStops();
-            
-            if (stops_combination.equals(stops)) {
+            ArrayList<Node> combination_stop = combination.getFermate();
+
+            if (combination_stop.equals(stops)) {
                 is = true;
             }
         }

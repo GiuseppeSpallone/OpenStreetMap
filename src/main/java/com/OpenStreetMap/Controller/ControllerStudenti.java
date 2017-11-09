@@ -6,13 +6,6 @@ import com.OpenStreetMap.Model.Route;
 
 import java.util.*;
 
-/*
-% 1 1
-# 41.560066 14.665717
-# 41.560986 14.668059
-# 41.563812 14.670908
-# 1 41.567444 14.663317 20
- */
 public class ControllerStudenti {
 
     Dijkstra dijkstra = new Dijkstra();
@@ -162,7 +155,7 @@ public class ControllerStudenti {
                 }
                 i++;
             }
-            node_student.setPercorsi(percorsi_dijkstra);
+            node_student.setPercorsi_dijkstra(percorsi_dijkstra);
 
             System.out.println("\nDijkstra\n");
             for (int j = 0; j < percorsi_dijkstra.size(); j++) {
@@ -179,7 +172,7 @@ public class ControllerStudenti {
             Node node_student = it.next();
 
             Percorso minPercorso = null;
-            for (Iterator<Percorso> it2 = node_student.getPercorsi().iterator(); it2.hasNext();) {
+            for (Iterator<Percorso> it2 = node_student.getPercorsi_dijkstra().iterator(); it2.hasNext();) {
                 Percorso percorso = it2.next();
 
                 if (minPercorso == null || minPercorso.getDistanza() > percorso.getDistanza()) {
@@ -204,7 +197,7 @@ public class ControllerStudenti {
 
             output_percorsi += "________________________" + "\n";
 
-            for (Iterator<Percorso> it1 = node_student.getPercorsi().iterator(); it1.hasNext();) {
+            for (Iterator<Percorso> it1 = node_student.getPercorsi_dijkstra().iterator(); it1.hasNext();) {
                 Percorso percorso = it1.next();
 
                 output_percorsi += "\nDISTANZA PERCORSO: " + percorso.getDistanza() + "\n";

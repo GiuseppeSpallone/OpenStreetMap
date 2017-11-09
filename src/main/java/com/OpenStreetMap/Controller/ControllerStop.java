@@ -12,272 +12,262 @@ import java.util.Map;
 
 public class ControllerStop {
 
-    /*
-% 1 1
-# 41.560204 14.664995
-# 41.560986 14.668059
-# 41.563812 14.670908
-# 1 41.560078 14.668353 15
-# 1 41.562477 14.668082 30
-# 1 41.560715 14.671404 5
-     */
     Dijkstra dijkstra = new Dijkstra();
 
     public void run(HashSet<Node> nodes_students, HashSet<Route> routes) {
-        HashSet<Combination> combinations;
-        combinations = creaCombinazioni(routes);
-        combinations = assegnaFermate(combinations, nodes_students);
-        combinations = valutazione(combinations);
-        combinations = valutazioneMinRoutes(combinations, routes);
-        assegnaFermataReal(routes, nodes_students);
-
-        printCombinations(combinations);
-        printStudent(nodes_students);
-
+        creaCombinazioni(routes);
+        assegnaFermateCombinazioni(routes, nodes_students);
+        valutazioneCombinazioni(routes);
+        minValutazioneCombinazione(routes);
+        assegnaFermateRoute(routes);
+        assegnaFermateStudents(routes, nodes_students);
     }
 
-    private HashSet<Combination> creaCombinazioni(HashSet<Route> routes) {
-        //creo tutte le combinazioni di fermate 
-        HashSet<Combination> combinations = new HashSet<>();
-
+    private void creaCombinazioni(HashSet<Route> routes) {
         for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
             Route route = it.next();
-            Percorso percorso_route = route.getPercorso();
-            ArrayList<Node> nodes_route = percorso_route.getNodes();
-            Node partenza = nodes_route.get(0);
-            Node arrivo = nodes_route.get(nodes_route.size() - 1);
 
-            for (int i = 0; i < nodes_route.size(); i++) {
-                Node _stop = nodes_route.get(i);
+            ArrayList<Combination> combinazioni_fermate = new ArrayList<>();
 
-                Combination combination = new Combination();
+            for (Iterator<Node> it2 = route.getPercorso().getNodes().iterator(); it2.hasNext();) {
+                Node node_route = it2.next();
+                Node partenza = route.getPercorso().getNodes().get(0);
+                Node arrivo = route.getPercorso().getNodes().get(route.getPercorso().getNodes().size() - 1);
 
-                ArrayList<Node> stops = new ArrayList<>();
-                if (_stop != partenza && _stop != arrivo) {
+                ArrayList<Node> stops = null;
+
+                // per tratte fatte solo di due nodi
+                if (route.getPercorso().getNodes().size() == 2) {
+                    stops = new ArrayList<>();
+
                     stops.add(partenza);
-                    stops.add(_stop);
+                    stops.add(arrivo);
+                } else if (node_route != partenza && node_route != arrivo) {
+                    stops = new ArrayList<>();
+
+                    stops.add(partenza);
+                    stops.add(node_route);
                     stops.add(arrivo);
 
-                    //per evitare ripetizioni
-                    if (!Combination.isStops(combinations, stops)) {
-                        combination.setRoute(route);
-                        combination.setStops(stops);
+                }
 
-                        combinations.add(combination);
+                // per evitare ripetizioni
+                if (stops != null) {
+                    if (!Combination.isStops(combinazioni_fermate, stops) || stops != null) {
+                        Combination combination = new Combination();
+                        combination.setFermate(stops);
+                        combinazioni_fermate.add(combination);
                     }
+                }
+
+            }
+            route.setCombinazioni(combinazioni_fermate);
+        }
+
+        System.out.println("\n CREA COMBINAZIONI");
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
+            Route route = it.next();
+
+            System.out.println("TRATTA: " + route.getName());
+
+            for (Iterator<Combination> it2 = route.getCombinazioni().iterator(); it2.hasNext();) {
+                Combination combinazione = it2.next();
+
+                for (Iterator<Node> it3 = combinazione.getFermate().iterator(); it3.hasNext();) {
+                    Node stop = it3.next();
+
+                    System.out.print("  " + stop.getIndex());
 
                 }
+                System.out.println("\n");
             }
+
         }
-
-        //stampa combiazione
-        for (Iterator<Combination> it = combinations.iterator(); it.hasNext();) {
-            Combination combination = it.next();
-            System.out.println("COMBINAZIONE TRATTA: " + combination.getRoute().getName());
-            for (Iterator<Node> it2 = combination.getStops().iterator(); it2.hasNext();) {
-                Node stop = it2.next();
-
-                System.out.println("Stop " + stop.getIndex());
-            }
-        }
-
-        return combinations;
     }
 
-    private HashSet<Combination> assegnaFermate(HashSet<Combination> combinations, HashSet<Node> nodes_students) {
-        //per ogni combinazione di fermate assegno ad ogni studente la fermata più vicina
-        for (Iterator<Combination> it = combinations.iterator(); it.hasNext();) {
-            Combination combination = it.next();
+    private void assegnaFermateCombinazioni(HashSet<Route> routes, HashSet<Node> nodes_students) {
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
+            Route route = it.next();
 
-            HashMap<Node, Percorso> students = new HashMap<>();
+            for (Iterator<Combination> it2 = route.getCombinazioni().iterator(); it2.hasNext();) {
+                Combination combination = it2.next();
 
-            for (Iterator<Node> it3 = nodes_students.iterator(); it3.hasNext();) {
-                Node node_student = it3.next();
-                ArrayList<Percorso> percorsi = node_student.getPercorsi();
+                HashMap<Node, Percorso> minPercorsoFermata = new HashMap<>();
 
-                double minDistanza = Double.MAX_VALUE;
-                Node stop_student = null;
-                Percorso percorso_student = null;
+                for (Iterator<Node> it3 = nodes_students.iterator(); it3.hasNext();) {
+                    Node student = it3.next();
 
-                if (combination.getRoute() == node_student.getRoute()) {
+                    if (student.getRoute() == route) {
+                        Percorso minPercorso = new Percorso();
+                        minPercorso.setDistanza(Double.MAX_VALUE);
 
-                    for (Iterator<Percorso> it4 = percorsi.iterator(); it4.hasNext();) {
-                        Percorso percorso = it4.next();
-                        ArrayList<Node> nodes_percorso = percorso.getNodes();
-                        double distanza = percorso.getDistanza();
-                        Node lastNode = nodes_percorso.get(nodes_percorso.size() - 1);
+                        for (Iterator<Percorso> it4 = student.getPercorsi_dijkstra().iterator(); it4.hasNext();) {
+                            Percorso percorso = it4.next();
+                            ArrayList<Node> nodes_percorso = percorso.getNodes();
+                            Node lastNode = nodes_percorso.get(nodes_percorso.size() - 1);
 
-                        for (Iterator<Node> it2 = combination.getStops().iterator(); it2.hasNext();) {
-                            Node stop = it2.next();
+                            for (Iterator<Node> it5 = combination.getFermate().iterator(); it5.hasNext();) {
+                                Node stop = it5.next();
 
-                            if (lastNode == stop) {
-                                if (distanza <= minDistanza) {
-                                    minDistanza = distanza;
-                                    stop_student = stop;
-                                    percorso_student = percorso;
+                                if (lastNode == stop) {
+                                    if (percorso.getDistanza() <= minPercorso.getDistanza()) {
+                                        minPercorso.setNodes(nodes_percorso);
+                                        minPercorso.setDistanza(percorso.getDistanza());
+                                    }
                                 }
                             }
 
                         }
 
+                        minPercorsoFermata.put(student, minPercorso);
                     }
                 }
-                students.put(node_student, percorso_student);
+                combination.setMinPercorsoFermata(minPercorsoFermata);
             }
-            combination.setStudents(students);
         }
-        return combinations;
     }
 
-    private HashSet<Combination> valutazione(HashSet<Combination> combinations) {
-        //valutazione per ogni combinazione
+    private void valutazioneCombinazioni(HashSet<Route> routes) {
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
+            Route route = it.next();
 
-        for (Iterator<Combination> it = combinations.iterator(); it.hasNext();) {
-            Combination combination = it.next();
-            Route route_combination = combination.getRoute();
-            HashMap<Node, Percorso> students = combination.getStudents();
-            ArrayList<Node> stops = combination.getStops();
+            for (Iterator<Combination> it2 = route.getCombinazioni().iterator(); it2.hasNext();) {
+                Combination combination = it2.next();
 
-            double value = 0;
-            double num = 0;
-            double z = 0;
-            for (Map.Entry<Node, Percorso> entry : students.entrySet()) {
+                double valutazione = 0;
+                double a = 0;
+                double b = 0;
+
+                for (Map.Entry<Node, Percorso> entry : combination.getMinPercorsoFermata().entrySet()) {
+                    Node student = entry.getKey();
+                    Percorso percorso = entry.getValue();
+
+                    a += (double) student.getNum_studenti() * percorso.getDistanza();
+                    b += (double) student.getNum_studenti();
+
+                }
+                valutazione = a / b;
+                combination.setValue(valutazione);
+            }
+        }
+
+        System.out.println("\n VALUTAZIONE COMBINAZIONI");
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
+            Route route = it.next();
+
+            System.out.println("TRATTA: " + route.getName());
+
+            int i = 1;
+            for (Iterator<Combination> it2 = route.getCombinazioni().iterator(); it2.hasNext();) {
+                Combination combination = it2.next();
+
+                System.out.println("    COMBINAZIONE: " + i + " v: " + combination.getValue());
+
+                for (Iterator<Node> it3 = combination.getFermate().iterator(); it3.hasNext();) {
+                    Node stop = it3.next();
+
+                    System.out.print("      " + stop.getIndex());
+
+                }
+                System.out.print("\n");
+
+                for (Map.Entry<Node, Percorso> entry : combination.getMinPercorsoFermata().entrySet()) {
+                    Node student = entry.getKey();
+                    Percorso percorso = entry.getValue();
+
+                    System.out.println("        studente: " + student.getIndex() + " --> stop: " + percorso.getNodes().get(percorso.getNodes().size() - 1).getIndex());
+                }
+                System.out.println("-------------------------------------------");
+                i++;
+            }
+            System.out.println("*******************************************");
+        }
+    }
+
+    private void minValutazioneCombinazione(HashSet<Route> routes) {
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
+            Route route = it.next();
+
+            Combination minCombination = new Combination();
+            minCombination.setValue(Double.MAX_VALUE);
+
+            for (Iterator<Combination> it2 = route.getCombinazioni().iterator(); it2.hasNext();) {
+                Combination combination = it2.next();
+
+                if (combination.getValue() <= minCombination.getValue()) {
+                    minCombination.setFermate(combination.getFermate());
+                    minCombination.setMinPercorsoFermata(combination.getMinPercorsoFermata());
+                    minCombination.setValue(combination.getValue());
+                }
+            }
+
+            route.setMinCombination(minCombination);
+        }
+
+        System.out.println("\n COMBINAZIONI MINIME");
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
+            Route route = it.next();
+            Combination minCombination = route.getMinCombination();
+
+            System.out.println("TRATTA: " + route.getName());
+
+            System.out.println("    MIN COMBINAZIONE v: " + minCombination.getValue());
+
+            for (Iterator<Node> it3 = minCombination.getFermate().iterator(); it3.hasNext();) {
+                Node stop = it3.next();
+
+                System.out.print("      " + stop.getIndex());
+
+            }
+            System.out.print("\n");
+
+            for (Map.Entry<Node, Percorso> entry : minCombination.getMinPercorsoFermata().entrySet()) {
                 Node student = entry.getKey();
                 Percorso percorso = entry.getValue();
 
-                value += percorso.getDistanza() * (double) student.getNum_studenti();
-                num += (double) student.getNum_studenti();
+                System.out.println("        studente: " + student.getIndex() + " --> stop: " + percorso.getNodes().get(percorso.getNodes().size() - 1).getIndex());
             }
-
-            z = value / num;
-            combination.setValue(z);
-
+            System.out.println("-------------------------------------------");
         }
-
-        return combinations;
     }
 
-    private HashSet<Combination> valutazioneMinRoutes(HashSet<Combination> combinations, HashSet<Route> routes) {
-        //scelta di una combinazione per rotta con minor valutazione
+    private void assegnaFermateRoute(HashSet<Route> routes) {
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
+            Route route = it.next();
+            ArrayList<Node> fermateEffettive = route.getMinCombination().getFermate();
+
+            route.setFermate_effettive(fermateEffettive);
+        }
+    }
+
+    private void assegnaFermateStudents(HashSet<Route> routes, HashSet<Node> nodes_students) {
 
         for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
             Route route = it.next();
 
-            double minValue = Double.MAX_VALUE;
-            ArrayList<Node> stops_route = new ArrayList<>();
+            for (Map.Entry<Node, Percorso> entry : route.getMinCombination().getMinPercorsoFermata().entrySet()) {
+                Node student_combination = entry.getKey();
+                Percorso minPercorso = entry.getValue();
+                Node minStop = minPercorso.getNodes().get(minPercorso.getNodes().size() - 1);
 
-            for (Iterator<Combination> it2 = combinations.iterator(); it2.hasNext();) {
-                Combination combination = it2.next();
-                Route route_combination = combination.getRoute();
-                HashMap<Node, Percorso> students = combination.getStudents();
-                ArrayList<Node> stops = combination.getStops();
+                for (Iterator<Node> it2 = nodes_students.iterator(); it2.hasNext();) {
+                    Node student = it2.next();
 
-                if (route_combination == route) {
-                    if (combination.getValue() <= minValue) {
-                        minValue = combination.getValue();
-                        stops_route = stops;
+                    if (student == student_combination) {
+                        student.setRealPercorso(minPercorso);
+                        student.setRealStop(minStop);
                     }
                 }
 
             }
-
-            route.setFermate(stops_route);
         }
 
-        //stampa
-        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
-            Route route = it.next();
-
-            System.out.print("TRATTA " + route.getName());
-
-            for (Iterator<Node> it2 = route.getFermate().iterator(); it2.hasNext();) {
-                Node stop = it2.next();
-
-                System.out.print(stop.getIndex() + " ");
-            }
-        }
-        return combinations;
-    }
-
-    private void assegnaFermataReal(HashSet<Route> routes, HashSet<Node> nodes_students) {
-        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
-            Route route = it.next();
-            ArrayList<Node> stops = route.getFermate();
-
-            for (Iterator<Node> it3 = nodes_students.iterator(); it3.hasNext();) {
-                Node node_student = it3.next();
-                ArrayList<Percorso> percorsi = node_student.getPercorsi();
-
-                double minDistanza = Double.MAX_VALUE;
-                Node stop_student = null;
-
-                if (route == node_student.getRoute()) {
-
-                    for (Iterator<Percorso> it4 = percorsi.iterator(); it4.hasNext();) {
-                        Percorso percorso = it4.next();
-                        ArrayList<Node> nodes_percorso = percorso.getNodes();
-                        double distanza = percorso.getDistanza();
-                        Node lastNode = nodes_percorso.get(nodes_percorso.size() - 1);
-
-                        for (Iterator<Node> it2 = stops.iterator(); it2.hasNext();) {
-                            Node stop = it2.next();
-
-                            if (lastNode == stop) {
-                                if (distanza <= minDistanza) {
-                                    minDistanza = distanza;
-                                    stop_student = stop;
-                                }
-                            }
-
-                        }
-
-                    }
-                }
-                node_student.setRealStop(stop_student);
-            }
+        for (Iterator<Node> it1 = nodes_students.iterator(); it1.hasNext();) {
+            Node student = it1.next();
+            
+            System.out.println("studente: " + student.getIndex() + " fermata: " + student.getRealStop().getIndex());
 
         }
     }
 
-    private void printCombinations(HashSet<Combination> combinations) {
-        //stampa
-        for (Iterator<Combination> it = combinations.iterator(); it.hasNext();) {
-            Combination combination = it.next();
-
-            System.out.println("-----------");
-            System.out.println("Combinazione " + combination.getValue());
-            System.out.println("Route: " + combination.getRoute().getName());
-
-            for (Iterator<Node> it2 = combination.getStops().iterator(); it2.hasNext();) {
-                Node node = it2.next();
-
-                System.out.println("Stop: " + node.getIndex());
-
-            }
-            System.out.println("-");
-            for (Map.Entry<Node, Percorso> entry : combination.getStudents().entrySet()) {
-                Node student = entry.getKey();
-                Percorso percorso_student = entry.getValue();
-
-                System.out.println("Studente: " + student.getIndex() + " distanza: " + percorso_student.getDistanza());
-
-                for (Iterator<Node> it3 = percorso_student.getNodes().iterator(); it3.hasNext();) {
-                    Node node = it3.next();
-
-                    //System.out.println("Nodo: " + node.getIndex());
-                }
-                System.out.println("-");
-            }
-        }
-    }
-
-    private void printStudent(HashSet<Node> nodes_students) {
-        for (Iterator<Node> it = nodes_students.iterator(); it.hasNext();) {
-            Node student = it.next();
-
-            System.out.println("Studente: " + student.getIndex());
-            System.out.println("Fermata: " + student.getRealStop().getIndex());
-
-        }
-    }
 }
