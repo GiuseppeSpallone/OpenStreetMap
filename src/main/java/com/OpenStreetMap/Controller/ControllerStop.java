@@ -53,7 +53,7 @@ public class ControllerStop {
 
                 // per evitare ripetizioni
                 if (stops != null) {
-                    if (!Combination.isStops(combinazioni_fermate, stops) || stops != null) {
+                    if (!Combination.isStops(combinazioni_fermate, stops)) {
                         Combination combination = new Combination();
                         combination.setFermate(stops);
                         combinazioni_fermate.add(combination);
@@ -262,9 +262,10 @@ public class ControllerStop {
             }
         }
 
+        System.out.println("\n ASSEGNAZIONE FERMATE A STUDENTI");
         for (Iterator<Node> it1 = nodes_students.iterator(); it1.hasNext();) {
             Node student = it1.next();
-            
+
             System.out.println("studente: " + student.getIndex() + " fermata: " + student.getRealStop().getIndex());
 
         }
