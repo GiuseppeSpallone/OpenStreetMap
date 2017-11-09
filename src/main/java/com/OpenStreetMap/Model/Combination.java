@@ -41,6 +41,7 @@ public class Combination {
             Combination combination = it.next();
             ArrayList<Node> combination_stop = combination.getFermate();
 
+            //aggiungere anche per array inverso
             if (combination_stop.equals(stops)) {
                 is = true;
             }
