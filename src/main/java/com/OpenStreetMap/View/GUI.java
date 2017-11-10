@@ -20,12 +20,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -93,7 +95,6 @@ public class GUI extends javax.swing.JFrame {
         studentiOutput_jPanel = new javax.swing.JPanel();
         calcolaFermate_jScrollPane = new javax.swing.JScrollPane();
         calcolaFermate_jPanel = new javax.swing.JPanel();
-        mappaPlot_jScrollPane = new javax.swing.JScrollPane();
         mappaPlot_jPanel = new JPanel(){
 
             @Override
@@ -110,6 +111,8 @@ public class GUI extends javax.swing.JFrame {
         tratteInput_jTextArea = new javax.swing.JTextArea();
         jScrollPane4 = new javax.swing.JScrollPane();
         utentiInput_jTextArea = new javax.swing.JTextArea();
+        infoTratte_jButton = new javax.swing.JButton();
+        infoUtenti_jButton = new javax.swing.JButton();
         altro_jPanel = new javax.swing.JPanel();
         sLat_jTextField = new javax.swing.JTextField();
         sLon_jTextField = new javax.swing.JTextField();
@@ -125,6 +128,7 @@ public class GUI extends javax.swing.JFrame {
         jScrollPane10 = new javax.swing.JScrollPane();
         visitaOutput_jTextArea = new javax.swing.JTextArea();
         visita_jButton = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
         jMenuBar = new javax.swing.JMenuBar();
         mappa_jMenu = new javax.swing.JMenu();
         caricaEsporta_jMenuItem = new javax.swing.JMenuItem();
@@ -194,7 +198,7 @@ public class GUI extends javax.swing.JFrame {
                 .addComponent(tratte_jCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(utenti_jCheckBox)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
             .addComponent(calcolaFermate_jButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         mappaTratte_jPanelLayout.setVerticalGroup(
@@ -206,13 +210,13 @@ public class GUI extends javax.swing.JFrame {
                     .addComponent(tratte_jCheckBox)
                     .addComponent(utenti_jCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tratteOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(utentiOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(calcolaFermate_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(calcolaFermate_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE))
+                .addComponent(tratteOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addComponent(utentiOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(calcolaFermate_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(calcolaFermate_jButton))
         );
 
         mappaPlot_jPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -239,15 +243,12 @@ public class GUI extends javax.swing.JFrame {
         mappaPlot_jPanel.setLayout(mappaPlot_jPanelLayout);
         mappaPlot_jPanelLayout.setHorizontalGroup(
             mappaPlot_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1278, Short.MAX_VALUE)
+            .addGap(0, 1059, Short.MAX_VALUE)
         );
         mappaPlot_jPanelLayout.setVerticalGroup(
             mappaPlot_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 738, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
-
-        mappaPlot_jScrollPane.setViewportView(mappaPlot_jPanel);
-        mappaPlot_jPanel.getAccessibleContext().setAccessibleDescription("");
 
         javax.swing.GroupLayout mappa_jPanelLayout = new javax.swing.GroupLayout(mappa_jPanel);
         mappa_jPanel.setLayout(mappa_jPanelLayout);
@@ -255,20 +256,22 @@ public class GUI extends javax.swing.JFrame {
             mappa_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mappa_jPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(mappaPlot_jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1142, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mappaPlot_jPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(mappaTratte_jPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(25, 25, 25))
         );
         mappa_jPanelLayout.setVerticalGroup(
             mappa_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mappa_jPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(mappa_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mappaPlot_jScrollPane)
-                    .addComponent(mappaTratte_jPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(mappaTratte_jPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(mappaPlot_jPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
+
+        mappaPlot_jPanel.getAccessibleContext().setAccessibleDescription("");
 
         jTabbedPane.addTab("Mappa", mappa_jPanel);
 
@@ -294,39 +297,54 @@ public class GUI extends javax.swing.JFrame {
         utentiInput_jTextArea.setRows(5);
         jScrollPane4.setViewportView(utentiInput_jTextArea);
 
+        infoTratte_jButton.setText("Info");
+        infoTratte_jButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                infoTratte_jButtonActionPerformed(evt);
+            }
+        });
+
+        infoUtenti_jButton.setText("Info");
+        infoUtenti_jButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                infoUtenti_jButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout tratte_jPanelLayout = new javax.swing.GroupLayout(tratte_jPanel);
         tratte_jPanel.setLayout(tratte_jPanelLayout);
         tratte_jPanelLayout.setHorizontalGroup(
             tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tratte_jPanelLayout.createSequentialGroup()
+            .addGroup(tratte_jPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(tratte_jPanelLayout.createSequentialGroup()
-                        .addGap(153, 153, 153)
-                        .addComponent(tratte_jButton))
-                    .addGroup(tratte_jPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 447, Short.MAX_VALUE)
-                .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tratte_jPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tratte_jPanelLayout.createSequentialGroup()
-                        .addComponent(idealRoute_jButton)
-                        .addGap(183, 183, 183))))
+                    .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(infoTratte_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tratte_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 171, Short.MAX_VALUE)
+                .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
+                    .addComponent(idealRoute_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(infoUtenti_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         tratte_jPanelLayout.setVerticalGroup(
             tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tratte_jPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
-                    .addComponent(jScrollPane11))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane11, javax.swing.GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tratte_jButton)
                     .addComponent(idealRoute_jButton))
-                .addContainerGap(127, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(infoTratte_jButton)
+                    .addComponent(infoUtenti_jButton))
+                .addContainerGap())
         );
 
         jTabbedPane.addTab("Tratte", tratte_jPanel);
@@ -385,81 +403,76 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
         javax.swing.GroupLayout altro_jPanelLayout = new javax.swing.GroupLayout(altro_jPanel);
         altro_jPanel.setLayout(altro_jPanelLayout);
         altro_jPanelLayout.setHorizontalGroup(
             altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(altro_jPanelLayout.createSequentialGroup()
-                .addGap(93, 93, 93)
+                .addGap(36, 36, 36)
+                .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(sLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dLat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(randomDijkstra_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(sLat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+                    .addComponent(dijkstra_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(altro_jPanelLayout.createSequentialGroup()
-                        .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(lon_jTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
-                            .addComponent(lat_jTextField, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addGap(18, 18, 18)
-                        .addComponent(randomVisita_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(randomVisita_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(visita_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(altro_jPanelLayout.createSequentialGroup()
-                        .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(dLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dLat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(sLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(sLat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(randomDijkstra_jButton)))
-                .addGap(41, 41, 41)
-                .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-                    .addComponent(jScrollPane10))
-                .addGap(67, 67, 67)
-                .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(dijkstra_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(visita_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(403, Short.MAX_VALUE))
+                        .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 25, Short.MAX_VALUE))
         );
         altro_jPanelLayout.setVerticalGroup(
             altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, altro_jPanelLayout.createSequentialGroup()
-                .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(altro_jPanelLayout.createSequentialGroup()
-                        .addGap(73, 73, 73)
-                        .addComponent(jScrollPane9))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, altro_jPanelLayout.createSequentialGroup()
-                        .addGap(103, 103, 103)
-                        .addComponent(sLat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(altro_jPanelLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(sLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(dLat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(altro_jPanelLayout.createSequentialGroup()
-                                .addGap(34, 34, 34)
-                                .addComponent(randomDijkstra_jButton)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(dLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)))
-                .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(altro_jPanelLayout.createSequentialGroup()
-                        .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(altro_jPanelLayout.createSequentialGroup()
-                                .addGap(120, 120, 120)
-                                .addComponent(lat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(lon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(altro_jPanelLayout.createSequentialGroup()
-                                .addGap(145, 145, 145)
-                                .addComponent(randomVisita_jButton)))
-                        .addGap(178, 178, 178))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, altro_jPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(150, 150, 150))))
             .addGroup(altro_jPanelLayout.createSequentialGroup()
-                .addGap(138, 138, 138)
-                .addComponent(dijkstra_jButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(visita_jButton)
-                .addGap(211, 211, 211))
+                .addGap(35, 35, 35)
+                .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(altro_jPanelLayout.createSequentialGroup()
+                            .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(altro_jPanelLayout.createSequentialGroup()
+                                    .addComponent(sLat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(sLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(dLat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(dLon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jScrollPane9))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(randomDijkstra_jButton)
+                                .addComponent(dijkstra_jButton)))
+                        .addGroup(altro_jPanelLayout.createSequentialGroup()
+                            .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(altro_jPanelLayout.createSequentialGroup()
+                                    .addComponent(lat_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(lon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(71, 71, 71))
+                                .addGroup(altro_jPanelLayout.createSequentialGroup()
+                                    .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(randomVisita_jButton)
+                                .addComponent(visita_jButton)))))
+                .addContainerGap(654, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Altro", altro_jPanel);
@@ -534,11 +547,11 @@ public class GUI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane)
+            .addComponent(jTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1296, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane)
+            .addComponent(jTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 889, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -638,66 +651,6 @@ public class GUI extends javax.swing.JFrame {
         mappaPlot_jPanel.repaint();
     }//GEN-LAST:event_cancella_jMenuItemActionPerformed
 
-    private void visita_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visita_jButtonActionPerformed
-        float lat = Float.parseFloat(lat_jTextField.getText());
-        float lon = Float.parseFloat(lon_jTextField.getText());
-
-        Node startingNode = Node.nodeByLatLon(nodes, lat, lon);
-
-        ArrayList<Node> visit_nodes = visit.visita(nodes, startingNode);
-
-        String output_visit = visit.printVisit(visit_nodes);
-        visitaOutput_jTextArea.setText(output_visit);
-
-        mappaPlot_jPanel.repaint();
-    }//GEN-LAST:event_visita_jButtonActionPerformed
-
-    private void randomVisita_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomVisita_jButtonActionPerformed
-        Node startingNode = Node.randomNode(nodes);
-
-        lat_jTextField.setText(String.valueOf(startingNode.getLat()));
-        lon_jTextField.setText(String.valueOf(startingNode.getLon()));
-    }//GEN-LAST:event_randomVisita_jButtonActionPerformed
-
-    private void dijkstra_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dijkstra_jButtonActionPerformed
-        float lat_s = Float.parseFloat(sLat_jTextField.getText());
-        float lon_s = Float.parseFloat(sLon_jTextField.getText());
-        float lat_d = Float.parseFloat(dLat_jTextField.getText());
-        float lon_d = Float.parseFloat(dLon_jTextField.getText());
-
-        Node sorgente = Node.nodeByLatLon(nodes, lat_s, lon_s);
-        Node destinazione = Node.nodeByLatLon(nodes, lat_d, lon_d);
-
-        Percorso percorso = dijkstra.run(sorgente, destinazione, nodes, true);
-
-        String output_dijkstra = dijkstra.printPercorso(percorso);
-        dijkstraOutput_jTextArea.setText(output_dijkstra);
-
-        mappaPlot_jPanel.repaint();
-    }//GEN-LAST:event_dijkstra_jButtonActionPerformed
-
-    private void randomDijkstra_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomDijkstra_jButtonActionPerformed
-        Node sorgente = Node.randomNode(nodes);
-        Node destinazione = Node.randomNode(nodes);
-
-        sLat_jTextField.setText(String.valueOf(sorgente.getLat()));
-        sLon_jTextField.setText(String.valueOf(sorgente.getLon()));
-        dLat_jTextField.setText(String.valueOf(destinazione.getLat()));
-        dLon_jTextField.setText(String.valueOf(destinazione.getLon()));
-    }//GEN-LAST:event_randomDijkstra_jButtonActionPerformed
-
-    private void dLon_jTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dLon_jTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_dLon_jTextFieldActionPerformed
-
-    private void dLat_jTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dLat_jTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_dLat_jTextFieldActionPerformed
-
-    private void sLon_jTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sLon_jTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_sLon_jTextFieldActionPerformed
-
     private void idealRoute_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idealRoute_jButtonActionPerformed
         String area = utentiInput_jTextArea.getText();
         nodes_students = controllerStudenti.read(area, nodes, routes);
@@ -760,6 +713,145 @@ public class GUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_mappa_jCheckBoxActionPerformed
 
+    private void calcolaFermate_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcolaFermate_jButtonActionPerformed
+
+        controllerStop.run(nodes_students, routes);
+
+        JOptionPane.showMessageDialog(null, "Create fermate");
+        writeStops();
+        mappaPlot_jPanel.repaint();
+    }//GEN-LAST:event_calcolaFermate_jButtonActionPerformed
+
+    private void visita_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visita_jButtonActionPerformed
+        float lat = Float.parseFloat(lat_jTextField.getText());
+        float lon = Float.parseFloat(lon_jTextField.getText());
+
+        Node startingNode = Node.nodeByLatLon(nodes, lat, lon);
+
+        ArrayList<Node> visit_nodes = visit.visita(nodes, startingNode);
+
+        String output_visit = visit.printVisit(visit_nodes);
+        visitaOutput_jTextArea.setText(output_visit);
+
+        mappaPlot_jPanel.repaint();
+    }//GEN-LAST:event_visita_jButtonActionPerformed
+
+    private void randomVisita_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomVisita_jButtonActionPerformed
+        Node startingNode = Node.randomNode(nodes);
+
+        lat_jTextField.setText(String.valueOf(startingNode.getLat()));
+        lon_jTextField.setText(String.valueOf(startingNode.getLon()));
+    }//GEN-LAST:event_randomVisita_jButtonActionPerformed
+
+    private void dijkstra_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dijkstra_jButtonActionPerformed
+        float lat_s = Float.parseFloat(sLat_jTextField.getText());
+        float lon_s = Float.parseFloat(sLon_jTextField.getText());
+        float lat_d = Float.parseFloat(dLat_jTextField.getText());
+        float lon_d = Float.parseFloat(dLon_jTextField.getText());
+
+        Node sorgente = Node.nodeByLatLon(nodes, lat_s, lon_s);
+        Node destinazione = Node.nodeByLatLon(nodes, lat_d, lon_d);
+
+        Percorso percorso = dijkstra.run(sorgente, destinazione, nodes, true);
+
+        String output_dijkstra = dijkstra.printPercorso(percorso);
+        dijkstraOutput_jTextArea.setText(output_dijkstra);
+
+        mappaPlot_jPanel.repaint();
+    }//GEN-LAST:event_dijkstra_jButtonActionPerformed
+
+    private void randomDijkstra_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomDijkstra_jButtonActionPerformed
+        Node sorgente = Node.randomNode(nodes);
+        Node destinazione = Node.randomNode(nodes);
+
+        sLat_jTextField.setText(String.valueOf(sorgente.getLat()));
+        sLon_jTextField.setText(String.valueOf(sorgente.getLon()));
+        dLat_jTextField.setText(String.valueOf(destinazione.getLat()));
+        dLon_jTextField.setText(String.valueOf(destinazione.getLon()));
+    }//GEN-LAST:event_randomDijkstra_jButtonActionPerformed
+
+    private void dLon_jTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dLon_jTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dLon_jTextFieldActionPerformed
+
+    private void dLat_jTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dLat_jTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dLat_jTextFieldActionPerformed
+
+    private void sLon_jTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sLon_jTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_sLon_jTextFieldActionPerformed
+
+    private void infoTratte_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoTratte_jButtonActionPerformed
+        JPanel panelInfoTratte = new JPanel(new GridLayout(5, 1));
+        JLabel info1_label = new JLabel("Per definire una tratta usare il carattere \"%\"");
+        JLabel info2_label = new JLabel("% \"nome tratta\" \"numero fermate\" \"colore tratta (red, blue, green, orange, yellow)\"");
+        JLabel info3_label = new JLabel("Per definire un elenco di punti usare il carattere \"#\" oppure \"*\"");
+        JLabel info4_label = new JLabel("# \"latitudine\" \"longitudine\"");
+        JLabel info5_label = new JLabel("* \"query string (nome paese, nome città, via)\"");
+        panelInfoTratte.add(info1_label);
+        panelInfoTratte.add(info2_label);
+        panelInfoTratte.add(info3_label);
+        panelInfoTratte.add(info4_label);
+        panelInfoTratte.add(info5_label);
+
+        final int MOSTRA = 0;
+        final int ANNULLA = 1;
+
+        Object[] options = {"Mostra esempio", "Annulla"};
+        int option = JOptionPane.showOptionDialog(null, panelInfoTratte, "Info tratte", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+        switch (option) {
+            case MOSTRA:
+                Node n1 = Node.randomNode(nodes);
+                Node n2 = Node.randomNode(nodes);
+                tratteInput_jTextArea.removeAll();
+                tratteInput_jTextArea.validate();
+                tratteInput_jTextArea.append("% trattaEsempio 1 blue \n" + 
+                        "# " + n1.getLat() + " " + n1.getLon() + "\n" +
+                        "# " + n2.getLat() + " " + n2.getLon() + "\n");
+                break;
+            case ANNULLA:
+                break;
+        }
+    }//GEN-LAST:event_infoTratte_jButtonActionPerformed
+
+    private void infoUtenti_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoUtenti_jButtonActionPerformed
+        JPanel panelInfoStudenti = new JPanel(new GridLayout(5, 1));
+        JLabel info1_label = new JLabel("Per definire un nodo studente usare \"#\" oppure \"*\"");
+        JLabel info2_label = new JLabel("# \"tratta di appartenenza\" \"latitudine\" \"longitudine\" \"numero studenti\"");
+        JLabel info3_label = new JLabel("* \"tratta di appartenenza\" \"query string (nome paese, nome città, via)\" \"numero studenti\"");
+        panelInfoStudenti.add(info1_label);
+        panelInfoStudenti.add(info2_label);
+        panelInfoStudenti.add(info3_label);
+
+        final int MOSTRA = 0;
+        final int ANNULLA = 1;
+
+        Object[] options = {"Mostra esempio", "Annulla"};
+        int option = JOptionPane.showOptionDialog(null, panelInfoStudenti, "Info studenti", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+        switch (option) {
+            case MOSTRA:
+                Node n1 = Node.randomNode(nodes);
+                Node n2 = Node.randomNode(nodes);
+                Node n3 = Node.randomNode(nodes);
+                utentiInput_jTextArea.removeAll();
+                utentiInput_jTextArea.validate();
+                utentiInput_jTextArea.append("# trattaEsempio " + n1.getLat() + " " + n1.getLon() + " 10\n" +
+                        "# trattaEsempio " + n2.getLat() + " " + n2.getLon() + " 15\n" +
+                        "# trattaEsempio " + n3.getLat() + " " + n3.getLon() + " 30\n");
+                break;
+            case ANNULLA:
+                break;
+        }
+    }//GEN-LAST:event_infoUtenti_jButtonActionPerformed
+
+    private void mappaPlot_jPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mappaPlot_jPanelMousePressed
+        px = evt.getX();
+        py = evt.getY();
+    }//GEN-LAST:event_mappaPlot_jPanelMousePressed
+
     private void mappaPlot_jPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mappaPlot_jPanelMouseClicked
         int x = evt.getX();
         int y = evt.getY();
@@ -782,33 +874,33 @@ public class GUI extends javax.swing.JFrame {
 
         switch (option) {
             case TRATTE:
-                tratteInput_jTextArea.append("# " + n.getLat() + " " + n.getLon() + "\n");
-                break;
+            tratteInput_jTextArea.append("# " + n.getLat() + " " + n.getLon() + "\n");
+            break;
             case UTENTI:
-                utentiInput_jTextArea.append("# " + n.getLat() + " " + n.getLon() + "\n");
-                break;
+            utentiInput_jTextArea.append("# " + n.getLat() + " " + n.getLon() + "\n");
+            break;
             case DIJKSTRA:
-                Object[] options2 = {"Sorgente", "Destinazione", "Annulla"};
-                int option2 = JOptionPane.showOptionDialog(null, null, "Dijkstra", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+            Object[] options2 = {"Sorgente", "Destinazione", "Annulla"};
+            int option2 = JOptionPane.showOptionDialog(null, null, "Dijkstra", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
 
-                if (option2 == 0) {
-                    sLat_jTextField.setText(String.valueOf(n.getLat()));
-                    sLon_jTextField.setText(String.valueOf(n.getLon()));
-                }
-                if (option2 == 1) {
-                    dLat_jTextField.setText(String.valueOf(n.getLat()));
-                    dLon_jTextField.setText(String.valueOf(n.getLon()));
-                }
-                if (option2 == 2) {
-                    break;
-                }
+            if (option2 == 0) {
+                sLat_jTextField.setText(String.valueOf(n.getLat()));
+                sLon_jTextField.setText(String.valueOf(n.getLon()));
+            }
+            if (option2 == 1) {
+                dLat_jTextField.setText(String.valueOf(n.getLat()));
+                dLon_jTextField.setText(String.valueOf(n.getLon()));
+            }
+            if (option2 == 2) {
                 break;
+            }
+            break;
             case VISITA:
-                lat_jTextField.setText(String.valueOf(n.getLat()));
-                lon_jTextField.setText(String.valueOf(n.getLon()));
-                break;
+            lat_jTextField.setText(String.valueOf(n.getLat()));
+            lon_jTextField.setText(String.valueOf(n.getLon()));
+            break;
             case ANNULLA:
-                break;
+            break;
         }
     }//GEN-LAST:event_mappaPlot_jPanelMouseClicked
 
@@ -824,15 +916,6 @@ public class GUI extends javax.swing.JFrame {
         mappaPlot_jPanel.repaint();
     }//GEN-LAST:event_mappaPlot_jPanelMouseWheelMoved
 
-    private void calcolaFermate_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcolaFermate_jButtonActionPerformed
-
-        controllerStop.run(nodes_students, routes);
-
-        JOptionPane.showMessageDialog(null, "Create fermate");
-        writeStops();
-        mappaPlot_jPanel.repaint();
-    }//GEN-LAST:event_calcolaFermate_jButtonActionPerformed
-
     private void mappaPlot_jPanelMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mappaPlot_jPanelMouseDragged
         sfasx += px - evt.getX();
         sfasy += py - evt.getY();
@@ -842,11 +925,6 @@ public class GUI extends javax.swing.JFrame {
 
         mappaPlot_jPanel.repaint();
     }//GEN-LAST:event_mappaPlot_jPanelMouseDragged
-
-    private void mappaPlot_jPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mappaPlot_jPanelMousePressed
-        px = evt.getX();
-        py = evt.getY();
-    }//GEN-LAST:event_mappaPlot_jPanelMousePressed
 
     /**
      * @param args the command line arguments
@@ -899,17 +977,19 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem disegna_jMenuItem;
     private javax.swing.JMenuItem esci_jMenuItem;
     private javax.swing.JButton idealRoute_jButton;
+    private javax.swing.JButton infoTratte_jButton;
+    private javax.swing.JButton infoUtenti_jButton;
     private javax.swing.JMenuItem inserisciDB_jMenuItem;
     private javax.swing.JMenuBar jMenuBar;
     private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane11;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane9;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane;
     private javax.swing.JTextField lat_jTextField;
     private javax.swing.JTextField lon_jTextField;
     private javax.swing.JPanel mappaPlot_jPanel;
-    private javax.swing.JScrollPane mappaPlot_jScrollPane;
     private javax.swing.JPanel mappaTratte_jPanel;
     private javax.swing.JCheckBox mappa_jCheckBox;
     private javax.swing.JMenu mappa_jMenu;
