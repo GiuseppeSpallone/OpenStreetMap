@@ -5,7 +5,7 @@ import com.OpenStreetMap.Controller.ControllerStop;
 import com.OpenStreetMap.Controller.ControllerStudenti;
 import com.OpenStreetMap.Controller.Database;
 import com.OpenStreetMap.Controller.Dijkstra;
-import com.OpenStreetMap.Controller.ExportMap;
+import com.OpenStreetMap.Controller.Export;
 import com.OpenStreetMap.Controller.ImportMap;
 import com.OpenStreetMap.Controller.ImportPlotMap;
 import com.OpenStreetMap.Controller.Visit;
@@ -22,6 +22,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,7 +42,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class GUI extends javax.swing.JFrame {
 
     ImportMap importMap = new ImportMap();
-    ExportMap exportMap = new ExportMap();
+    Export exportMap = new Export();
     Database database = new Database();
     ImportPlotMap importPlotMap = new ImportPlotMap();
     ControllerRoutes controllerRoutes = new ControllerRoutes();
@@ -135,6 +138,7 @@ public class GUI extends javax.swing.JFrame {
         disegna_jMenuItem = new javax.swing.JMenuItem();
         reset_jMenuItem = new javax.swing.JMenuItem();
         cancella_jMenuItem = new javax.swing.JMenuItem();
+        report_jMenuItem = new javax.swing.JMenuItem();
         esci_jMenuItem = new javax.swing.JMenuItem();
         database_jMenu = new javax.swing.JMenu();
         connettiDB_jMenuItem = new javax.swing.JMenuItem();
@@ -322,7 +326,7 @@ public class GUI extends javax.swing.JFrame {
                     .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(infoTratte_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(tratte_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 171, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 167, Short.MAX_VALUE)
                 .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
                     .addComponent(idealRoute_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -337,9 +341,9 @@ public class GUI extends javax.swing.JFrame {
                     .addComponent(jScrollPane11, javax.swing.GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE)
                     .addComponent(jScrollPane4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tratte_jButton)
-                    .addComponent(idealRoute_jButton))
+                .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(idealRoute_jButton)
+                    .addComponent(tratte_jButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(infoTratte_jButton)
@@ -435,7 +439,7 @@ public class GUI extends javax.swing.JFrame {
                             .addComponent(lon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 25, Short.MAX_VALUE))
+                .addGap(0, 22, Short.MAX_VALUE))
         );
         altro_jPanelLayout.setVerticalGroup(
             altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -511,6 +515,14 @@ public class GUI extends javax.swing.JFrame {
         });
         mappa_jMenu.add(cancella_jMenuItem);
 
+        report_jMenuItem.setText("Report");
+        report_jMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                report_jMenuItemActionPerformed(evt);
+            }
+        });
+        mappa_jMenu.add(report_jMenuItem);
+
         esci_jMenuItem.setText("Esci");
         esci_jMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -581,7 +593,7 @@ public class GUI extends javax.swing.JFrame {
 
                 connettiDB_jMenuItem.setEnabled(true);
 
-                file = selectPath();
+                file = selectPath(true);
                 if (esportaMap(file)) {
                     Object[] options = {"Si", "No"};
                     int option = JOptionPane.showOptionDialog(null, "Mappa esportata, disegnare mappa?", null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -807,9 +819,9 @@ public class GUI extends javax.swing.JFrame {
                 Node n2 = Node.randomNode(nodes);
                 tratteInput_jTextArea.removeAll();
                 tratteInput_jTextArea.validate();
-                tratteInput_jTextArea.append("% trattaEsempio 1 blue \n" + 
-                        "# " + n1.getLat() + " " + n1.getLon() + "\n" +
-                        "# " + n2.getLat() + " " + n2.getLon() + "\n");
+                tratteInput_jTextArea.append("% trattaEsempio 1 blue \n"
+                        + "# " + n1.getLat() + " " + n1.getLon() + "\n"
+                        + "# " + n2.getLat() + " " + n2.getLon() + "\n");
                 break;
             case ANNULLA:
                 break;
@@ -838,9 +850,9 @@ public class GUI extends javax.swing.JFrame {
                 Node n3 = Node.randomNode(nodes);
                 utentiInput_jTextArea.removeAll();
                 utentiInput_jTextArea.validate();
-                utentiInput_jTextArea.append("# trattaEsempio " + n1.getLat() + " " + n1.getLon() + " 10\n" +
-                        "# trattaEsempio " + n2.getLat() + " " + n2.getLon() + " 15\n" +
-                        "# trattaEsempio " + n3.getLat() + " " + n3.getLon() + " 30\n");
+                utentiInput_jTextArea.append("# trattaEsempio " + n1.getLat() + " " + n1.getLon() + " 10\n"
+                        + "# trattaEsempio " + n2.getLat() + " " + n2.getLon() + " 15\n"
+                        + "# trattaEsempio " + n3.getLat() + " " + n3.getLon() + " 30\n");
                 break;
             case ANNULLA:
                 break;
@@ -874,33 +886,33 @@ public class GUI extends javax.swing.JFrame {
 
         switch (option) {
             case TRATTE:
-            tratteInput_jTextArea.append("# " + n.getLat() + " " + n.getLon() + "\n");
-            break;
-            case UTENTI:
-            utentiInput_jTextArea.append("# " + n.getLat() + " " + n.getLon() + "\n");
-            break;
-            case DIJKSTRA:
-            Object[] options2 = {"Sorgente", "Destinazione", "Annulla"};
-            int option2 = JOptionPane.showOptionDialog(null, null, "Dijkstra", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-
-            if (option2 == 0) {
-                sLat_jTextField.setText(String.valueOf(n.getLat()));
-                sLon_jTextField.setText(String.valueOf(n.getLon()));
-            }
-            if (option2 == 1) {
-                dLat_jTextField.setText(String.valueOf(n.getLat()));
-                dLon_jTextField.setText(String.valueOf(n.getLon()));
-            }
-            if (option2 == 2) {
+                tratteInput_jTextArea.append("# " + n.getLat() + " " + n.getLon() + "\n");
                 break;
-            }
-            break;
+            case UTENTI:
+                utentiInput_jTextArea.append("# " + n.getLat() + " " + n.getLon() + "\n");
+                break;
+            case DIJKSTRA:
+                Object[] options2 = {"Sorgente", "Destinazione", "Annulla"};
+                int option2 = JOptionPane.showOptionDialog(null, null, "Dijkstra", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+
+                if (option2 == 0) {
+                    sLat_jTextField.setText(String.valueOf(n.getLat()));
+                    sLon_jTextField.setText(String.valueOf(n.getLon()));
+                }
+                if (option2 == 1) {
+                    dLat_jTextField.setText(String.valueOf(n.getLat()));
+                    dLon_jTextField.setText(String.valueOf(n.getLon()));
+                }
+                if (option2 == 2) {
+                    break;
+                }
+                break;
             case VISITA:
-            lat_jTextField.setText(String.valueOf(n.getLat()));
-            lon_jTextField.setText(String.valueOf(n.getLon()));
-            break;
+                lat_jTextField.setText(String.valueOf(n.getLat()));
+                lon_jTextField.setText(String.valueOf(n.getLon()));
+                break;
             case ANNULLA:
-            break;
+                break;
         }
     }//GEN-LAST:event_mappaPlot_jPanelMouseClicked
 
@@ -925,6 +937,12 @@ public class GUI extends javax.swing.JFrame {
 
         mappaPlot_jPanel.repaint();
     }//GEN-LAST:event_mappaPlot_jPanelMouseDragged
+
+    private void report_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_report_jMenuItemActionPerformed
+        
+        file = selectPath(false);
+        exportMap.exportReport(file, nodes_students, routes);
+    }//GEN-LAST:event_report_jMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -996,6 +1014,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JPanel mappa_jPanel;
     private javax.swing.JButton randomDijkstra_jButton;
     private javax.swing.JButton randomVisita_jButton;
+    private javax.swing.JMenuItem report_jMenuItem;
     private javax.swing.JMenuItem reset_jMenuItem;
     private javax.swing.JTextField sLat_jTextField;
     private javax.swing.JTextField sLon_jTextField;
@@ -1032,8 +1051,14 @@ public class GUI extends javax.swing.JFrame {
         }
     }
 
-    private File selectPath() {
-        FileNameExtensionFilter grfFilter = new FileNameExtensionFilter("osm.grf files (*osm.grf)", "osm.grf");
+    private File selectPath(boolean map) {
+        FileNameExtensionFilter grfFilter;
+        if(map){
+             grfFilter = new FileNameExtensionFilter("osm.grf files (*osm.grf)", "osm.grf");
+        }else{
+             grfFilter = new FileNameExtensionFilter("txt files (*txt)", "txt");
+        }
+        
         JFileChooser jFileChooser = new JFileChooser();
         jFileChooser.setDialogTitle("Scegli cartella destinazione");
         jFileChooser.addChoosableFileFilter(grfFilter);
@@ -1179,7 +1204,7 @@ public class GUI extends javax.swing.JFrame {
 
     private boolean esportaMap(File file) {
         if (file != null) {
-            exportMap.export(file, nodes, arcs);
+            exportMap.exportMap(file, nodes, arcs);
             nodes = exportMap.getNodes();
             arcs = exportMap.getArcs();
 
