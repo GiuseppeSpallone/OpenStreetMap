@@ -2,10 +2,12 @@ package com.OpenStreetMap.View;
 
 import com.OpenStreetMap.Controller.ControllerRoutes;
 import com.OpenStreetMap.Controller.ControllerStop;
+import com.OpenStreetMap.Controller.ControllerStop2;
 import com.OpenStreetMap.Controller.ControllerStudenti;
 import com.OpenStreetMap.Controller.Database;
 import com.OpenStreetMap.Controller.Dijkstra;
 import com.OpenStreetMap.Controller.Export;
+import com.OpenStreetMap.Controller.GoogleCoordinate;
 import com.OpenStreetMap.Controller.ImportMap;
 import com.OpenStreetMap.Controller.ImportPlotMap;
 import com.OpenStreetMap.Controller.Visit;
@@ -48,6 +50,7 @@ public class GUI extends javax.swing.JFrame {
     ControllerRoutes controllerRoutes = new ControllerRoutes();
     ControllerStudenti controllerStudenti = new ControllerStudenti();
     ControllerStop controllerStop = new ControllerStop();
+    ControllerStop2 controllerStop2 = new ControllerStop2();
     Visit visit = new Visit();
     Dijkstra dijkstra = new Dijkstra();
 
@@ -98,6 +101,9 @@ public class GUI extends javax.swing.JFrame {
         studentiOutput_jPanel = new javax.swing.JPanel();
         calcolaFermate_jScrollPane = new javax.swing.JScrollPane();
         calcolaFermate_jPanel = new javax.swing.JPanel();
+        calcolaFermate2_jButton = new javax.swing.JButton();
+        valueOutput_jScrollPane = new javax.swing.JScrollPane();
+        valueOutput_jPanel = new javax.swing.JPanel();
         mappaPlot_jPanel = new JPanel(){
 
             @Override
@@ -171,7 +177,7 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
-        calcolaFermate_jButton.setText("Calcola Fermate");
+        calcolaFermate_jButton.setText("1");
         calcolaFermate_jButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 calcolaFermate_jButtonActionPerformed(evt);
@@ -188,13 +194,27 @@ public class GUI extends javax.swing.JFrame {
         calcolaFermate_jPanel.setLayout(new javax.swing.BoxLayout(calcolaFermate_jPanel, javax.swing.BoxLayout.PAGE_AXIS));
         calcolaFermate_jScrollPane.setViewportView(calcolaFermate_jPanel);
 
+        calcolaFermate2_jButton.setText("2");
+        calcolaFermate2_jButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                calcolaFermate2_jButtonActionPerformed(evt);
+            }
+        });
+
+        valueOutput_jPanel.setLayout(new javax.swing.BoxLayout(valueOutput_jPanel, javax.swing.BoxLayout.PAGE_AXIS));
+        valueOutput_jScrollPane.setViewportView(valueOutput_jPanel);
+
         javax.swing.GroupLayout mappaTratte_jPanelLayout = new javax.swing.GroupLayout(mappaTratte_jPanel);
         mappaTratte_jPanel.setLayout(mappaTratte_jPanelLayout);
         mappaTratte_jPanelLayout.setHorizontalGroup(
             mappaTratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(tratteOutput_jScrollPane, javax.swing.GroupLayout.Alignment.TRAILING)
-            .addComponent(utentiOutput_jScrollPane)
-            .addComponent(calcolaFermate_jScrollPane)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mappaTratte_jPanelLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(calcolaFermate_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(calcolaFermate2_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(utentiOutput_jScrollPane, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(mappaTratte_jPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(mappa_jCheckBox)
@@ -202,8 +222,9 @@ public class GUI extends javax.swing.JFrame {
                 .addComponent(tratte_jCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(utenti_jCheckBox)
-                .addContainerGap(18, Short.MAX_VALUE))
-            .addComponent(calcolaFermate_jButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(valueOutput_jScrollPane)
+            .addComponent(calcolaFermate_jScrollPane, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         mappaTratte_jPanelLayout.setVerticalGroup(
             mappaTratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -215,12 +236,16 @@ public class GUI extends javax.swing.JFrame {
                     .addComponent(utenti_jCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tratteOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                .addComponent(utentiOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addComponent(utentiOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(valueOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addComponent(calcolaFermate_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(calcolaFermate_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(calcolaFermate_jButton))
+                .addGroup(mappaTratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(calcolaFermate_jButton)
+                    .addComponent(calcolaFermate2_jButton)))
         );
 
         mappaPlot_jPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -326,7 +351,7 @@ public class GUI extends javax.swing.JFrame {
                     .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(infoTratte_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(tratte_jButton, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 167, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 201, Short.MAX_VALUE)
                 .addGroup(tratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
                     .addComponent(idealRoute_jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -439,7 +464,7 @@ public class GUI extends javax.swing.JFrame {
                             .addComponent(lon_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 22, Short.MAX_VALUE))
+                .addGap(0, 56, Short.MAX_VALUE))
         );
         altro_jPanelLayout.setVerticalGroup(
             altro_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -559,7 +584,7 @@ public class GUI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1296, Short.MAX_VALUE)
+            .addComponent(jTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1330, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -672,6 +697,7 @@ public class GUI extends javax.swing.JFrame {
 
             nodes_students = controllerStudenti.applyPercorsi(nodes, nodes_students, routes);
             nodes_students = controllerStudenti.idealPercorso(nodes_students);
+            nodes_students = controllerStudenti.setStudentsRoute(nodes_students);
 
             writeStudents();
             mappaPlot_jPanel.repaint();
@@ -726,11 +752,11 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_mappa_jCheckBoxActionPerformed
 
     private void calcolaFermate_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcolaFermate_jButtonActionPerformed
-
         controllerStop.run(nodes_students, routes);
 
         JOptionPane.showMessageDialog(null, "Create fermate");
         writeStops();
+        writeValue();
         mappaPlot_jPanel.repaint();
     }//GEN-LAST:event_calcolaFermate_jButtonActionPerformed
 
@@ -939,10 +965,17 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_mappaPlot_jPanelMouseDragged
 
     private void report_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_report_jMenuItemActionPerformed
-        
+
         file = selectPath(false);
         exportMap.exportReport(file, nodes_students, routes);
     }//GEN-LAST:event_report_jMenuItemActionPerformed
+
+    private void calcolaFermate2_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcolaFermate2_jButtonActionPerformed
+        controllerStop2.run(nodes_students, routes);
+        writeStops();
+        writeValue();
+        mappaPlot_jPanel.repaint();
+    }//GEN-LAST:event_calcolaFermate2_jButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -981,6 +1014,7 @@ public class GUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel altro_jPanel;
+    private javax.swing.JButton calcolaFermate2_jButton;
     private javax.swing.JButton calcolaFermate_jButton;
     private javax.swing.JPanel calcolaFermate_jPanel;
     private javax.swing.JScrollPane calcolaFermate_jScrollPane;
@@ -1028,6 +1062,8 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JTextArea utentiInput_jTextArea;
     private javax.swing.JScrollPane utentiOutput_jScrollPane;
     private javax.swing.JCheckBox utenti_jCheckBox;
+    private javax.swing.JPanel valueOutput_jPanel;
+    private javax.swing.JScrollPane valueOutput_jScrollPane;
     private javax.swing.JTextArea visitaOutput_jTextArea;
     private javax.swing.JButton visita_jButton;
     // End of variables declaration//GEN-END:variables
@@ -1053,12 +1089,12 @@ public class GUI extends javax.swing.JFrame {
 
     private File selectPath(boolean map) {
         FileNameExtensionFilter grfFilter;
-        if(map){
-             grfFilter = new FileNameExtensionFilter("osm.grf files (*osm.grf)", "osm.grf");
-        }else{
-             grfFilter = new FileNameExtensionFilter("txt files (*txt)", "txt");
+        if (map) {
+            grfFilter = new FileNameExtensionFilter("osm.grf files (*osm.grf)", "osm.grf");
+        } else {
+            grfFilter = new FileNameExtensionFilter("txt files (*txt)", "txt");
         }
-        
+
         JFileChooser jFileChooser = new JFileChooser();
         jFileChooser.setDialogTitle("Scegli cartella destinazione");
         jFileChooser.addChoosableFileFilter(grfFilter);
@@ -1096,6 +1132,8 @@ public class GUI extends javax.swing.JFrame {
         studentiOutput_jPanel.validate();
         calcolaFermate_jPanel.removeAll();
         calcolaFermate_jPanel.validate();
+        valueOutput_jPanel.removeAll();
+        valueOutput_jPanel.validate();
     }
 
     private void resetMark() {
@@ -1313,6 +1351,24 @@ public class GUI extends javax.swing.JFrame {
         calcolaFermate_jPanel.validate();
     }
 
+    private void writeValue() {
+        valueOutput_jPanel.removeAll();
+        valueOutput_jPanel.validate();
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
+            Route route = it.next();
+
+            JLabel route_JLabel = new JLabel("Tratta: " + route.getName() + "   value: " + route.getMinCombination().getValue());
+            route_JLabel.setForeground(route.getColor());
+            JSeparator jSeparator = new JSeparator();
+
+            valueOutput_jPanel.add(route_JLabel);
+            valueOutput_jPanel.add(jSeparator);
+
+        }
+
+        valueOutput_jPanel.validate();
+    }
+
     private void disegna(Graphics gg) {
 
         Graphics2D g = (Graphics2D) gg;
@@ -1412,10 +1468,9 @@ public class GUI extends javax.swing.JFrame {
                         double x = (r_n.getX() - minX) * rap;
                         double y = (r_n.getY() - minY) * rap;
 
-                        g.setFont(new Font("Arial", Font.PLAIN, (int) (12 * zoom)));
-                        g.drawString("" + r_n.getIndex(), (int) x, (int) y);
-                        g.fillRect((int) x, (int) y, (int) (5 * zoom), (int) (5 * zoom));
-
+                        //g.setFont(new Font("Arial", Font.PLAIN, (int) (12 * zoom)));
+                        //g.drawString("" + r_n.getIndex(), (int) x, (int) y);
+                        //g.fillRect((int) x, (int) y, (int) (5 * zoom), (int) (5 * zoom));
                         if (i != r.getPercorso().getNodes().size() - 1) {
                             Arc arc = Arc.arcByFromTo(r_n, r.getPercorso().getNodes().get(i + 1));
 

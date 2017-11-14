@@ -109,7 +109,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jTabbedPane" alignment="0" pref="1296" max="32767" attributes="0"/>
+          <Component id="jTabbedPane" alignment="0" pref="1330" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -164,18 +164,24 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="tratteOutput_jScrollPane" alignment="1" max="32767" attributes="0"/>
-                      <Component id="utentiOutput_jScrollPane" alignment="0" max="32767" attributes="0"/>
-                      <Component id="calcolaFermate_jScrollPane" alignment="0" max="32767" attributes="0"/>
-                      <Group type="102" alignment="0" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="calcolaFermate_jButton" min="-2" pref="107" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="calcolaFermate2_jButton" min="-2" pref="110" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="utentiOutput_jScrollPane" alignment="1" max="32767" attributes="0"/>
+                      <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="mappa_jCheckBox" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="tratte_jCheckBox" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="utenti_jCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="18" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
-                      <Component id="calcolaFermate_jButton" alignment="1" max="32767" attributes="0"/>
+                      <Component id="valueOutput_jScrollPane" alignment="0" max="32767" attributes="0"/>
+                      <Component id="calcolaFermate_jScrollPane" alignment="1" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -189,12 +195,17 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="tratteOutput_jScrollPane" min="-2" pref="245" max="-2" attributes="0"/>
-                          <EmptySpace pref="27" max="32767" attributes="0"/>
-                          <Component id="utentiOutput_jScrollPane" min="-2" pref="245" max="-2" attributes="0"/>
+                          <EmptySpace pref="10" max="32767" attributes="0"/>
+                          <Component id="utentiOutput_jScrollPane" min="-2" pref="233" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="valueOutput_jScrollPane" min="-2" pref="59" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                          <Component id="calcolaFermate_jScrollPane" min="-2" pref="199" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="calcolaFermate_jScrollPane" min="-2" pref="245" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="calcolaFermate_jButton" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="calcolaFermate_jButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="calcolaFermate2_jButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -229,7 +240,7 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="calcolaFermate_jButton">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Calcola Fermate"/>
+                    <Property name="text" type="java.lang.String" value="1"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="calcolaFermate_jButtonActionPerformed"/>
@@ -269,6 +280,26 @@
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
                     <Container class="javax.swing.JPanel" name="calcolaFermate_jPanel">
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout">
+                        <Property name="axis" type="int" value="3"/>
+                      </Layout>
+                    </Container>
+                  </SubComponents>
+                </Container>
+                <Component class="javax.swing.JButton" name="calcolaFermate2_jButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="2"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="calcolaFermate2_jButtonActionPerformed"/>
+                  </Events>
+                </Component>
+                <Container class="javax.swing.JScrollPane" name="valueOutput_jScrollPane">
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                  <SubComponents>
+                    <Container class="javax.swing.JPanel" name="valueOutput_jPanel">
 
                       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout">
                         <Property name="axis" type="int" value="3"/>
@@ -333,7 +364,7 @@
                               <Component id="tratte_jButton" alignment="1" min="-2" pref="550" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="167" max="32767" attributes="0"/>
+                      <EmptySpace pref="201" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="jScrollPane4" pref="550" max="32767" attributes="0"/>
                           <Component id="idealRoute_jButton" max="32767" attributes="0"/>
@@ -475,7 +506,7 @@
                               <Component id="jScrollPane10" min="-2" pref="383" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace min="0" pref="22" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="56" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

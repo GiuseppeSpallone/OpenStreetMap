@@ -17,6 +17,7 @@ public class Route {
     private int numFermate;
     private ArrayList<Node> fermate_effettive;
     private Combination minCombination;
+    public ArrayList<Node> students = new ArrayList<>();
 
     public static Route getRouteByName(HashSet<Route> routes, String name) {
         for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
@@ -107,7 +108,12 @@ public class Route {
     public void setMinCombination(Combination minCombination) {
         this.minCombination = minCombination;
     }
-    
-    
 
+    public ArrayList<Node> getStudents() {
+        return students;
+    }
+
+    public void setStudents(ArrayList<Node> students) {
+        this.students = students;
+    }
 }

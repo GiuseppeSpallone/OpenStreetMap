@@ -188,6 +188,19 @@ public class ControllerStudenti {
         return nodes_students;
     }
 
+    public HashSet<Node> setStudentsRoute(HashSet<Node> nodes_students) {
+        
+        for (Iterator<Node> it = nodes_students.iterator(); it.hasNext();) {
+            Node node_student = it.next();
+            Route route = node_student.getRoute();
+
+            route.students.add(node_student);
+
+        }
+
+        return nodes_students;
+    }
+
     public String printPercorsi(HashSet<Node> nodes_students) {
         String output_percorsi = "";
 
