@@ -1,6 +1,5 @@
 package com.OpenStreetMap.Controller;
 
-import com.OpenStreetMap.Model.Node;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.BufferedReader;

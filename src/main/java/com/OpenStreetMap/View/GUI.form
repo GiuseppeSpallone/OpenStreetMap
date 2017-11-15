@@ -28,6 +28,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="reset_jMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Reset"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reset_jMenuItemActionPerformed"/>
@@ -36,6 +37,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="cancella_jMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Cancella"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancella_jMenuItemActionPerformed"/>
@@ -44,6 +46,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="report_jMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Report"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="report_jMenuItemActionPerformed"/>
@@ -75,6 +78,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="inserisciDB_jMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Inserisci"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inserisciDB_jMenuItemActionPerformed"/>
@@ -120,6 +124,9 @@
   </Layout>
   <SubComponents>
     <Container class="javax.swing.JTabbedPane" name="jTabbedPane">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
       <SubComponents>
@@ -159,6 +166,9 @@
           </Layout>
           <SubComponents>
             <Container class="javax.swing.JPanel" name="mappaTratte_jPanel">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
 
               <Layout>
                 <DimensionLayout dim="0">
@@ -215,6 +225,7 @@
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="Mappa"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mappa_jCheckBoxActionPerformed"/>
@@ -224,6 +235,7 @@
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="Tratte"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tratte_jCheckBoxActionPerformed"/>
@@ -233,6 +245,7 @@
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="Studenti"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="utenti_jCheckBoxActionPerformed"/>
@@ -241,6 +254,7 @@
                 <Component class="javax.swing.JButton" name="calcolaFermate_jButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="1"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="calcolaFermate_jButtonActionPerformed"/>
@@ -290,6 +304,7 @@
                 <Component class="javax.swing.JButton" name="calcolaFermate2_jButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="2"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="calcolaFermate2_jButtonActionPerformed"/>

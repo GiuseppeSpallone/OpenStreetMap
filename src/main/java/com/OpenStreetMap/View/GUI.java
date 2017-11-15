@@ -7,7 +7,6 @@ import com.OpenStreetMap.Controller.ControllerStudenti;
 import com.OpenStreetMap.Controller.Database;
 import com.OpenStreetMap.Controller.Dijkstra;
 import com.OpenStreetMap.Controller.Export;
-import com.OpenStreetMap.Controller.GoogleCoordinate;
 import com.OpenStreetMap.Controller.ImportMap;
 import com.OpenStreetMap.Controller.ImportPlotMap;
 import com.OpenStreetMap.Controller.Visit;
@@ -24,27 +23,21 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
-import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
-import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GUI extends javax.swing.JFrame {
 
     ImportMap importMap = new ImportMap();
-    Export exportMap = new Export();
+    Export export = new Export();
     Database database = new Database();
     ImportPlotMap importPlotMap = new ImportPlotMap();
     ControllerRoutes controllerRoutes = new ControllerRoutes();
@@ -153,8 +146,13 @@ public class GUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
+        jTabbedPane.setEnabled(false);
+
+        mappaTratte_jPanel.setEnabled(false);
+
         mappa_jCheckBox.setSelected(true);
         mappa_jCheckBox.setText("Mappa");
+        mappa_jCheckBox.setEnabled(false);
         mappa_jCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mappa_jCheckBoxActionPerformed(evt);
@@ -163,6 +161,7 @@ public class GUI extends javax.swing.JFrame {
 
         tratte_jCheckBox.setSelected(true);
         tratte_jCheckBox.setText("Tratte");
+        tratte_jCheckBox.setEnabled(false);
         tratte_jCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tratte_jCheckBoxActionPerformed(evt);
@@ -171,6 +170,7 @@ public class GUI extends javax.swing.JFrame {
 
         utenti_jCheckBox.setSelected(true);
         utenti_jCheckBox.setText("Studenti");
+        utenti_jCheckBox.setEnabled(false);
         utenti_jCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 utenti_jCheckBoxActionPerformed(evt);
@@ -178,6 +178,7 @@ public class GUI extends javax.swing.JFrame {
         });
 
         calcolaFermate_jButton.setText("1");
+        calcolaFermate_jButton.setEnabled(false);
         calcolaFermate_jButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 calcolaFermate_jButtonActionPerformed(evt);
@@ -195,6 +196,7 @@ public class GUI extends javax.swing.JFrame {
         calcolaFermate_jScrollPane.setViewportView(calcolaFermate_jPanel);
 
         calcolaFermate2_jButton.setText("2");
+        calcolaFermate2_jButton.setEnabled(false);
         calcolaFermate2_jButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 calcolaFermate2_jButtonActionPerformed(evt);
@@ -525,6 +527,7 @@ public class GUI extends javax.swing.JFrame {
         mappa_jMenu.add(disegna_jMenuItem);
 
         reset_jMenuItem.setText("Reset");
+        reset_jMenuItem.setEnabled(false);
         reset_jMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 reset_jMenuItemActionPerformed(evt);
@@ -533,6 +536,7 @@ public class GUI extends javax.swing.JFrame {
         mappa_jMenu.add(reset_jMenuItem);
 
         cancella_jMenuItem.setText("Cancella");
+        cancella_jMenuItem.setEnabled(false);
         cancella_jMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancella_jMenuItemActionPerformed(evt);
@@ -541,6 +545,7 @@ public class GUI extends javax.swing.JFrame {
         mappa_jMenu.add(cancella_jMenuItem);
 
         report_jMenuItem.setText("Report");
+        report_jMenuItem.setEnabled(false);
         report_jMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 report_jMenuItemActionPerformed(evt);
@@ -569,6 +574,7 @@ public class GUI extends javax.swing.JFrame {
         database_jMenu.add(connettiDB_jMenuItem);
 
         inserisciDB_jMenuItem.setText("Inserisci");
+        inserisciDB_jMenuItem.setEnabled(false);
         inserisciDB_jMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 inserisciDB_jMenuItemActionPerformed(evt);
@@ -599,8 +605,12 @@ public class GUI extends javax.swing.JFrame {
         if (disegnaMap(file)) {
             reset_jMenuItem.setEnabled(true);
             cancella_jMenuItem.setEnabled(true);
+            report_jMenuItem.setEnabled(true);
+            mappaTratte_jPanel.setEnabled(true);
+            mappa_jCheckBox.setEnabled(true);
+            tratte_jCheckBox.setEnabled(true);
+            utenti_jCheckBox.setEnabled(true);
             jTabbedPane.setEnabled(true);
-
             mappaPlot_jPanel.repaint();
         }
     }//GEN-LAST:event_disegna_jMenuItemActionPerformed
@@ -627,8 +637,12 @@ public class GUI extends javax.swing.JFrame {
                         if (disegnaMap(file)) {
                             reset_jMenuItem.setEnabled(true);
                             cancella_jMenuItem.setEnabled(true);
+                            report_jMenuItem.setEnabled(true);
+                            mappaTratte_jPanel.setEnabled(true);
+                            mappa_jCheckBox.setEnabled(true);
+                            tratte_jCheckBox.setEnabled(true);
+                            utenti_jCheckBox.setEnabled(true);
                             jTabbedPane.setEnabled(true);
-
                             mappaPlot_jPanel.repaint();
                         }
                     }
@@ -652,7 +666,8 @@ public class GUI extends javax.swing.JFrame {
         dbStreetMap = database.connectDB("localhost", 27017, "StreetMap");
         if (dbStreetMap != null) {
             JOptionPane.showMessageDialog(null, "Connesso al DB");
-            inserisciDB_jMenuItem.setEnabled(false);
+            inserisciDB_jMenuItem.setEnabled(true);
+            connettiDB_jMenuItem.setEnabled(false);
         } else {
             JOptionPane.showMessageDialog(null, "Connessione al DB non riuscita");
         }
@@ -676,6 +691,7 @@ public class GUI extends javax.swing.JFrame {
         resetStudent();
         routes = null;
         nodes_students = null;
+        routes = null;
 
         mappaPlot_jPanel.repaint();
     }//GEN-LAST:event_reset_jMenuItemActionPerformed
@@ -689,6 +705,16 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_cancella_jMenuItemActionPerformed
 
     private void idealRoute_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idealRoute_jButtonActionPerformed
+        nodes_students = null;
+        mappaPlot_jPanel.repaint();
+
+        studentiOutput_jPanel.removeAll();
+        studentiOutput_jPanel.validate();
+        calcolaFermate_jPanel.removeAll();
+        calcolaFermate_jPanel.validate();
+        valueOutput_jPanel.removeAll();
+        valueOutput_jPanel.validate();
+
         String area = utentiInput_jTextArea.getText();
         nodes_students = controllerStudenti.read(area, nodes, routes);
 
@@ -699,6 +725,8 @@ public class GUI extends javax.swing.JFrame {
             nodes_students = controllerStudenti.idealPercorso(nodes_students);
             nodes_students = controllerStudenti.setStudentsRoute(nodes_students);
 
+            calcolaFermate_jButton.setEnabled(true);
+            calcolaFermate2_jButton.setEnabled(true);
             writeStudents();
             mappaPlot_jPanel.repaint();
         } else {
@@ -709,6 +737,18 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_idealRoute_jButtonActionPerformed
 
     private void tratte_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tratte_jButtonActionPerformed
+        tratteOutput_jPanel.removeAll();
+        tratteOutput_jPanel.validate();
+        studentiOutput_jPanel.removeAll();
+        studentiOutput_jPanel.validate();
+        calcolaFermate_jPanel.removeAll();
+        calcolaFermate_jPanel.validate();
+        valueOutput_jPanel.removeAll();
+        valueOutput_jPanel.validate();
+        routes = null;
+        nodes_students = null;
+        mappaPlot_jPanel.repaint();
+
         String area = tratteInput_jTextArea.getText();
         routes = controllerRoutes.read(area, nodes);
 
@@ -757,6 +797,8 @@ public class GUI extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, "Create fermate");
         writeStops();
         writeValue();
+
+        report_jMenuItem.setEnabled(true);
         mappaPlot_jPanel.repaint();
     }//GEN-LAST:event_calcolaFermate_jButtonActionPerformed
 
@@ -841,6 +883,7 @@ public class GUI extends javax.swing.JFrame {
 
         switch (option) {
             case MOSTRA:
+
                 Node n1 = Node.randomNode(nodes);
                 Node n2 = Node.randomNode(nodes);
                 tratteInput_jTextArea.removeAll();
@@ -871,6 +914,7 @@ public class GUI extends javax.swing.JFrame {
 
         switch (option) {
             case MOSTRA:
+
                 Node n1 = Node.randomNode(nodes);
                 Node n2 = Node.randomNode(nodes);
                 Node n3 = Node.randomNode(nodes);
@@ -879,6 +923,7 @@ public class GUI extends javax.swing.JFrame {
                 utentiInput_jTextArea.append("# trattaEsempio " + n1.getLat() + " " + n1.getLon() + " 10\n"
                         + "# trattaEsempio " + n2.getLat() + " " + n2.getLon() + " 15\n"
                         + "# trattaEsempio " + n3.getLat() + " " + n3.getLon() + " 30\n");
+
                 break;
             case ANNULLA:
                 break;
@@ -965,15 +1010,17 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_mappaPlot_jPanelMouseDragged
 
     private void report_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_report_jMenuItemActionPerformed
-
         file = selectPath(false);
-        exportMap.exportReport(file, nodes_students, routes);
+        export.exportReport(file, nodes_students, routes);
     }//GEN-LAST:event_report_jMenuItemActionPerformed
 
     private void calcolaFermate2_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcolaFermate2_jButtonActionPerformed
         controllerStop2.run(nodes_students, routes);
+
         writeStops();
         writeValue();
+
+        report_jMenuItem.setEnabled(true);
         mappaPlot_jPanel.repaint();
     }//GEN-LAST:event_calcolaFermate2_jButtonActionPerformed
 
@@ -1115,6 +1162,10 @@ public class GUI extends javax.swing.JFrame {
 
     private void resetComponent() {
 
+        report_jMenuItem.setEnabled(false);
+        calcolaFermate_jButton.setEnabled(false);
+        calcolaFermate2_jButton.setEnabled(false);
+
         tratteInput_jTextArea.setText("");
         utentiInput_jTextArea.setText("");
         sLat_jTextField.setText("");
@@ -1163,6 +1214,9 @@ public class GUI extends javax.swing.JFrame {
         routes = null;
         nodes_students = null;
 
+        mappa_jCheckBox.setEnabled(false);
+        tratte_jCheckBox.setEnabled(false);
+        utenti_jCheckBox.setEnabled(false);
         reset_jMenuItem.setEnabled(false);
         cancella_jMenuItem.setEnabled(false);
         jTabbedPane.setEnabled(false);
@@ -1242,9 +1296,9 @@ public class GUI extends javax.swing.JFrame {
 
     private boolean esportaMap(File file) {
         if (file != null) {
-            exportMap.exportMap(file, nodes, arcs);
-            nodes = exportMap.getNodes();
-            arcs = exportMap.getArcs();
+            export.exportMap(file, nodes, arcs);
+            nodes = export.getNodes();
+            arcs = export.getArcs();
 
             //manca controllo nodes, arcs is empty
             return true;
@@ -1468,9 +1522,9 @@ public class GUI extends javax.swing.JFrame {
                         double x = (r_n.getX() - minX) * rap;
                         double y = (r_n.getY() - minY) * rap;
 
-                        //g.setFont(new Font("Arial", Font.PLAIN, (int) (12 * zoom)));
-                        //g.drawString("" + r_n.getIndex(), (int) x, (int) y);
-                        //g.fillRect((int) x, (int) y, (int) (5 * zoom), (int) (5 * zoom));
+                        g.setFont(new Font("Arial", Font.PLAIN, (int) (12 * zoom)));
+                        g.drawString("" + r_n.getIndex(), (int) x, (int) y);
+                        g.fillRect((int) x, (int) y, (int) (5 * zoom), (int) (5 * zoom));
                         if (i != r.getPercorso().getNodes().size() - 1) {
                             Arc arc = Arc.arcByFromTo(r_n, r.getPercorso().getNodes().get(i + 1));
 

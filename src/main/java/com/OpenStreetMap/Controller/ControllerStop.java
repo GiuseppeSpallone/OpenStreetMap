@@ -15,8 +15,7 @@ public class ControllerStop {
     Dijkstra dijkstra = new Dijkstra();
 
     public void run(HashSet<Node> nodes_students, HashSet<Route> routes) {
-        creaCombinazioni(routes);
-        //creaCombinazioniDue(routes);
+        assegnaCombinazione(routes);
         assegnaFermateCombinazioni(routes, nodes_students);
         valutazioneCombinazioni(routes);
         minValutazioneCombinazione(routes);
@@ -24,16 +23,95 @@ public class ControllerStop {
         assegnaFermateStudents(routes, nodes_students);
     }
 
-    private void creaCombinazioni(HashSet<Route> routes) {
+    private void assegnaCombinazione(HashSet<Route> routes) {
+        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
+            Route route = it.next();
+            int numFermate = route.getNumFermate();
+
+            switch (numFermate) {
+                case 1:
+                    creaCombinazioni(route);
+                    break;
+                case 2:
+                    creaCombinazioniDue(route);
+                    break;
+                case 3:
+                    creaCombinazioniTre(route);
+                    break;
+            }
+        }
+
+        System.out.println("\n CREA COMBINAZIONI");
         for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
             Route route = it.next();
 
-            ArrayList<Combination> combinazioni_fermate = new ArrayList<>();
+            System.out.println("TRATTA: " + route.getName());
 
-            for (Iterator<Node> it2 = route.getPercorso().getNodes().iterator(); it2.hasNext();) {
-                Node node_route = it2.next();
-                Node partenza = route.getPercorso().getNodes().get(0);
-                Node arrivo = route.getPercorso().getNodes().get(route.getPercorso().getNodes().size() - 1);
+            for (Iterator<Combination> it2 = route.getCombinazioni().iterator(); it2.hasNext();) {
+                Combination combinazione = it2.next();
+
+                for (Iterator<Node> it3 = combinazione.getFermate().iterator(); it3.hasNext();) {
+                    Node stop = it3.next();
+
+                    System.out.print("  " + stop.getIndex());
+
+                }
+                System.out.println("\n");
+            }
+
+        }
+    }
+
+    private void creaCombinazioni(Route route) {
+
+        ArrayList<Combination> combinazioni_fermate = new ArrayList<>();
+
+        for (Iterator<Node> it2 = route.getPercorso().getNodes().iterator(); it2.hasNext();) {
+            Node node_route = it2.next();
+            Node partenza = route.getPercorso().getNodes().get(0);
+            Node arrivo = route.getPercorso().getNodes().get(route.getPercorso().getNodes().size() - 1);
+
+            ArrayList<Node> stops = null;
+
+            // per tratte fatte solo di due nodi
+            if (route.getPercorso().getNodes().size() == 2) {
+                stops = new ArrayList<>();
+
+                stops.add(partenza);
+                stops.add(arrivo);
+            } else if (node_route != partenza && node_route != arrivo) {
+                stops = new ArrayList<>();
+
+                stops.add(partenza);
+                stops.add(node_route);
+                stops.add(arrivo);
+
+            }
+
+            // per evitare ripetizioni
+            if (stops != null) {
+                if (!Combination.isStops(combinazioni_fermate, stops)) {
+                    Combination combination = new Combination();
+                    combination.setFermate(stops);
+                    combinazioni_fermate.add(combination);
+                }
+            }
+
+        }
+        route.setCombinazioni(combinazioni_fermate);
+    }
+
+    private void creaCombinazioniDue(Route route) {
+        Node partenza = route.getPercorso().getNodes().get(0);
+        Node arrivo = route.getPercorso().getNodes().get(route.getPercorso().getNodes().size() - 1);
+
+        ArrayList<Combination> combinazioni_fermate = new ArrayList<>();
+
+        for (Iterator<Node> it2 = route.getPercorso().getNodes().iterator(); it2.hasNext();) {
+            Node node_routeUno = it2.next();
+
+            for (Iterator<Node> it3 = route.getPercorso().getNodes().iterator(); it3.hasNext();) {
+                Node node_routeDue = it3.next();
 
                 ArrayList<Node> stops = null;
 
@@ -43,11 +121,12 @@ public class ControllerStop {
 
                     stops.add(partenza);
                     stops.add(arrivo);
-                } else if (node_route != partenza && node_route != arrivo) {
+                } else if (node_routeUno != partenza && node_routeUno != arrivo && node_routeDue != partenza && node_routeDue != arrivo && node_routeUno != node_routeDue) {
                     stops = new ArrayList<>();
 
                     stops.add(partenza);
-                    stops.add(node_route);
+                    stops.add(node_routeUno);
+                    stops.add(node_routeDue);
                     stops.add(arrivo);
 
                 }
@@ -64,41 +143,22 @@ public class ControllerStop {
             }
             route.setCombinazioni(combinazioni_fermate);
         }
-
-        System.out.println("\n CREA COMBINAZIONI");
-        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
-            Route route = it.next();
-
-            System.out.println("TRATTA: " + route.getName());
-
-            for (Iterator<Combination> it2 = route.getCombinazioni().iterator(); it2.hasNext();) {
-                Combination combinazione = it2.next();
-
-                for (Iterator<Node> it3 = combinazione.getFermate().iterator(); it3.hasNext();) {
-                    Node stop = it3.next();
-
-                    System.out.print("  " + stop.getIndex());
-
-                }
-                System.out.println("\n");
-            }
-
-        }
     }
 
-    private void creaCombinazioniDue(HashSet<Route> routes) {
-        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
-            Route route = it.next();
-            Node partenza = route.getPercorso().getNodes().get(0);
-            Node arrivo = route.getPercorso().getNodes().get(route.getPercorso().getNodes().size() - 1);
+    private void creaCombinazioniTre(Route route) {
+        Node partenza = route.getPercorso().getNodes().get(0);
+        Node arrivo = route.getPercorso().getNodes().get(route.getPercorso().getNodes().size() - 1);
 
-            ArrayList<Combination> combinazioni_fermate = new ArrayList<>();
+        ArrayList<Combination> combinazioni_fermate = new ArrayList<>();
 
-            for (Iterator<Node> it2 = route.getPercorso().getNodes().iterator(); it2.hasNext();) {
-                Node node_routeUno = it2.next();
+        for (Iterator<Node> it2 = route.getPercorso().getNodes().iterator(); it2.hasNext();) {
+            Node node_routeUno = it2.next();
 
-                for (Iterator<Node> it3 = route.getPercorso().getNodes().iterator(); it3.hasNext();) {
-                    Node node_routeDue = it3.next();
+            for (Iterator<Node> it3 = route.getPercorso().getNodes().iterator(); it3.hasNext();) {
+                Node node_routeDue = it3.next();
+
+                for (Iterator<Node> it4 = route.getPercorso().getNodes().iterator(); it4.hasNext();) {
+                    Node node_routeTre = it4.next();
 
                     ArrayList<Node> stops = null;
 
@@ -108,12 +168,13 @@ public class ControllerStop {
 
                         stops.add(partenza);
                         stops.add(arrivo);
-                    } else if (node_routeUno != partenza && node_routeUno != arrivo && node_routeDue != partenza && node_routeDue != arrivo && node_routeUno != node_routeDue) {
+                    } else if (node_routeUno != partenza && node_routeUno != arrivo && node_routeDue != partenza && node_routeDue != arrivo && node_routeTre != partenza && node_routeTre != arrivo && node_routeUno != node_routeDue && node_routeUno != node_routeTre && node_routeDue != node_routeTre) {
                         stops = new ArrayList<>();
 
                         stops.add(partenza);
                         stops.add(node_routeUno);
                         stops.add(node_routeDue);
+                        stops.add(node_routeTre);
                         stops.add(arrivo);
 
                     }
@@ -130,26 +191,6 @@ public class ControllerStop {
                 }
                 route.setCombinazioni(combinazioni_fermate);
             }
-        }
-
-        System.out.println("\n CREA COMBINAZIONI");
-        for (Iterator<Route> it = routes.iterator(); it.hasNext();) {
-            Route route = it.next();
-
-            System.out.println("TRATTA: " + route.getName());
-
-            for (Iterator<Combination> it2 = route.getCombinazioni().iterator(); it2.hasNext();) {
-                Combination combinazione = it2.next();
-
-                for (Iterator<Node> it3 = combinazione.getFermate().iterator(); it3.hasNext();) {
-                    Node stop = it3.next();
-
-                    System.out.print("  " + stop.getIndex());
-
-                }
-                System.out.println("\n");
-            }
-
         }
     }
 
