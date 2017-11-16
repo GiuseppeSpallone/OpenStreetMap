@@ -6,6 +6,7 @@ import com.OpenStreetMap.Model.Node;
 import java.util.*;
 
 public class Visit {
+
     ArrayList<Node> nodes = new ArrayList<>();
 
     public ArrayList<Node> visita(HashMap<Long, Node> nodes, Node startingNode) {
@@ -24,7 +25,7 @@ public class Visit {
         node.setComp(1);
         nodes.add(node);
 
-        for (Iterator<Arc> it = node.nd_arcs.iterator(); it.hasNext(); ) {
+        for (Iterator<Arc> it = node.nd_arcs.iterator(); it.hasNext();) {
             Arc arc = it.next();
 
             arc.setMark(1);
@@ -41,11 +42,11 @@ public class Visit {
 
     private void reset(HashMap<Long, Node> nodes) {
 
-        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext();) {
             Node node = it.next();
             node.setMark(0);
 
-            for (Iterator<Arc> it1 = node.nd_arcs.iterator(); it1.hasNext(); ) {
+            for (Iterator<Arc> it1 = node.nd_arcs.iterator(); it1.hasNext();) {
                 Arc arc = it1.next();
                 arc.setMark(0);
             }
@@ -55,7 +56,7 @@ public class Visit {
     public String printVisit(ArrayList<Node> nodes) {
         String output_visit = "";
 
-        for (Iterator<Node> it = nodes.iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nodes.iterator(); it.hasNext();) {
             Node node = it.next();
 
             output_visit += "id: " + node.getId() + " index: " + node.getIndex() + " lat: " + node.getLat() + " lon: " + node.getLon() + "\n";
@@ -73,14 +74,14 @@ public class Visit {
                 return new Integer(o1.nd_arcs.size()).compareTo(o2.nd_arcs.size()) * -1;
             }
         });
-        for (Iterator<Node> it = nd.iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nd.iterator(); it.hasNext();) {
             Node n = it.next();
             n.setComp(0);
         }
         int c = 1;
         int max = 0;
         int csel = 0;
-        for (Iterator<Node> it = nd.iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nd.iterator(); it.hasNext();) {
             Node n = it.next();
             if (n.getComp() == 0) {
                 int sz = creaComp(c, n);
@@ -95,17 +96,17 @@ public class Visit {
         }
         System.out.println("removeUnconnected B");
         ArrayList<Node> del = new ArrayList<>(nodes.size());
-        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext();) {
             Node n = it.next();
             if (n.getComp() != csel) {
                 del.add(n);
             }
         }
         System.out.println("Del Node Component: " + del.size());
-        for (Iterator<Node> it = del.iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = del.iterator(); it.hasNext();) {
             Node node = it.next();
             nodes.remove(node.getId());
-            for (Iterator<Arc> it1 = node.nd_arcs.iterator(); it1.hasNext(); ) {
+            for (Iterator<Arc> it1 = node.nd_arcs.iterator(); it1.hasNext();) {
                 Arc a = it1.next();
                 arc.remove(a);
             }
@@ -117,7 +118,7 @@ public class Visit {
     private int creaComp(int c, Node n) {
         int sz = 1;
         n.setComp(c);
-        for (Iterator<Arc> it = n.nd_arcs.iterator(); it.hasNext(); ) {
+        for (Iterator<Arc> it = n.nd_arcs.iterator(); it.hasNext();) {
             Arc arc = it.next();
             if (arc.getFrom().getComp() != c) {
                 sz += creaComp(c, arc.getFrom());
@@ -134,7 +135,7 @@ public class Visit {
         HashSet<Node> raggiunti = new HashSet<>();
         strongConnect.add(rif.getId());
 
-        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext();) {
             Node n = it.next();
             n.setComp(0);
         }
@@ -142,7 +143,7 @@ public class Visit {
         visitaFrom(rif);
 
         ArrayList<Node> del = new ArrayList<>();
-        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext();) {
             Node n = it.next();
             if (n.getComp() == 0) {
                 del.add(n);
@@ -187,10 +188,10 @@ public class Visit {
         }
 
         System.out.println("Del Node Strong Connect: " + del.size());
-        for (Iterator<Node> it = del.iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = del.iterator(); it.hasNext();) {
             Node node = it.next();
             nodes.remove(node.getId());
-            for (Iterator<Arc> it1 = node.nd_arcs.iterator(); it1.hasNext(); ) {
+            for (Iterator<Arc> it1 = node.nd_arcs.iterator(); it1.hasNext();) {
                 Arc a = it1.next();
                 arc.remove(a);
             }
@@ -203,7 +204,7 @@ public class Visit {
         raggiunti.add(n);
         int fmx = Integer.MIN_VALUE;
         Node nx = null;
-        for (Iterator<Arc> it = n.nd_arcs.iterator(); it.hasNext(); ) {
+        for (Iterator<Arc> it = n.nd_arcs.iterator(); it.hasNext();) {
             Arc arc = it.next();
             if (arc.getFrom() == n) {
                 if (arc.getTo().getComp() == 2) {
@@ -226,7 +227,7 @@ public class Visit {
             return true;
         }
 
-        for (Iterator<Arc> it = n.nd_arcs.iterator(); it.hasNext(); ) {
+        for (Iterator<Arc> it = n.nd_arcs.iterator(); it.hasNext();) {
             Arc arc = it.next();
             if (arc.getFrom() == n) {
                 if (arc.getTo().getComp() == 0 && arc.getTo() != nx) {
@@ -240,6 +241,5 @@ public class Visit {
         }
         return false;
     }
-
 
 }

@@ -1,4 +1,4 @@
-package test;
+package com.Test;
 
 import ilog.concert.IloLinearNumExpr;
 import ilog.concert.IloNumVar;
@@ -8,24 +8,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Random;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class TestPMedian {
 
     public static void main(String[] args) {
+        Controller controller = new Controller();
 
-        Parameter parameter1 = setParameters(20, 100, 1);
-        Parameter parameter2 = setParameters(20, 100, 2);
-        Parameter parameter3 = setParameters(20, 100, 3);
-
-        ArrayList<Parameter> parameters = new ArrayList<>();
-        parameters.add(parameter1);
-        parameters.add(parameter2);
-        parameters.add(parameter3);
+        ArrayList<Parameter> parameters = controller.nodiDomanda();
 
         for (int i = 0; i < parameters.size(); i++) {
+            System.out.println("***** Parameter " + (i + 1) + " *****");
             run(parameters.get(i));
         }
 
@@ -34,68 +28,19 @@ public class TestPMedian {
 
     }
 
-    private static Parameter setParameters(int s, int f, int p) {
-        //insieme studenti
-        Random r = new Random(1);
-
-        int studenti[] = new int[s];
-
-        for (int i = 0; i < s; i++) {
-            studenti[i] = r.nextInt(10) + 1;
-        }
-
-        //insieme fermate candidate
-        int fermate[] = new int[f];
-
-        //distranze studente - fermata candidata
-        int distanze[][] = new int[s][f];
-
-        for (int i = 0; i < s; i++) {
-            int d = r.nextInt(50) + 10;
-
-            int k = r.nextInt(10) - 4;
-
-            if (k == 0) {
-                k = -1;
-            }
-
-            for (int j = 0; j < f; j++) {
-                distanze[i][j] = r.nextInt(100) + 10;
-                //distanze[i][j] = d;
-                d = d + k;
-                if ((d + k) < 0) {
-                    k = k * -1;
-                    d = d + (2 * k);
-                }
-
-                if (r.nextInt(100) < 10) {
-                    k = r.nextInt(10) - 4;
-                }
-            }
-        }
-
-        Parameter parameter = new Parameter();
-        parameter.setStudenti(studenti);
-        parameter.setFermate(fermate);
-        parameter.setDistanze(distanze);
-        parameter.setP(p);
-
-        return parameter;
-    }
-
     private static void run(Parameter parameter) {
-        int[] studenti = parameter.getStudenti();
-        int[] fermate = parameter.getFermate();
+        long startTime = System.currentTimeMillis();
+
+        int[] studenti = parameter.getNodiStudenti();
+        int[] fermate = parameter.getNumFermateCandidate();
         int[][] distanze = parameter.getDistanze();
-        int p = parameter.getP();
+        int p = parameter.getNumFermateDaFissare();
 
         try {
 
             IloCplex model = new IloCplex();
 
-            /**
-             * insieme di variabili*
-             */
+            //variabili
             IloNumVar[] x = model.boolVarArray(fermate.length);
             IloNumVar[][] y = new IloNumVar[studenti.length][];
 
@@ -104,9 +49,7 @@ public class TestPMedian {
                 y[i] = model.boolVarArray(fermate.length);
             }
 
-            /**
-             * funzione obiettivo*
-             */
+            //funzione obiettivo
             IloLinearNumExpr function = model.linearNumExpr();
 
             for (int i = 0; i < studenti.length; i++) {
@@ -116,9 +59,6 @@ public class TestPMedian {
             }
             model.addMinimize(function);
 
-            /**
-             * vincoli*
-             */
             //vincolo 1
             IloLinearNumExpr v = model.linearNumExpr();
             for (int i = 0; i < fermate.length; i++) {
@@ -144,21 +84,11 @@ public class TestPMedian {
                 }
             }
 
-            /**
-             * soluzione*
-             */
+            //soluzione
             if (model.solve()) {
                 parameter.setValue(model.getObjValue());
                 System.out.println("Solution status: " + model.getStatus());
                 System.out.println("Solution value: " + model.getObjValue());
-
-                for (int i = 0; i < fermate.length; i++) {
-                    if (model.getValue(x[i]) > 0.5) {
-                        System.out.print("fermata " + (i + 1) + " ");
-                    }
-                }
-                System.out.println("");
-                System.out.println("Solution status: " + model.getStatus());
 
             } else {
                 System.out.println("Solution status: " + model.getStatus());
@@ -167,7 +97,9 @@ public class TestPMedian {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        long endTime = System.currentTimeMillis();
+        long time = (endTime - startTime);
+        parameter.setTime(time);
     }
 
     public static void export(File file, ArrayList<Parameter> parameters) {
@@ -178,15 +110,22 @@ public class TestPMedian {
             outFile = new FileWriter(file);
             PrintWriter out = new PrintWriter(outFile);
 
-            out.println("V   \tS   \tN   \tF");
-
             for (int i = 0; i < parameters.size(); i++) {
-                double valore = (parameters.get(i).getValue() / parameters.get(i).getStudenti().length);
-                int numStudenti = parameters.get(i).getStudenti().length;
-                int numNodi = parameters.get(i).getFermate().length;
-                int numFermate = parameters.get(i).getP();
-                out.println(valore + "\t" + numStudenti + "\t" + numNodi + "\t" + numFermate);
-                out.println("---------------------------------------------");
+                Parameter parameter = parameters.get(i);
+
+                int valore = (int) (parameter.getValue() / parameter.getNumTotStudenti());
+                long time = parameter.getTime();
+                int seed = parameter.getSeedRandom();
+                int domanda = parameter.getNodiStudenti().length;
+                int minDomanda = parameter.getMinNumStudenti();
+                int maxDomanda = parameter.getMaxNumStudenti();
+                int totDomanda = parameter.getNumTotStudenti();
+                int offerta = parameter.getNumFermateCandidate().length;
+                int minDistanza = parameter.getMinDistanza();
+                int maxDistanza = parameter.getMaxDistanza();
+                int p = parameter.getNumFermateDaFissare();
+
+                out.println(valore + " \t " + time + " \t " + seed + " \t " + domanda + " \t " + " \t " + minDomanda + " \t " + maxDomanda + " \t " + totDomanda + " \t " + offerta + " \t " + " \t " + minDistanza + " \t " + maxDistanza + " \t " + p);
 
             }
 

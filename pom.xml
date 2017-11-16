@@ -49,15 +49,15 @@
             <version>20090211</version>
         </dependency>
         <dependency>
-            <groupId>cplex</groupId>
-            <artifactId>cplex</artifactId>
-            <version>12.7.1</version>
-        </dependency>
-        <dependency>
             <groupId>jdom</groupId>
             <artifactId>jdom</artifactId>
             <version>1.0</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>cplex</groupId>
+            <artifactId>cplex</artifactId>
+            <version>12.7.1</version>
         </dependency>
     </dependencies>
 </project>

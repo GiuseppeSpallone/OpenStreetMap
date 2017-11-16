@@ -2,7 +2,7 @@ package com.OpenStreetMap.View;
 
 import com.OpenStreetMap.Controller.ControllerRoutes;
 import com.OpenStreetMap.Controller.ControllerStop;
-import com.OpenStreetMap.Controller.ControllerStop2;
+//import com.OpenStreetMap.Controller.ControllerStop2;
 import com.OpenStreetMap.Controller.ControllerStudenti;
 import com.OpenStreetMap.Controller.Database;
 import com.OpenStreetMap.Controller.Dijkstra;
@@ -43,7 +43,7 @@ public class GUI extends javax.swing.JFrame {
     ControllerRoutes controllerRoutes = new ControllerRoutes();
     ControllerStudenti controllerStudenti = new ControllerStudenti();
     ControllerStop controllerStop = new ControllerStop();
-    ControllerStop2 controllerStop2 = new ControllerStop2();
+    //ControllerStop2 controllerStop2 = new ControllerStop2();
     Visit visit = new Visit();
     Dijkstra dijkstra = new Dijkstra();
 
@@ -1015,7 +1015,7 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_report_jMenuItemActionPerformed
 
     private void calcolaFermate2_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcolaFermate2_jButtonActionPerformed
-        controllerStop2.run(nodes_students, routes);
+        //controllerStop2.run(nodes_students, routes);
 
         writeStops();
         writeValue();
