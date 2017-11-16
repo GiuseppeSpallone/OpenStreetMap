@@ -1522,9 +1522,9 @@ public class GUI extends javax.swing.JFrame {
                         double x = (r_n.getX() - minX) * rap;
                         double y = (r_n.getY() - minY) * rap;
 
-                        g.setFont(new Font("Arial", Font.PLAIN, (int) (12 * zoom)));
-                        g.drawString("" + r_n.getIndex(), (int) x, (int) y);
-                        g.fillRect((int) x, (int) y, (int) (5 * zoom), (int) (5 * zoom));
+                        //g.setFont(new Font("Arial", Font.PLAIN, (int) (12 * zoom)));
+                        //g.drawString("" + r_n.getIndex(), (int) x, (int) y);
+                        //g.fillRect((int) x, (int) y, (int) (5 * zoom), (int) (5 * zoom));
                         if (i != r.getPercorso().getNodes().size() - 1) {
                             Arc arc = Arc.arcByFromTo(r_n, r.getPercorso().getNodes().get(i + 1));
 
