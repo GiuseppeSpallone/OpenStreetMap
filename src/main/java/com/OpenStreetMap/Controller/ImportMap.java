@@ -139,8 +139,8 @@ public class ImportMap {
             Node rif = visit.removeUnconnected(nodes, arcs);
             System.out.println("rif: " + rif.getId());
 
-            System.out.println("REMOVE NOT STRONG CONNECTED");
-            visit.removeNotStrongConnected(nodes, arcs, rif);
+//            System.out.println("REMOVE NOT STRONG CONNECTED");
+//            visit.removeNotStrongConnected(nodes, arcs, rif);
 
             System.out.println("REMOVE MITERS");
             removeMiters(buildings, arcs);

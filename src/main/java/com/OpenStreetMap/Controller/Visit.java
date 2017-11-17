@@ -116,18 +116,24 @@ public class Visit {
     }
 
     private int creaComp(int c, Node n) {
-        int sz = 1;
-        n.setComp(c);
-        for (Iterator<Arc> it = n.nd_arcs.iterator(); it.hasNext();) {
-            Arc arc = it.next();
-            if (arc.getFrom().getComp() != c) {
-                sz += creaComp(c, arc.getFrom());
+        try {
+            int sz = 1;
+            n.setComp(c);
+            for (Iterator<Arc> it = n.nd_arcs.iterator(); it.hasNext();) {
+                Arc arc = it.next();
+                if (arc.getFrom().getComp() != c) {
+                    sz += creaComp(c, arc.getFrom());
+                }
+                if (arc.getTo().getComp() != c) {
+                    sz += creaComp(c, arc.getTo());
+                }
             }
-            if (arc.getTo().getComp() != c) {
-                sz += creaComp(c, arc.getTo());
-            }
+            return sz;
+
+        } catch (StackOverflowError e) {
+            System.err.println("Errore ricorsione");
         }
-        return sz;
+        return 1;
     }
 
     public void removeNotStrongConnected(HashMap<Long, Node> nodes, HashSet<Arc> arc, Node rif) {

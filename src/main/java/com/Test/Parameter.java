@@ -6,7 +6,7 @@ public class Parameter {
     
     private int seedRandom;
     private int[] nodiStudenti;
-    private int minNumStudenti; //domanda minim per ogni nodo studenti
+    private int minNumStudenti; //domanda minima per ogni nodo studenti
     private int maxNumStudenti; //domanda massima per ogni nodo studenti
     private int numTotStudenti;
     private int[] numFermateCandidate; 

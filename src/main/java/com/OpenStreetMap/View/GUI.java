@@ -2,7 +2,7 @@ package com.OpenStreetMap.View;
 
 import com.OpenStreetMap.Controller.ControllerRoutes;
 import com.OpenStreetMap.Controller.ControllerStop;
-//import com.OpenStreetMap.Controller.ControllerStop2;
+import com.OpenStreetMap.Controller.ControllerStop2;
 import com.OpenStreetMap.Controller.ControllerStudenti;
 import com.OpenStreetMap.Controller.Database;
 import com.OpenStreetMap.Controller.Dijkstra;
@@ -43,7 +43,7 @@ public class GUI extends javax.swing.JFrame {
     ControllerRoutes controllerRoutes = new ControllerRoutes();
     ControllerStudenti controllerStudenti = new ControllerStudenti();
     ControllerStop controllerStop = new ControllerStop();
-    //ControllerStop2 controllerStop2 = new ControllerStop2();
+    ControllerStop2 controllerStop2 = new ControllerStop2();
     Visit visit = new Visit();
     Dijkstra dijkstra = new Dijkstra();
 
@@ -718,20 +718,16 @@ public class GUI extends javax.swing.JFrame {
         String area = utentiInput_jTextArea.getText();
         nodes_students = controllerStudenti.read(area, nodes, routes);
 
-        if (!nodes_students.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Creati nodi studenti ");
+        nodes_students = controllerStudenti.applyPercorsi(nodes, nodes_students, routes);
+        nodes_students = controllerStudenti.idealPercorso(nodes_students);
+        nodes_students = controllerStudenti.setStudentsRoute(nodes_students);
 
-            nodes_students = controllerStudenti.applyPercorsi(nodes, nodes_students, routes);
-            nodes_students = controllerStudenti.idealPercorso(nodes_students);
-            nodes_students = controllerStudenti.setStudentsRoute(nodes_students);
+        JOptionPane.showMessageDialog(null, "Creati nodi studenti ");
 
-            calcolaFermate_jButton.setEnabled(true);
-            calcolaFermate2_jButton.setEnabled(true);
-            writeStudents();
-            mappaPlot_jPanel.repaint();
-        } else {
-            JOptionPane.showMessageDialog(null, "Nodi studenti non creati");
-        }
+        calcolaFermate_jButton.setEnabled(true);
+        calcolaFermate2_jButton.setEnabled(true);
+        writeStudents();
+        mappaPlot_jPanel.repaint();
 
 
     }//GEN-LAST:event_idealRoute_jButtonActionPerformed
@@ -1015,7 +1011,7 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_report_jMenuItemActionPerformed
 
     private void calcolaFermate2_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcolaFermate2_jButtonActionPerformed
-        //controllerStop2.run(nodes_students, routes);
+        controllerStop2.run(nodes_students, routes);
 
         writeStops();
         writeValue();
