@@ -60,6 +60,7 @@ public class GUI extends javax.swing.JFrame {
     boolean plotMap = true;
     boolean plotRoute = true;
     boolean plotStudents = true;
+    boolean plotId = true;
 
     double zoom = 1.0;
     double sfasx = 0;
@@ -87,6 +88,7 @@ public class GUI extends javax.swing.JFrame {
         mappa_jCheckBox = new javax.swing.JCheckBox();
         tratte_jCheckBox = new javax.swing.JCheckBox();
         utenti_jCheckBox = new javax.swing.JCheckBox();
+        id_jCheckBox = new javax.swing.JCheckBox();
         calcolaFermate_jButton = new javax.swing.JButton();
         tratteOutput_jScrollPane = new javax.swing.JScrollPane();
         tratteOutput_jPanel = new javax.swing.JPanel();
@@ -151,7 +153,7 @@ public class GUI extends javax.swing.JFrame {
         mappaTratte_jPanel.setEnabled(false);
 
         mappa_jCheckBox.setSelected(true);
-        mappa_jCheckBox.setText("Mappa");
+        mappa_jCheckBox.setText("M");
         mappa_jCheckBox.setEnabled(false);
         mappa_jCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -160,7 +162,7 @@ public class GUI extends javax.swing.JFrame {
         });
 
         tratte_jCheckBox.setSelected(true);
-        tratte_jCheckBox.setText("Tratte");
+        tratte_jCheckBox.setText("T");
         tratte_jCheckBox.setEnabled(false);
         tratte_jCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -169,11 +171,20 @@ public class GUI extends javax.swing.JFrame {
         });
 
         utenti_jCheckBox.setSelected(true);
-        utenti_jCheckBox.setText("Studenti");
+        utenti_jCheckBox.setText("S");
         utenti_jCheckBox.setEnabled(false);
         utenti_jCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 utenti_jCheckBoxActionPerformed(evt);
+            }
+        });
+
+        id_jCheckBox.setSelected(true);
+        id_jCheckBox.setText("id");
+        id_jCheckBox.setEnabled(false);
+        id_jCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                id_jCheckBoxActionPerformed(evt);
             }
         });
 
@@ -220,10 +231,12 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(mappaTratte_jPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(mappa_jCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(41, 41, 41)
                 .addComponent(tratte_jCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(utenti_jCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(id_jCheckBox)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(valueOutput_jScrollPane)
             .addComponent(calcolaFermate_jScrollPane, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -235,7 +248,8 @@ public class GUI extends javax.swing.JFrame {
                 .addGroup(mappaTratte_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(mappa_jCheckBox)
                     .addComponent(tratte_jCheckBox)
-                    .addComponent(utenti_jCheckBox))
+                    .addComponent(utenti_jCheckBox)
+                    .addComponent(id_jCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tratteOutput_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
@@ -608,6 +622,7 @@ public class GUI extends javax.swing.JFrame {
             report_jMenuItem.setEnabled(true);
             mappaTratte_jPanel.setEnabled(true);
             mappa_jCheckBox.setEnabled(true);
+            id_jCheckBox.setEnabled(true);
             tratte_jCheckBox.setEnabled(true);
             utenti_jCheckBox.setEnabled(true);
             jTabbedPane.setEnabled(true);
@@ -640,6 +655,7 @@ public class GUI extends javax.swing.JFrame {
                             report_jMenuItem.setEnabled(true);
                             mappaTratte_jPanel.setEnabled(true);
                             mappa_jCheckBox.setEnabled(true);
+                            id_jCheckBox.setEnabled(true);
                             tratte_jCheckBox.setEnabled(true);
                             utenti_jCheckBox.setEnabled(true);
                             jTabbedPane.setEnabled(true);
@@ -1020,6 +1036,16 @@ public class GUI extends javax.swing.JFrame {
         mappaPlot_jPanel.repaint();
     }//GEN-LAST:event_calcolaFermate2_jButtonActionPerformed
 
+    private void id_jCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_id_jCheckBoxActionPerformed
+        if (id_jCheckBox.isSelected()) {
+            plotId = true;
+            mappaPlot_jPanel.repaint();
+        } else {
+            plotId = false;
+            mappaPlot_jPanel.repaint();
+        }
+    }//GEN-LAST:event_id_jCheckBoxActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1071,6 +1097,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JButton dijkstra_jButton;
     private javax.swing.JMenuItem disegna_jMenuItem;
     private javax.swing.JMenuItem esci_jMenuItem;
+    private javax.swing.JCheckBox id_jCheckBox;
     private javax.swing.JButton idealRoute_jButton;
     private javax.swing.JButton infoTratte_jButton;
     private javax.swing.JButton infoUtenti_jButton;
@@ -1211,6 +1238,7 @@ public class GUI extends javax.swing.JFrame {
         nodes_students = null;
 
         mappa_jCheckBox.setEnabled(false);
+        id_jCheckBox.setEnabled(false);
         tratte_jCheckBox.setEnabled(false);
         utenti_jCheckBox.setEnabled(false);
         reset_jMenuItem.setEnabled(false);
@@ -1521,9 +1549,12 @@ public class GUI extends javax.swing.JFrame {
                         double x = (r_n.getX() - minX) * rap;
                         double y = (r_n.getY() - minY) * rap;
 
-                        //g.setFont(new Font("Arial", Font.PLAIN, (int) (12 * zoom)));
-                        //g.drawString("" + r_n.getIndex(), (int) x, (int) y);
-                        //g.fillRect((int) x, (int) y, (int) (5 * zoom), (int) (5 * zoom));
+                        if (plotId) {
+                            g.setFont(new Font("Arial", Font.PLAIN, (int) (12 * zoom)));
+                            g.drawString("" + r_n.getIndex(), (int) x, (int) y);
+                            g.fillRect((int) x, (int) y, (int) (5 * zoom), (int) (5 * zoom));
+                        }
+
                         if (i != r.getPercorso().getNodes().size() - 1) {
                             Arc arc = Arc.arcByFromTo(r_n, r.getPercorso().getNodes().get(i + 1));
 
@@ -1565,9 +1596,12 @@ public class GUI extends javax.swing.JFrame {
                         if (num_studenti > 0) {
                             g.setColor(route.getColor());
                             g.fillOval((int) x1, (int) y1, num_studenti, num_studenti);
-                            g.setFont(new Font("Arial", Font.PLAIN, (int) (12 * zoom)));
-                            //g.drawString("" + n.getNum_studenti(), (int) x1, (int) y1); //
-                            g.drawString("" + n.getIndex(), (int) x1, (int) y1);
+
+                            if (plotId) {
+                                g.setFont(new Font("Arial", Font.PLAIN, (int) (12 * zoom)));
+                                g.drawString("" + n.getIndex(), (int) x1, (int) y1);
+                            }
+
                         }
 
                     }

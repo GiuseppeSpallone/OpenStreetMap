@@ -184,10 +184,12 @@
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="mappa_jCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
                           <Component id="tratte_jCheckBox" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="utenti_jCheckBox" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="id_jCheckBox" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
                       <Component id="valueOutput_jScrollPane" alignment="0" max="32767" attributes="0"/>
@@ -202,6 +204,7 @@
                               <Component id="mappa_jCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="tratte_jCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="utenti_jCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="id_jCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="tratteOutput_jScrollPane" min="-2" pref="245" max="-2" attributes="0"/>
@@ -224,7 +227,7 @@
                 <Component class="javax.swing.JCheckBox" name="mappa_jCheckBox">
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
-                    <Property name="text" type="java.lang.String" value="Mappa"/>
+                    <Property name="text" type="java.lang.String" value="M"/>
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
@@ -234,7 +237,7 @@
                 <Component class="javax.swing.JCheckBox" name="tratte_jCheckBox">
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
-                    <Property name="text" type="java.lang.String" value="Tratte"/>
+                    <Property name="text" type="java.lang.String" value="T"/>
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
@@ -244,11 +247,21 @@
                 <Component class="javax.swing.JCheckBox" name="utenti_jCheckBox">
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
-                    <Property name="text" type="java.lang.String" value="Studenti"/>
+                    <Property name="text" type="java.lang.String" value="S"/>
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="utenti_jCheckBoxActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="id_jCheckBox">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="id"/>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="id_jCheckBoxActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="calcolaFermate_jButton">

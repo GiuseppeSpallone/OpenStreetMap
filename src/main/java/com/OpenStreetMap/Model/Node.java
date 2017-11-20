@@ -29,7 +29,6 @@ public class Node {
     //Tratta
     private int num_studenti;
     private Route route; //rotta prefissata
-    private boolean route_prefixed;
     private ArrayList<Percorso> percorsi_dijkstra; //percorsi dijkstra verso tutti i nodi della tratta
     private ArrayList<Percorso> percorsi_euclide; //percorsi euclidei verso tutti i nodi della tratta
     private Percorso idealPercorso; //percorso verso la fermata ideale
@@ -284,15 +283,4 @@ public class Node {
     public void setRealPercorso(Percorso realPercorso) {
         this.realPercorso = realPercorso;
     }
-
-    public boolean isRoute_prefixed() {
-        return route_prefixed;
-    }
-
-    public void setRoute_prefixed(boolean route_prefixed) {
-        this.route_prefixed = route_prefixed;
-    }
-    
-    
-
 }
