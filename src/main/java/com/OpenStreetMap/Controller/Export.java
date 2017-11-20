@@ -66,20 +66,22 @@ public class Export {
 
                 String name = route.getName();
                 double value = route.getMinCombination().getValue();
+                long time = route.getMinCombination().getTime();
                 int numFermate = route.getNumFermate();
+                int numNodes = route.getPercorso().getNodes().size();
+                int numNodesStudents = route.students.size();
                 double distanza = route.getDistanza();
                 ArrayList<Node> fermate = route.getFermate_effettive();
 
-                out.println("Tratta: " + name + " Valore: " + value);
+                out.println("Tratta: " + name  + " Num Nodi: " + numNodes + " Lunghezza: " + (int) distanza + "m" + " Fermate: " + numFermate);
+                out.println("Num nodi studenti: " + numNodesStudents);
+                out.println("Valore: " + value + " Tempo: " + time);
                 out.print("   Fermate:");
 
                 for (int i = 0; i < fermate.size(); i++) {
 
                     out.print(" " + fermate.get(i).getIndex());
                 }
-
-                out.println("");
-                out.println("   Lunghezza: " + (int) distanza + "m");
             }
             out.println("");
             out.println("");

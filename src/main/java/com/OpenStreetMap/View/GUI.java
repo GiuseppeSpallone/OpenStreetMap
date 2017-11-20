@@ -1313,12 +1313,13 @@ public class GUI extends javax.swing.JFrame {
             String name = route.getName();
             Color color = route.getColor();
             int numFermate = route.getNumFermate();
+            int numNodes = route.getPercorso().getNodes().size();
             double distanza = route.getDistanza();
 
             JLabel name_JLabel = new JLabel("Tratta: " + name);
             name_JLabel.setForeground(color);
             JLabel numFermate_JLabel = new JLabel("Fermate: " + numFermate);
-            JLabel distanza_JLabel = new JLabel("Lunghezza: " + (int) distanza + "m");
+            JLabel distanza_JLabel = new JLabel("Nodi: " + numNodes + " Lunghezza: " + (int) distanza + "m");
             JSeparator jSeparator = new JSeparator();
 
             tratteOutput_jPanel.add(name_JLabel);
@@ -1469,7 +1470,8 @@ public class GUI extends javax.swing.JFrame {
                         g.setStroke(new BasicStroke(2));
                     }
                     if (arc.getMark() == 0) {
-                        g.setColor(Color.black);
+                        //g.setColor(Color.black);
+                        g.setColor(Color.gray);
                         g.setStroke(new BasicStroke(1));
 
                     }
@@ -1489,7 +1491,8 @@ public class GUI extends javax.swing.JFrame {
 
                     switch (mark) {
                         case -1:
-                            g.setColor(Color.black);
+                            //g.setColor(Color.black);
+                            g.setColor(Color.gray);
                             break;
                         case 0:
                             g.setColor(Color.red);

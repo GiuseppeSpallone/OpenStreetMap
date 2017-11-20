@@ -116,7 +116,6 @@ public class Visit {
     }
 
     private int creaComp(int c, Node n) {
-        try {
             int sz = 1;
             n.setComp(c);
             for (Iterator<Arc> it = n.nd_arcs.iterator(); it.hasNext();) {
@@ -129,11 +128,6 @@ public class Visit {
                 }
             }
             return sz;
-
-        } catch (StackOverflowError e) {
-            System.err.println("Errore ricorsione");
-        }
-        return 1;
     }
 
     public void removeNotStrongConnected(HashMap<Long, Node> nodes, HashSet<Arc> arc, Node rif) {

@@ -3,9 +3,7 @@ package com.OpenStreetMap.Controller;
 import com.OpenStreetMap.Model.Node;
 import com.OpenStreetMap.Model.Percorso;
 import com.OpenStreetMap.Model.Route;
-
 import java.awt.*;
-import java.awt.color.ColorSpace;
 import java.util.*;
 
 public class ControllerRoutes {

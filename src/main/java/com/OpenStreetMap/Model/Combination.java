@@ -9,6 +9,7 @@ public class Combination {
     private ArrayList<Node> fermate;
     private HashMap<Node, Percorso> minPercorsoFermata; //per ciascun studente il percorso verso la fermata più vicina
     private double value;
+    private long time = 0;
 
     public ArrayList<Node> getFermate() {
         return fermate;
@@ -33,6 +34,15 @@ public class Combination {
     public void setValue(double value) {
         this.value = value;
     }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+    
 
     public static boolean isStops(ArrayList<Combination> combinations, ArrayList<Node> stops) {
         boolean is = false;
