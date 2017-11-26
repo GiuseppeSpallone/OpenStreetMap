@@ -79,7 +79,7 @@ public class ImportMap {
                 nodes = new HashMap<>();
                 buildings = new HashSet<>();
 
-                for (Iterator it = children_node.iterator(); it.hasNext(); ) {
+                for (Iterator it = children_node.iterator(); it.hasNext();) {
                     Element nd = (Element) it.next();
                     Node node = new Node();
 
@@ -107,7 +107,6 @@ public class ImportMap {
                 System.out.println("     CREATE --> WAYS: " + ways.size());
             }
 
-
             //rimozione nodi ed edifici
             removeNodes_Buildings(minlatT, maxlatT, minlonT, maxlonT);
             System.out.println("     REMOVE -->: NODES: " + nodes.size() + " BUILDINGS: " + buildings.size());
@@ -115,7 +114,6 @@ public class ImportMap {
             //creo archi
             arcs = createArcs(ways);
             System.out.println("     CREATE --> ARCS: " + arcs.size());
-
 
             if (!import_building) {
                 buildings.clear();
@@ -179,7 +177,7 @@ public class ImportMap {
 
             List children_way_nd, children_way_tag;
 
-            for (Iterator it = children_way.iterator(); it.hasNext(); ) {
+            for (Iterator it = children_way.iterator(); it.hasNext();) {
                 Element we = (Element) it.next();
 
                 boolean imp = false;
@@ -194,7 +192,7 @@ public class ImportMap {
 
                 //esamino i tag delle strade
                 if (children_way_tag.size() > 0) {
-                    for (Iterator it1 = children_way_tag.iterator(); it1.hasNext(); ) {
+                    for (Iterator it1 = children_way_tag.iterator(); it1.hasNext();) {
                         Element nd = (Element) it1.next();
 
                         String k = nd.getAttribute("k").getValue();
@@ -280,7 +278,6 @@ public class ImportMap {
                                 }
                             }
 
-
                             Integer i = tag.get(k);
                             if (i != null) {
                                 i = i.intValue() + 1;
@@ -309,11 +306,10 @@ public class ImportMap {
 
                     //esamino i nodi delle strade
                     if (children_way_nd.size() > 0) {
-                        for (Iterator it2 = children_way_nd.iterator(); it2.hasNext(); ) {
+                        for (Iterator it2 = children_way_nd.iterator(); it2.hasNext();) {
                             Element nd2 = (Element) it2.next();
 
                             //ArrayList<Way> ways_node = new ArrayList<>();
-
                             Long ref = Long.parseLong(nd2.getAttribute("ref").getValue());
 
                             if (nodes.containsKey(ref)) {
@@ -324,7 +320,6 @@ public class ImportMap {
                                 /*nodes_way.add(node); //aggiungo nodo in array
                                 ways_node.add(way); //aggiungo strada in array
                                 node.setNd_ways(ways_node); //set array di strade in nodo*/
-
                                 ways.put(way.getId(), way); //aggiungo strada in hashmap strade
                             }
                         }
@@ -337,7 +332,7 @@ public class ImportMap {
                 } else {
                     if (building) {
                         children_way_nd = we.getChildren("nd");
-                        for (Iterator it1 = children_way_nd.iterator(); it1.hasNext(); ) {
+                        for (Iterator it1 = children_way_nd.iterator(); it1.hasNext();) {
                             Element nd = (Element) it1.next();
                             long ref = Long.parseLong(nd.getAttribute("ref").getValue());
                             if (!nodes.containsKey(ref)) {
@@ -393,7 +388,7 @@ public class ImportMap {
 
             List children_way_nd, children_way_tag;
 
-            for (Iterator it = children_way.iterator(); it.hasNext(); ) {
+            for (Iterator it = children_way.iterator(); it.hasNext();) {
                 Element we = (Element) it.next();
 
                 boolean imp = false;
@@ -409,7 +404,7 @@ public class ImportMap {
 
                 //esamino i tag delle strade
                 if (children_way_tag.size() > 0) {
-                    for (Iterator it1 = children_way_tag.iterator(); it1.hasNext(); ) {
+                    for (Iterator it1 = children_way_tag.iterator(); it1.hasNext();) {
                         Element nd = (Element) it1.next();
 
                         String k = nd.getAttribute("k").getValue();
@@ -466,14 +461,12 @@ public class ImportMap {
                     children_way_nd = we.getChildren("nd");
 
                     //ArrayList<Node> nodes_way = new ArrayList<>();
-
                     //esamino i nodi delle strade
                     if (children_way_nd.size() > 0) {
-                        for (Iterator it2 = children_way_nd.iterator(); it2.hasNext(); ) {
+                        for (Iterator it2 = children_way_nd.iterator(); it2.hasNext();) {
                             Element nd2 = (Element) it2.next();
 
                             //ArrayList<Way> ways_node = new ArrayList<>();
-
                             Long ref = Long.parseLong(nd2.getAttribute("ref").getValue());
 
                             if (!nodes.containsKey(ref)) {
@@ -494,7 +487,7 @@ public class ImportMap {
                 } else {
                     if (building) {
                         children_way_nd = we.getChildren("nd");
-                        for (Iterator it1 = children_way_nd.iterator(); it1.hasNext(); ) {
+                        for (Iterator it1 = children_way_nd.iterator(); it1.hasNext();) {
                             Element nd = (Element) it1.next();
                             long ref = Long.parseLong(nd.getAttribute("ref").getValue());
                             if (!nodes.containsKey(ref)) {
@@ -542,15 +535,14 @@ public class ImportMap {
         arcs = new HashSet<>();
         //ArrayList<Arc> arcs_node = null;
 
-        for (Iterator<Way> it = ways.values().iterator(); it.hasNext(); ) {
+        for (Iterator<Way> it = ways.values().iterator(); it.hasNext();) {
             Way w = it.next();
             Node old = null;
 
-            for (Iterator<Node> it1 = w.nd.iterator(); it1.hasNext(); ) {
+            for (Iterator<Node> it1 = w.nd.iterator(); it1.hasNext();) {
                 Node n = it1.next();
 
                 //arcs_node = new ArrayList<>();
-
                 if (old != null) {
                     Arc a = new Arc(old, n);
 
@@ -569,7 +561,6 @@ public class ImportMap {
                     arcs_node.add(a); //aggiungo arco in array
                     n.setNd_arcs(arcs_node); //set array di archi in nodo n
                     old.setNd_arcs(arcs_node); //set array di archi in nodo old*/
-
                 }
                 old = n;
             }
@@ -579,7 +570,7 @@ public class ImportMap {
 
     private void setIndexNodes(HashMap<Long, Node> nodes) {
         int i = 0;
-        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext();) {
             Node n = it.next();
             n.setIndex(i++);
         }
@@ -590,14 +581,14 @@ public class ImportMap {
         double dmax = distance(minlatT, maxlatT, minlonT, minlonT, 0, 0);
 
         int i = 0;
-        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext();) {
             Node n = it.next();
             n.setIndex(i++);
             n.setX((int) (prop * (distance(minlatT, minlatT, minlonT, n.getLon(), 0, 0))));
             n.setY((int) (prop * (dmax - distance(minlatT, n.getLat(), minlonT, minlonT, 0, 0))));
         }
 
-        for (Iterator<Node> it = buildings.iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = buildings.iterator(); it.hasNext();) {
             Node n = it.next();
             if (!nodes.containsKey(n.getId())) {
                 n.setIndex(i++);
@@ -629,7 +620,7 @@ public class ImportMap {
     private void removeNodes_Buildings(float minlatT, float maxlatT, float minlonT, float maxlonT) {
         ArrayList<Node> del = new ArrayList<>();
 
-        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext();) {
             Node n = it.next();
             if (n.nd_ways.size() <= 0) {
                 del.add(n);
@@ -646,17 +637,17 @@ public class ImportMap {
             }
         }
 
-        for (Iterator<Node> it = del.iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = del.iterator(); it.hasNext();) {
             Node n = it.next();
             nodes.remove(n.getId());
-            for (Iterator<Way> it1 = n.nd_ways.iterator(); it1.hasNext(); ) {
+            for (Iterator<Way> it1 = n.nd_ways.iterator(); it1.hasNext();) {
                 Way way = it1.next();
                 way.nd.remove(n);
             }
         }
         del.clear();
 
-        for (Iterator<Node> it = buildings.iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = buildings.iterator(); it.hasNext();) {
             Node n = it.next();
             if (n.getLat() < minlatT) {
                 del.add(n);
@@ -669,7 +660,7 @@ public class ImportMap {
             }
         }
 
-        for (Iterator<Node> it = del.iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = del.iterator(); it.hasNext();) {
             Node n = it.next();
             buildings.remove(n);
         }
@@ -679,7 +670,7 @@ public class ImportMap {
         ArrayList<Node> del = new ArrayList<>(nodes.size());
         ArrayList<Node> nd = new ArrayList<>(nodes.values());
         Collections.shuffle(nd);
-        for (Iterator<Node> it = nd.iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nd.iterator(); it.hasNext();) {
             Node n = it.next();
             if (n.nd_arcs.size() == 2) {
                 if (n.nd_arcs.get(0).isOneway() == n.nd_arcs.get(1).isOneway()) {
@@ -724,12 +715,12 @@ public class ImportMap {
             }
         }
 
-        for (Iterator<Node> it = del.iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = del.iterator(); it.hasNext();) {
             Node n = it.next();
             nodes.remove(n.getId());
         }
         int i = 0;
-        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = nodes.values().iterator(); it.hasNext();) {
             Node n = it.next();
             n.setIndex(i++);
         }
@@ -755,13 +746,13 @@ public class ImportMap {
     private void applyOneway(HashSet<Arc> arc) {
         ArrayList<Arc> arcAdd = new ArrayList<>();
 
-        for (Iterator<Arc> it = arc.iterator(); it.hasNext(); ) {
+        for (Iterator<Arc> it = arc.iterator(); it.hasNext();) {
             Arc a = it.next();
             if (!a.isOneway()) {
                 arcAdd.add(a);
             }
         }
-        for (Iterator<Arc> it = arcAdd.iterator(); it.hasNext(); ) {
+        for (Iterator<Arc> it = arcAdd.iterator(); it.hasNext();) {
             Arc a = it.next();
             a.setOneway(true);
             Arc b = new Arc(a.getTo(), a.getFrom(), a.getLength());
@@ -776,7 +767,7 @@ public class ImportMap {
         HashSet<String> arcM = new HashSet<>(arc.size());
         ArrayList<Arc> del = new ArrayList<>(arc.size());
 
-        for (Iterator<Arc> it = arc.iterator(); it.hasNext(); ) {
+        for (Iterator<Arc> it = arc.iterator(); it.hasNext();) {
             Arc a = it.next();
             String s = a.getFrom() + "-" + a.getTo();
             if (arcM.contains(s)) {
@@ -786,7 +777,7 @@ public class ImportMap {
             }
         }
 
-        for (Iterator<Arc> it = del.iterator(); it.hasNext(); ) {
+        for (Iterator<Arc> it = del.iterator(); it.hasNext();) {
             Arc a = it.next();
             arc.remove(a);
             a.getFrom().nd_arcs.remove(a);
@@ -796,13 +787,13 @@ public class ImportMap {
 
     private void removeMiters(HashSet<Node> buildings, HashSet<Arc> arc) {
 
-        for (Iterator<Node> it = buildings.iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = buildings.iterator(); it.hasNext();) {
             Node node = it.next();
             node.setFlag1(false);
         }
-        for (Iterator<Arc> it = arc.iterator(); it.hasNext(); ) {
+        for (Iterator<Arc> it = arc.iterator(); it.hasNext();) {
             Arc a = it.next();
-            for (Iterator<Node> it2 = buildings.iterator(); it2.hasNext(); ) {
+            for (Iterator<Node> it2 = buildings.iterator(); it2.hasNext();) {
                 Node node = it2.next();
                 if (!node.isFlag1()) {
                     if (node.distToEdge(a) < maxD) {
@@ -812,7 +803,7 @@ public class ImportMap {
             }
         }
         ArrayList<Node> del = new ArrayList<>();
-        for (Iterator<Node> it = buildings.iterator(); it.hasNext(); ) {
+        for (Iterator<Node> it = buildings.iterator(); it.hasNext();) {
             Node node = it.next();
             if (!node.isFlag1()) {
                 del.add(node);
@@ -838,8 +829,8 @@ public class ImportMap {
 
     /**
      * Print
-     **/
-
+     *
+     */
     public void printALL() {
         System.out.println("   Nodi num: " + nodes.size());
         System.out.println("   Buildings num: " + buildings.size());
@@ -852,10 +843,10 @@ public class ImportMap {
 
         nodes.forEach((key, value) -> {
             System.out.println(
-                    " index: " + value.getIndex() +
-                            " id: " + value.getId()
-                            + " lat: " + value.getLat()
-                            + " lon: " + value.getLon());
+                    " index: " + value.getIndex()
+                    + " id: " + value.getId()
+                    + " lat: " + value.getLat()
+                    + " lon: " + value.getLon());
         });
     }
 
@@ -879,7 +870,7 @@ public class ImportMap {
     public void printArcs(HashSet<Arc> arcs) {
         System.out.println("Arcs: " + arcs.size());
         int i = 0;
-        for (Iterator<Arc> it = arcs.iterator(); it.hasNext(); ) {
+        for (Iterator<Arc> it = arcs.iterator(); it.hasNext();) {
             Arc a = it.next();
             System.out.println(i + " from: " + a.getFrom().getId()
                     + " to: " + a.getTo().getId());

@@ -2,6 +2,7 @@ package com.OpenStreetMap.Controller;
 
 import com.OpenStreetMap.Model.Arc;
 import com.OpenStreetMap.Model.Node;
+import com.OpenStreetMap.Model.Pila;
 
 import java.util.*;
 
@@ -116,18 +117,50 @@ public class Visit {
     }
 
     private int creaComp(int c, Node n) {
-            int sz = 1;
-            n.setComp(c);
-            for (Iterator<Arc> it = n.nd_arcs.iterator(); it.hasNext();) {
-                Arc arc = it.next();
-                if (arc.getFrom().getComp() != c) {
-                    sz += creaComp(c, arc.getFrom());
-                }
-                if (arc.getTo().getComp() != c) {
-                    sz += creaComp(c, arc.getTo());
+        int sz = 1;
+        n.setComp(c);
+        for (Iterator<Arc> it = n.nd_arcs.iterator(); it.hasNext();) {
+            Arc arc = it.next();
+            if (arc.getFrom().getComp() != c) {
+                sz += creaComp(c, arc.getFrom());
+            }
+            if (arc.getTo().getComp() != c) {
+                sz += creaComp(c, arc.getTo());
+            }
+        }
+        return sz;
+    }
+
+    private int crea(int c, Node n) {
+        Pila s = new Pila();
+        System.out.println("Length: " + s.getLength());
+
+        int sz = 1;
+        n.setComp(c);
+
+        s.push(n);
+
+        while (!s.isEmpty()) {
+            System.out.println("Size: " + s.getSize());
+            Node u = s.pop();
+
+            for (Arc arc : u.nd_arcs) {
+
+                if (u != null) {
+
+                    if (arc.getFrom().getComp() != c) {
+                        s.push(arc.getFrom());
+                        sz += c;
+
+                    }
+                    if (arc.getTo().getComp() != c) {
+                        s.push(arc.getTo());
+                        sz += c;
+                    }
                 }
             }
-            return sz;
+        }
+        return sz;
     }
 
     public void removeNotStrongConnected(HashMap<Long, Node> nodes, HashSet<Arc> arc, Node rif) {

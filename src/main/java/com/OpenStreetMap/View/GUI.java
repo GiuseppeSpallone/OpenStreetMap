@@ -23,10 +23,15 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -146,6 +151,8 @@ public class GUI extends javax.swing.JFrame {
         inserisciDB_jMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Bus Stop");
+        setIconImages(null);
         setResizable(false);
 
         jTabbedPane.setEnabled(false);
@@ -1498,8 +1505,8 @@ public class GUI extends javax.swing.JFrame {
                         g.setStroke(new BasicStroke(2));
                     }
                     if (arc.getMark() == 0) {
-                        //g.setColor(Color.black);
-                        g.setColor(Color.gray);
+                        g.setColor(Color.black);
+                        //g.setColor(Color.gray);
                         g.setStroke(new BasicStroke(1));
 
                     }
