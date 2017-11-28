@@ -116,22 +116,22 @@ public class Visit {
         return rif;
     }
 
-    private int creaComp(int c, Node n) {
+    private int creaCompOld(int c, Node n) {
         int sz = 1;
         n.setComp(c);
         for (Iterator<Arc> it = n.nd_arcs.iterator(); it.hasNext();) {
             Arc arc = it.next();
             if (arc.getFrom().getComp() != c) {
-                sz += creaComp(c, arc.getFrom());
+                sz += creaCompOld(c, arc.getFrom());
             }
             if (arc.getTo().getComp() != c) {
-                sz += creaComp(c, arc.getTo());
+                sz += creaCompOld(c, arc.getTo());
             }
         }
         return sz;
     }
 
-    private int crea(int c, Node n) {
+    private int creaComp(int c, Node n) {
         Pila s = new Pila();
         System.out.println("Length: " + s.getLength());
 
@@ -146,18 +146,20 @@ public class Visit {
 
             for (Arc arc : u.nd_arcs) {
 
-                if (u != null) {
+                
 
                     if (arc.getFrom().getComp() != c) {
                         s.push(arc.getFrom());
-                        sz += c;
+                        arc.getFrom().setComp(c);
+                        sz ++;
 
                     }
                     if (arc.getTo().getComp() != c) {
                         s.push(arc.getTo());
-                        sz += c;
+                        arc.getTo().setComp(c);
+                        sz ++;
                     }
-                }
+                
             }
         }
         return sz;
