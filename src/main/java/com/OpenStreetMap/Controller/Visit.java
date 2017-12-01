@@ -133,7 +133,6 @@ public class Visit {
 
     private int creaComp(int c, Node n) {
         Pila s = new Pila();
-        System.out.println("Length: " + s.getLength());
 
         int sz = 1;
         n.setComp(c);
@@ -141,12 +140,9 @@ public class Visit {
         s.push(n);
 
         while (!s.isEmpty()) {
-            System.out.println("Size: " + s.getSize());
             Node u = s.pop();
 
             for (Arc arc : u.nd_arcs) {
-
-                
 
                     if (arc.getFrom().getComp() != c) {
                         s.push(arc.getFrom());
@@ -159,7 +155,6 @@ public class Visit {
                         arc.getTo().setComp(c);
                         sz ++;
                     }
-                
             }
         }
         return sz;
